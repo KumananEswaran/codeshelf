@@ -1,26 +1,28 @@
 # Current Feature
 
-## Dashboard UI Phase 3
+## Prisma + Neon PostgreSQL Setup
 
-Implement the third and final phase of the dashboard UI — main content area with stats cards, recent collections, pinned items, and recent items.
+Set up Prisma ORM with Neon PostgreSQL database for the CodeShelf application.
+
+### Requirements
+
+- Use Neon PostgreSQL (serverless)
+- Create initial schema based on data models in project-overview.md (will evolve)
+- Include NextAuth models (Account, Session, VerificationToken)
+- Add appropriate indexes and cascade deletes
+- Use Prisma 7 (has breaking changes — follow upgrade guide)
+- Always create migrations (`prisma migrate dev`), never push directly unless specified
+- Configure development and production database branches
+
+### References
+
+- Data models: `@context/project-overview.md`
+- Database spec: `@context/features/database-spec.md`
+- Database standards: `@context/coding-standards.md`
 
 ## Status
 
 In Progress
-
-## Goals
-
-- 4 stats cards at the top (items count, collections count, favorite items, favorite collections)
-- Recent collections section
-- Pinned items section
-- 10 most recent items
-
-## Notes
-
-- Source specification: @context/features/dashboard-phase-3-spec.md
-- Reference screenshot: @context/screenshots/dashboard-ui-main.png
-- Mock data: @src/lib/mock-data.js
-- This is phase 3 of 3, building on phases 1 and 2.
 
 ## History
 
@@ -29,4 +31,5 @@ In Progress
 - 2026-03-18: Current feature updated to Dashboard UI Phase 1 with status set to In Progress
 - 2026-03-18: Dashboard UI Phase 1 completed — ShadCN initialized, /dashboard route with layout, top bar with search/New Collection/New Item buttons, sidebar and main placeholders, dark mode default
 - 2026-03-19: Dashboard UI Phase 2 completed — Collapsible sidebar with item types/counts, favorite and recent collections, user avatar area, drawer toggle, mobile sheet drawer
-- 2026-03-19: Current feature updated to Dashboard UI Phase 3 with status set to In Progress
+- 2026-03-19: Dashboard UI Phase 3 completed — Stats cards, collections grid, pinned items, recent items sections, typography switched to Inter + JetBrains Mono
+- 2026-03-19: Current feature updated to Prisma + Neon PostgreSQL Setup with status set to In Progress
