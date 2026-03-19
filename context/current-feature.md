@@ -22,3 +22,5 @@ Idle
 - 2026-03-19: Seed Data completed — demo user, 7 system item types with Lucide icons, 5 collections with 18 items, updated test-db script
 - 2026-03-19: Current feature updated to Dashboard Collections (Real Data) with status set to In Progress
 - 2026-03-19: Dashboard Collections (Real Data) completed — src/lib/db/collections.ts with Prisma queries, CollectionsGrid with type icons and dominant-color border, dashboard page as async server component fetching from Neon DB
+- 2026-03-19: Current feature updated to Dashboard Items (Real Data) with status set to In Progress
+- 2026-03-19: Dashboard Items (Real Data) completed — src/lib/db/items.ts with Prisma queries (pinned, recent, stats), PinnedItems and RecentItems components updated with Lucide icon map and type-colored borders, mock data removed from dashboard page
