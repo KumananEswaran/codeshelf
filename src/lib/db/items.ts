@@ -2,12 +2,12 @@ import { prisma } from "@/lib/prisma";
 
 const DEMO_USER_EMAIL = "demo@codeshelf.io";
 
-async function getDemoUserId() {
-  const user = await prisma.user.findUniqueOrThrow({
+async function getDemoUserId(): Promise<string | null> {
+  const user = await prisma.user.findUnique({
     where: { email: DEMO_USER_EMAIL },
     select: { id: true },
   });
-  return user.id;
+  return user?.id ?? null;
 }
 
 export interface ItemWithDetails {
@@ -70,6 +70,7 @@ function formatItem(
 
 export async function getPinnedItems(): Promise<ItemWithDetails[]> {
   const userId = await getDemoUserId();
+  if (!userId) return [];
 
   const items = await prisma.item.findMany({
     where: { userId, isPinned: true },
@@ -84,6 +85,7 @@ export async function getRecentItems(
   limit = 10
 ): Promise<ItemWithDetails[]> {
   const userId = await getDemoUserId();
+  if (!userId) return [];
 
   const items = await prisma.item.findMany({
     where: { userId },
@@ -125,7 +127,7 @@ export async function getItemTypesWithCounts(): Promise<ItemTypeWithCount[]> {
       color: true,
       _count: {
         select: {
-          items: { where: { userId } },
+          items: userId ? { where: { userId } } : true,
         },
       },
     },
@@ -150,6 +152,7 @@ export async function getItemTypesWithCounts(): Promise<ItemTypeWithCount[]> {
 
 export async function getItemStats() {
   const userId = await getDemoUserId();
+  if (!userId) return { totalItems: 0, favoriteItems: 0 };
 
   const [totalItems, favoriteItems] = await Promise.all([
     prisma.item.count({ where: { userId } }),

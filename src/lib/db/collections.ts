@@ -2,12 +2,12 @@ import { prisma } from "@/lib/prisma";
 
 const DEMO_USER_EMAIL = "demo@codeshelf.io";
 
-async function getDemoUserId() {
-  const user = await prisma.user.findUniqueOrThrow({
+async function getDemoUserId(): Promise<string | null> {
+  const user = await prisma.user.findUnique({
     where: { email: DEMO_USER_EMAIL },
     select: { id: true },
   });
-  return user.id;
+  return user?.id ?? null;
 }
 
 export interface CollectionWithTypes {
@@ -24,6 +24,7 @@ export async function getRecentCollections(
   limit = 6
 ): Promise<CollectionWithTypes[]> {
   const userId = await getDemoUserId();
+  if (!userId) return [];
 
   const collections = await prisma.collection.findMany({
     where: { userId },
@@ -100,6 +101,7 @@ export async function getSidebarCollections(): Promise<{
   recents: SidebarCollection[];
 }> {
   const userId = await getDemoUserId();
+  if (!userId) return { favorites: [], recents: [] };
 
   const collections = await prisma.collection.findMany({
     where: { userId },
@@ -153,6 +155,7 @@ export async function getSidebarCollections(): Promise<{
 
 export async function getCollectionStats() {
   const userId = await getDemoUserId();
+  if (!userId) return { totalCollections: 0, favoriteCollections: 0 };
 
   const [totalCollections, favoriteCollections] = await Promise.all([
     prisma.collection.count({ where: { userId } }),
