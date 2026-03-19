@@ -4,13 +4,10 @@ import { Button } from "@/components/ui/button";
 
 export default function TopBar() {
   return (
-    <header className="flex items-center justify-between px-6 h-14.25 border-b border-border bg-background shrink-0">
+    <div className="flex items-center justify-between flex-1 min-w-0">
       <div className="relative max-w-sm w-full">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Search items..."
-          className="pl-9"
-        />
+        <Input placeholder="Search items..." className="pl-9" />
       </div>
       <div className="flex items-center gap-2">
         <Button variant="outline">
@@ -22,6 +19,6 @@ export default function TopBar() {
           New Item
         </Button>
       </div>
-    </header>
+    </div>
   );
 }
