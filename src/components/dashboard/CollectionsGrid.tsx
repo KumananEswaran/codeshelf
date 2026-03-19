@@ -1,17 +1,31 @@
 import Link from "next/link";
-import { Star, MoreHorizontal } from "lucide-react";
+import {
+  Star,
+  MoreHorizontal,
+  Code,
+  Sparkles,
+  Terminal,
+  StickyNote,
+  File,
+  Image,
+  LinkIcon,
+} from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import type { CollectionWithTypes } from "@/lib/db/collections";
+import type { LucideIcon } from "lucide-react";
 
-interface Collection {
-  id: string;
-  name: string;
-  description?: string;
-  itemCount: number;
-  isFavorite: boolean;
-}
+const ICON_MAP: Record<string, LucideIcon> = {
+  Code,
+  Sparkles,
+  Terminal,
+  StickyNote,
+  File,
+  Image,
+  Link: LinkIcon,
+};
 
 interface CollectionsGridProps {
-  collections: Collection[];
+  collections: CollectionWithTypes[];
 }
 
 export default function CollectionsGrid({ collections }: CollectionsGridProps) {
@@ -29,7 +43,14 @@ export default function CollectionsGrid({ collections }: CollectionsGridProps) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {collections.map((col) => (
           <Link key={col.id} href={`/collections/${col.id}`}>
-            <Card className="hover:ring-foreground/20 transition-all cursor-pointer h-full">
+            <Card
+              className="hover:ring-foreground/20 transition-all cursor-pointer h-full"
+              style={
+                col.dominantColor
+                  ? { borderTopColor: col.dominantColor, borderTopWidth: "2px" }
+                  : undefined
+              }
+            >
               <CardHeader>
                 <div className="flex items-center gap-2">
                   <CardTitle className="truncate">{col.name}</CardTitle>
@@ -48,6 +69,23 @@ export default function CollectionsGrid({ collections }: CollectionsGridProps) {
                 <p className="text-sm text-muted-foreground line-clamp-1">
                   {col.description}
                 </p>
+                {col.typeIcons.length > 0 && (
+                  <div className="flex items-center gap-1.5 mt-3">
+                    {col.typeIcons.map((t, i) => {
+                      const IconComponent = t.icon
+                        ? ICON_MAP[t.icon]
+                        : undefined;
+                      if (!IconComponent) return null;
+                      return (
+                        <IconComponent
+                          key={i}
+                          className="h-3.5 w-3.5"
+                          style={{ color: t.color ?? undefined }}
+                        />
+                      );
+                    })}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </Link>

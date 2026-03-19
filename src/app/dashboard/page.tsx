@@ -1,23 +1,24 @@
+import { mockItems, mockItemTypeCounts } from "@/lib/mock-data";
 import {
-  mockItems,
-  mockCollections,
-  mockItemTypeCounts,
-} from "@/lib/mock-data";
+  getRecentCollections,
+  getCollectionStats,
+} from "@/lib/db/collections";
 import StatsCards from "@/components/dashboard/StatsCards";
 import CollectionsGrid from "@/components/dashboard/CollectionsGrid";
 import PinnedItems from "@/components/dashboard/PinnedItems";
 import RecentItems from "@/components/dashboard/RecentItems";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const [recentCollections, collectionStats] = await Promise.all([
+    getRecentCollections(6),
+    getCollectionStats(),
+  ]);
+
   const totalItems = Object.values(mockItemTypeCounts).reduce(
     (sum, count) => sum + count,
     0
   );
-  const totalCollections = mockCollections.length;
   const favoriteItems = mockItems.filter((item) => item.isFavorite).length;
-  const favoriteCollections = mockCollections.filter(
-    (col) => col.isFavorite
-  ).length;
 
   const pinnedItems = mockItems.filter((item) => item.isPinned);
   const recentItems = [...mockItems]
@@ -26,8 +27,6 @@ export default function DashboardPage() {
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     )
     .slice(0, 10);
-
-  const recentCollections = mockCollections.slice(0, 6);
 
   return (
     <div className="space-y-8">
@@ -38,9 +37,9 @@ export default function DashboardPage() {
 
       <StatsCards
         totalItems={totalItems}
-        totalCollections={totalCollections}
+        totalCollections={collectionStats.totalCollections}
         favoriteItems={favoriteItems}
-        favoriteCollections={favoriteCollections}
+        favoriteCollections={collectionStats.favoriteCollections}
       />
 
       <CollectionsGrid collections={recentCollections} />
