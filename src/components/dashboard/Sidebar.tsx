@@ -15,9 +15,12 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import type { ItemTypeWithCount } from "@/lib/db/items";
 import type { SidebarCollection } from "@/lib/db/collections";
+
+const PRO_TYPES = new Set(["File", "Image"]);
 
 const ICON_MAP: Record<string, LucideIcon> = {
   Code,
@@ -72,6 +75,11 @@ export default function Sidebar({ itemTypes, sidebarCollections }: SidebarProps)
                     })()}
                   </span>
                   <span>{type.name[0].toUpperCase() + type.name.slice(1)}s</span>
+                  {PRO_TYPES.has(type.name) && (
+                    <Badge variant="secondary" className="h-4 px-1.5 text-[10px] font-semibold tracking-wide">
+                      PRO
+                    </Badge>
+                  )}
                 </span>
                 <span className="text-xs text-muted-foreground">
                   {type.count}
