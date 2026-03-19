@@ -1,24 +1,12 @@
 # Current Feature
 
-## Add Pro Badge to Sidebar
+## None
 
-Add a pro badge to the Files and Images item types in the sidebar.
+No active feature.
 
 ## Status
 
-In Progress
-
-## Goals
-
-- Add a ShadCN UI Badge component to the Files and Images types in the sidebar
-- Badge should display "PRO" in uppercase
-- Badge styling should be clean and subtle
-
-## Notes
-
-- Use the existing ShadCN Badge component (install if needed)
-- Only Files and Images types get the badge — other types remain unchanged
-- Keep the badge visually consistent with the sidebar's dark theme
+Idle
 
 ## History
 
@@ -38,3 +26,4 @@ In Progress
 - 2026-03-19: Dashboard Items (Real Data) completed — src/lib/db/items.ts with Prisma queries (pinned, recent, stats), PinnedItems and RecentItems components updated with Lucide icon map and type-colored borders, mock data removed from dashboard page
 - 2026-03-19: Current feature updated to Stats & Sidebar (Real Data) with status set to In Progress
 - 2026-03-19: Stats & Sidebar (Real Data) completed — getItemTypesWithCounts and getSidebarCollections DB functions, Sidebar rewritten with Lucide icons, colored circles for recents, star icons for favorites, "View all collections" link, data passed from layout via DashboardShell props
+- 2026-03-19: Add Pro Badge to Sidebar completed — ShadCN Badge with secondary variant added to Files and Images types in sidebar, PRO_TYPES set for easy extension
