@@ -87,6 +87,70 @@ export async function getRecentCollections(
   });
 }
 
+export interface SidebarCollection {
+  id: string;
+  name: string;
+  isFavorite: boolean;
+  itemCount: number;
+  dominantColor: string | null;
+}
+
+export async function getSidebarCollections(): Promise<{
+  favorites: SidebarCollection[];
+  recents: SidebarCollection[];
+}> {
+  const userId = await getDemoUserId();
+
+  const collections = await prisma.collection.findMany({
+    where: { userId },
+    orderBy: { createdAt: "desc" },
+    include: {
+      items: {
+        select: {
+          type: {
+            select: { id: true, color: true },
+          },
+        },
+      },
+    },
+  });
+
+  const mapped: SidebarCollection[] = collections.map((col) => {
+    const typeCounts = new Map<string, { count: number; color: string | null }>();
+
+    for (const item of col.items) {
+      const existing = typeCounts.get(item.type.id);
+      if (existing) {
+        existing.count++;
+      } else {
+        typeCounts.set(item.type.id, { count: 1, color: item.type.color });
+      }
+    }
+
+    let dominantColor: string | null = null;
+    let maxCount = 0;
+    for (const entry of typeCounts.values()) {
+      if (entry.count > maxCount) {
+        maxCount = entry.count;
+        dominantColor = entry.color;
+      }
+    }
+
+    return {
+      id: col.id,
+      name: col.name,
+      isFavorite: col.isFavorite,
+      itemCount: col.items.length,
+      dominantColor,
+    };
+  });
+
+  const favorites = mapped.filter((c) => c.isFavorite);
+  const recents = mapped.slice(0, 4);
+
+  return { favorites, recents };
+}
+
 export async function getCollectionStats() {
   const userId = await getDemoUserId();
 

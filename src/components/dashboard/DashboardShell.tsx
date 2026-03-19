@@ -11,12 +11,23 @@ import {
 } from "@/components/ui/sheet";
 import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
+import type { ItemTypeWithCount } from "@/lib/db/items";
+import type { SidebarCollection } from "@/lib/db/collections";
+
+interface DashboardShellProps {
+  children: React.ReactNode;
+  itemTypes: ItemTypeWithCount[];
+  sidebarCollections: {
+    favorites: SidebarCollection[];
+    recents: SidebarCollection[];
+  };
+}
 
 export default function DashboardShell({
   children,
-}: {
-  children: React.ReactNode;
-}) {
+  itemTypes,
+  sidebarCollections,
+}: DashboardShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   return (
@@ -33,7 +44,10 @@ export default function DashboardShell({
           </span>
         </div>
         <div className="flex-1 min-h-0 overflow-hidden">
-          <Sidebar />
+          <Sidebar
+            itemTypes={itemTypes}
+            sidebarCollections={sidebarCollections}
+          />
         </div>
       </aside>
 
@@ -57,7 +71,10 @@ export default function DashboardShell({
                   CodeShelf
                 </span>
               </div>
-              <Sidebar />
+              <Sidebar
+                itemTypes={itemTypes}
+                sidebarCollections={sidebarCollections}
+              />
             </SheetContent>
           </Sheet>
 

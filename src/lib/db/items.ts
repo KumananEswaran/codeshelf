@@ -95,6 +95,59 @@ export async function getRecentItems(
   return items.map(formatItem);
 }
 
+export interface ItemTypeWithCount {
+  id: string;
+  name: string;
+  icon: string | null;
+  color: string | null;
+  count: number;
+}
+
+const TYPE_DISPLAY_ORDER = [
+  "snippet",
+  "prompt",
+  "command",
+  "note",
+  "file",
+  "image",
+  "link",
+];
+
+export async function getItemTypesWithCounts(): Promise<ItemTypeWithCount[]> {
+  const userId = await getDemoUserId();
+
+  const types = await prisma.itemType.findMany({
+    where: { isSystem: true },
+    select: {
+      id: true,
+      name: true,
+      icon: true,
+      color: true,
+      _count: {
+        select: {
+          items: { where: { userId } },
+        },
+      },
+    },
+  });
+
+  const mapped = types.map((t) => ({
+    id: t.id,
+    name: t.name,
+    icon: t.icon,
+    color: t.color,
+    count: t._count.items,
+  }));
+
+  mapped.sort((a, b) => {
+    const ai = TYPE_DISPLAY_ORDER.indexOf(a.name);
+    const bi = TYPE_DISPLAY_ORDER.indexOf(b.name);
+    return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+  });
+
+  return mapped;
+}
+
 export async function getItemStats() {
   const userId = await getDemoUserId();
 
