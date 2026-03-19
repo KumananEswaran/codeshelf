@@ -20,7 +20,7 @@ import { Separator } from "@/components/ui/separator";
 import type { ItemTypeWithCount } from "@/lib/db/items";
 import type { SidebarCollection } from "@/lib/db/collections";
 
-const PRO_TYPES = new Set(["File", "Image"]);
+const PRO_TYPES = new Set(["file", "image"]);
 
 const ICON_MAP: Record<string, LucideIcon> = {
   Code,
