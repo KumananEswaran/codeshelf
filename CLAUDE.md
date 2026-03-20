@@ -20,6 +20,14 @@ Read the following to get the full context of the project:
 
 **IMPORTANT:** Do not add Claude to any commit messages
 
+## Neon MCP
+
+- **Default project:** `misty-water-95098571` (codeshelf)
+- **Default branch:** `br-damp-forest-a1kuwypn` (development)
+- Always use the development branch for all Neon MCP operations (queries, migrations, schema changes)
+- **NEVER** use the production branch (`br-red-sunset-a12pmzt3`) unless I explicitly say "production"
+- When running `run_sql`, `describe_branch`, or any branch-specific tool, always pass the development `branchId`
+
 
 
 
