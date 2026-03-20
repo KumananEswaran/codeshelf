@@ -2,23 +2,15 @@
 
 ## Goals
 
-- After registration, send a verification email with a unique token link
-- User must click the email link to verify their account
-- Unverified users cannot sign in (show appropriate message)
-- Use Resend as the email provider with `onboarding@resend.dev` as the from address
-- Verification token expires after a reasonable time period
+<!-- Goals for the current feature -->
 
 ## Notes
 
-- Using Resend SDK with RESEND_API_KEY from .env
-- From email: onboarding@resend.dev (Resend test sender)
-- Need a verification token model/table in Prisma schema
-- Registration flow: register → send email → user clicks link → account verified → can sign in
-- Block sign-in for unverified users with a clear error message
+<!-- Additional context, constraints, or details -->
 
 ## Status
 
-In Progress
+Not Started
 
 ## History
 
@@ -43,3 +35,4 @@ In Progress
 - 2026-03-20: Auth Setup — NextAuth + GitHub Provider completed — NextAuth v5 beta with Prisma adapter, split config (auth.config.ts + auth.ts) for edge compatibility, GitHub OAuth provider, JWT session strategy with user.id, proxy-based /dashboard/* route protection, API route handler, env vars configured
 - 2026-03-20: Auth Credentials — Email/Password Provider completed — Credentials provider with split pattern, bcrypt validation in auth.ts, registration API route with input validation and duplicate check, dark theme on default sign-in page
 - 2026-03-20: Auth UI — Sign In, Register & Sign Out completed — custom /sign-in and /register pages with server component + client form pattern, reusable UserAvatar component with initials fallback, sidebar user area with dropdown menu (Profile + Sign out), NextAuth custom pages config, Sonner toast on registration success
+- 2026-03-20: Email Verification on Register completed — Resend integration for verification emails, 24h token expiry, inline check-your-email and verified states on auth pages, unverified sign-in blocked, dashboard queries switched from getDemoUserId to session user ID, clean-users script added
