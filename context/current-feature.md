@@ -1,26 +1,12 @@
 # Current Feature
 
-## Codebase Cleanup — Quick Wins
+## None
 
-Low-risk housekeeping fixes identified during a codebase scan.
-
-### Tasks
-
-- [x] Extract duplicated `ICON_MAP` from 4 components into `src/lib/icon-map.ts`
-- [x] Extract duplicated `getDemoUserId()` from `items.ts` and `collections.ts` into `src/lib/db/user.ts`
-- [x] Extract duplicated `formatDate()` from `PinnedItems` and `RecentItems` into `src/lib/utils.ts`
-- [x] Add `generated/**` to ESLint `globalIgnores` in `eslint.config.mjs`
-- [x] Move `shadcn` from `dependencies` to `devDependencies` in `package.json`
-- [x] Fix N+1 query in collections.ts — use `_count` instead of loading all items
-- [x] Add missing `createdAt` index on Collection — via Prisma migration
-- [x] Add dashboard loading state — `loading.tsx` with skeleton UI
-- [x] Add dashboard error boundary — `error.tsx` with retry button
-- [x] Add query limit validation — cap limits in `getRecentItems` and `getRecentCollections`
-- [x] Fix unsafe icon lookup — return fallback `Code` icon from shared `getIcon()`
+No active feature.
 
 ## Status
 
-In Progress
+Idle
 
 ## History
 
@@ -41,3 +27,4 @@ In Progress
 - 2026-03-19: Current feature updated to Stats & Sidebar (Real Data) with status set to In Progress
 - 2026-03-19: Stats & Sidebar (Real Data) completed — getItemTypesWithCounts and getSidebarCollections DB functions, Sidebar rewritten with Lucide icons, colored circles for recents, star icons for favorites, "View all collections" link, data passed from layout via DashboardShell props
 - 2026-03-19: Add Pro Badge to Sidebar completed — ShadCN Badge with secondary variant added to Files and Images types in sidebar, PRO_TYPES set for easy extension
+- 2026-03-20: Codebase Cleanup — Quick Wins completed — extracted shared ICON_MAP/getDemoUserId/formatDate, fixed N+1 query with _count, added Collection createdAt index via migration, dashboard loading/error states, query limit caps, safe getIcon() fallback, ESLint generated ignore, shadcn moved to devDeps
