@@ -1,27 +1,16 @@
-# Current Feature: Forgot Password
+# Current Feature
 
 ## Goals
 
-- Add a "Forgot password?" link on the sign-in page
-- Create a `/forgot-password` page with email input to request a password reset
-- Generate a password reset token using the existing `VerificationToken` model (24h expiry)
-- Send a password reset email via Resend with a secure reset link
-- Create a `/reset-password` page where users enter a new password (with confirmation)
-- Create an API route to validate the reset token and update the password
-- Redirect to sign-in with success message after password reset
+<!-- Goals for the current feature -->
 
 ## Notes
 
-- Reuse the existing `VerificationToken` model — use a `reset:` prefix on the identifier to distinguish from email verification tokens
-- Reuse the existing Resend email integration (`src/lib/email.ts`)
-- Follow the same server component + client form pattern used in sign-in and register pages
-- Only applies to credentials (email/password) users — not GitHub OAuth users
-- Password validation: same rules as registration (8+ characters, confirmation match)
-- Token should be single-use (deleted after successful reset)
+<!-- Additional context, constraints, or details -->
 
 ## Status
 
-In Progress
+Not Started
 
 ## History
 
@@ -48,3 +37,4 @@ In Progress
 - 2026-03-20: Auth UI — Sign In, Register & Sign Out completed — custom /sign-in and /register pages with server component + client form pattern, reusable UserAvatar component with initials fallback, sidebar user area with dropdown menu (Profile + Sign out), NextAuth custom pages config, Sonner toast on registration success
 - 2026-03-20: Email Verification on Register completed — Resend integration for verification emails, 24h token expiry, inline check-your-email and verified states on auth pages, unverified sign-in blocked, dashboard queries switched from getDemoUserId to session user ID, clean-users script added
 - 2026-03-20: Email Verification Toggle completed — REQUIRE_EMAIL_VERIFICATION env variable to enable/disable email verification, default false for development without Resend domain
+- 2026-03-20: Forgot Password completed — forgot password link on sign-in, /forgot-password and /reset-password pages, reset token via VerificationToken with reset: prefix, Resend email, single-use 24h tokens, OAuth users excluded
