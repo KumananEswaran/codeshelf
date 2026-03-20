@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import DashboardShell from "@/components/dashboard/DashboardShell";
 import { getSidebarCollections } from "@/lib/db/collections";
 import { getItemTypesWithCounts } from "@/lib/db/items";
@@ -8,15 +9,24 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [itemTypes, sidebarCollections, session] = await Promise.all([
-    getItemTypesWithCounts(),
-    getSidebarCollections(),
-    auth(),
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    redirect("/sign-in");
+  }
+
+  const userId = session.user.id;
+
+  const [itemTypes, sidebarCollections] = await Promise.all([
+    getItemTypesWithCounts(userId),
+    getSidebarCollections(userId),
   ]);
 
-  const user = session?.user
-    ? { name: session.user.name ?? null, email: session.user.email ?? null, image: session.user.image ?? null }
-    : null;
+  const user = {
+    name: session.user.name ?? null,
+    email: session.user.email ?? null,
+    image: session.user.image ?? null,
+  };
 
   return (
     <DashboardShell

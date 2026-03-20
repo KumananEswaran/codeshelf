@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Github, Loader2 } from "lucide-react";
-import { toast } from "sonner";
+import { CircleCheck, Github, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,14 +18,8 @@ export default function SignInForm() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const toastShown = useRef(false);
-
-  useEffect(() => {
-    if (searchParams.get("registered") === "true" && !toastShown.current) {
-      toastShown.current = true;
-      toast.success("Account created! You can now sign in.");
-    }
-  }, [searchParams]);
+  const verified = searchParams.get("verified") === "true";
+  const tokenError = searchParams.get("error");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -40,12 +33,69 @@ export default function SignInForm() {
     });
 
     if (result?.error) {
-      setError("Invalid email or password");
+      if (result.code === "email-not-verified") {
+        setError("Please verify your email before signing in. Check your inbox.");
+      } else {
+        setError("Invalid email or password");
+      }
       setLoading(false);
       return;
     }
 
     router.push("/dashboard");
+  }
+
+  if (verified) {
+    return (
+      <Card className="w-full max-w-sm">
+        <CardHeader className="text-center">
+          <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-green-500/10">
+            <CircleCheck className="h-6 w-6 text-green-500" />
+          </div>
+          <CardTitle className="text-2xl font-bold">Email Verified</CardTitle>
+          <CardDescription>
+            Your account has been verified successfully.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Link href="/sign-in">
+            <Button className="w-full">
+              Sign in to your account
+            </Button>
+          </Link>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (tokenError) {
+    const errorMessage =
+      tokenError === "expired-token"
+        ? "Your verification link has expired. Please register again."
+        : "Invalid verification link. Please try again or register a new account.";
+
+    return (
+      <Card className="w-full max-w-sm">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl font-bold">Verification Failed</CardTitle>
+          <CardDescription>{errorMessage}</CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-3">
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={() => router.replace("/sign-in")}
+          >
+            Back to Sign In
+          </Button>
+          <Link href="/register">
+            <Button variant="ghost" className="w-full">
+              Register again
+            </Button>
+          </Link>
+        </CardContent>
+      </Card>
+    );
   }
 
   return (

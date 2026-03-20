@@ -2,15 +2,23 @@
 
 ## Goals
 
-<!-- Goals for the current feature -->
+- After registration, send a verification email with a unique token link
+- User must click the email link to verify their account
+- Unverified users cannot sign in (show appropriate message)
+- Use Resend as the email provider with `onboarding@resend.dev` as the from address
+- Verification token expires after a reasonable time period
 
 ## Notes
 
-<!-- Additional context, constraints, or details -->
+- Using Resend SDK with RESEND_API_KEY from .env
+- From email: onboarding@resend.dev (Resend test sender)
+- Need a verification token model/table in Prisma schema
+- Registration flow: register → send email → user clicks link → account verified → can sign in
+- Block sign-in for unverified users with a clear error message
 
 ## Status
 
-Not Started
+In Progress
 
 ## History
 

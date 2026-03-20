@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/prisma";
-import { getDemoUserId } from "@/lib/db/user";
 
 export interface ItemWithDetails {
   id: string;
@@ -59,10 +58,7 @@ function formatItem(
   };
 }
 
-export async function getPinnedItems(): Promise<ItemWithDetails[]> {
-  const userId = await getDemoUserId();
-  if (!userId) return [];
-
+export async function getPinnedItems(userId: string): Promise<ItemWithDetails[]> {
   const items = await prisma.item.findMany({
     where: { userId, isPinned: true },
     orderBy: { createdAt: "desc" },
@@ -73,11 +69,10 @@ export async function getPinnedItems(): Promise<ItemWithDetails[]> {
 }
 
 export async function getRecentItems(
+  userId: string,
   limit = 10
 ): Promise<ItemWithDetails[]> {
   const cappedLimit = Math.min(limit, 100);
-  const userId = await getDemoUserId();
-  if (!userId) return [];
 
   const items = await prisma.item.findMany({
     where: { userId },
@@ -107,9 +102,7 @@ const TYPE_DISPLAY_ORDER = [
   "link",
 ];
 
-export async function getItemTypesWithCounts(): Promise<ItemTypeWithCount[]> {
-  const userId = await getDemoUserId();
-
+export async function getItemTypesWithCounts(userId: string): Promise<ItemTypeWithCount[]> {
   const types = await prisma.itemType.findMany({
     where: { isSystem: true },
     select: {
@@ -119,7 +112,7 @@ export async function getItemTypesWithCounts(): Promise<ItemTypeWithCount[]> {
       color: true,
       _count: {
         select: {
-          items: userId ? { where: { userId } } : true,
+          items: { where: { userId } },
         },
       },
     },
@@ -142,10 +135,7 @@ export async function getItemTypesWithCounts(): Promise<ItemTypeWithCount[]> {
   return mapped;
 }
 
-export async function getItemStats() {
-  const userId = await getDemoUserId();
-  if (!userId) return { totalItems: 0, favoriteItems: 0 };
-
+export async function getItemStats(userId: string) {
   const [totalItems, favoriteItems] = await Promise.all([
     prisma.item.count({ where: { userId } }),
     prisma.item.count({ where: { userId, isFavorite: true } }),

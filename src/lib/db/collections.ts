@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/prisma";
-import { getDemoUserId } from "@/lib/db/user";
 
 export interface CollectionWithTypes {
   id: string;
@@ -12,11 +11,9 @@ export interface CollectionWithTypes {
 }
 
 export async function getRecentCollections(
+  userId: string,
   limit = 6
 ): Promise<CollectionWithTypes[]> {
-  const userId = await getDemoUserId();
-  if (!userId) return [];
-
   const cappedLimit = Math.min(limit, 100);
 
   const collections = await prisma.collection.findMany({
@@ -58,7 +55,6 @@ export async function getRecentCollections(
       }
     }
 
-    // Find most-used type for border color
     let dominantColor: string | null = null;
     let maxCount = 0;
     for (const entry of typeCounts.values()) {
@@ -68,7 +64,6 @@ export async function getRecentCollections(
       }
     }
 
-    // Unique type icons
     const typeIcons = Array.from(typeCounts.values()).map((t) => ({
       icon: t.icon,
       color: t.color,
@@ -94,13 +89,10 @@ export interface SidebarCollection {
   dominantColor: string | null;
 }
 
-export async function getSidebarCollections(): Promise<{
+export async function getSidebarCollections(userId: string): Promise<{
   favorites: SidebarCollection[];
   recents: SidebarCollection[];
 }> {
-  const userId = await getDemoUserId();
-  if (!userId) return { favorites: [], recents: [] };
-
   const collections = await prisma.collection.findMany({
     where: { userId },
     orderBy: { createdAt: "desc" },
@@ -155,10 +147,7 @@ export async function getSidebarCollections(): Promise<{
   return { favorites, recents };
 }
 
-export async function getCollectionStats() {
-  const userId = await getDemoUserId();
-  if (!userId) return { totalCollections: 0, favoriteCollections: 0 };
-
+export async function getCollectionStats(userId: string) {
   const [totalCollections, favoriteCollections] = await Promise.all([
     prisma.collection.count({ where: { userId } }),
     prisma.collection.count({ where: { userId, isFavorite: true } }),
