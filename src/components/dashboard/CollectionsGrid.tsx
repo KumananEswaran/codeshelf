@@ -2,27 +2,10 @@ import Link from "next/link";
 import {
   Star,
   MoreHorizontal,
-  Code,
-  Sparkles,
-  Terminal,
-  StickyNote,
-  File,
-  Image,
-  LinkIcon,
 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { getIcon } from "@/lib/icon-map";
 import type { CollectionWithTypes } from "@/lib/db/collections";
-import type { LucideIcon } from "lucide-react";
-
-const ICON_MAP: Record<string, LucideIcon> = {
-  Code,
-  Sparkles,
-  Terminal,
-  StickyNote,
-  File,
-  Image,
-  Link: LinkIcon,
-};
 
 interface CollectionsGridProps {
   collections: CollectionWithTypes[];
@@ -72,10 +55,7 @@ export default function CollectionsGrid({ collections }: CollectionsGridProps) {
                 {col.typeIcons.length > 0 && (
                   <div className="flex items-center gap-1.5 mt-3">
                     {col.typeIcons.map((t, i) => {
-                      const IconComponent = t.icon
-                        ? ICON_MAP[t.icon]
-                        : undefined;
-                      if (!IconComponent) return null;
+                      const IconComponent = getIcon(t.icon);
                       return (
                         <IconComponent
                           key={i}

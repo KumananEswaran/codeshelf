@@ -1,14 +1,5 @@
 import { prisma } from "@/lib/prisma";
-
-const DEMO_USER_EMAIL = "demo@codeshelf.io";
-
-async function getDemoUserId(): Promise<string | null> {
-  const user = await prisma.user.findUnique({
-    where: { email: DEMO_USER_EMAIL },
-    select: { id: true },
-  });
-  return user?.id ?? null;
-}
+import { getDemoUserId } from "@/lib/db/user";
 
 export interface CollectionWithTypes {
   id: string;
@@ -26,11 +17,18 @@ export async function getRecentCollections(
   const userId = await getDemoUserId();
   if (!userId) return [];
 
+  const cappedLimit = Math.min(limit, 100);
+
   const collections = await prisma.collection.findMany({
     where: { userId },
     orderBy: { createdAt: "desc" },
-    take: limit,
-    include: {
+    take: cappedLimit,
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      isFavorite: true,
+      _count: { select: { items: true } },
       items: {
         select: {
           type: {
@@ -81,7 +79,7 @@ export async function getRecentCollections(
       name: col.name,
       description: col.description,
       isFavorite: col.isFavorite,
-      itemCount: col.items.length,
+      itemCount: col._count.items,
       dominantColor,
       typeIcons,
     };
@@ -106,7 +104,11 @@ export async function getSidebarCollections(): Promise<{
   const collections = await prisma.collection.findMany({
     where: { userId },
     orderBy: { createdAt: "desc" },
-    include: {
+    select: {
+      id: true,
+      name: true,
+      isFavorite: true,
+      _count: { select: { items: true } },
       items: {
         select: {
           type: {
@@ -142,7 +144,7 @@ export async function getSidebarCollections(): Promise<{
       id: col.id,
       name: col.name,
       isFavorite: col.isFavorite,
-      itemCount: col.items.length,
+      itemCount: col._count.items,
       dominantColor,
     };
   });

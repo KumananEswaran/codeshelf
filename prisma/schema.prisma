@@ -139,6 +139,7 @@ model Collection {
 
   @@index([userId])
   @@index([isFavorite])
+  @@index([createdAt])
 }
 
 model Tag {

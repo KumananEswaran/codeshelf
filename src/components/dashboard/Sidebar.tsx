@@ -5,32 +5,15 @@ import {
   ChevronDown,
   Star,
   Settings,
-  Code,
-  Sparkles,
-  Terminal,
-  StickyNote,
-  File,
-  Image,
-  Link as LinkIcon,
 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { getIcon } from "@/lib/icon-map";
 import type { ItemTypeWithCount } from "@/lib/db/items";
 import type { SidebarCollection } from "@/lib/db/collections";
 
 const PRO_TYPES = new Set(["file", "image"]);
-
-const ICON_MAP: Record<string, LucideIcon> = {
-  Code,
-  Sparkles,
-  Terminal,
-  StickyNote,
-  File,
-  Image,
-  Link: LinkIcon,
-};
 
 interface SidebarProps {
   itemTypes: ItemTypeWithCount[];
@@ -66,12 +49,8 @@ export default function Sidebar({ itemTypes, sidebarCollections }: SidebarProps)
                     style={{ color: type.color ?? undefined }}
                   >
                     {(() => {
-                      const IconComponent = type.icon ? ICON_MAP[type.icon] : undefined;
-                      return IconComponent ? (
-                        <IconComponent className="h-4 w-4" />
-                      ) : (
-                        <span className="text-xs">{type.name[0]}</span>
-                      );
+                      const IconComponent = getIcon(type.icon);
+                      return <IconComponent className="h-4 w-4" />;
                     })()}
                   </span>
                   <span>{type.name[0].toUpperCase() + type.name.slice(1)}s</span>

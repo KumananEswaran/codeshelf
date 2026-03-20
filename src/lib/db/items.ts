@@ -1,14 +1,5 @@
 import { prisma } from "@/lib/prisma";
-
-const DEMO_USER_EMAIL = "demo@codeshelf.io";
-
-async function getDemoUserId(): Promise<string | null> {
-  const user = await prisma.user.findUnique({
-    where: { email: DEMO_USER_EMAIL },
-    select: { id: true },
-  });
-  return user?.id ?? null;
-}
+import { getDemoUserId } from "@/lib/db/user";
 
 export interface ItemWithDetails {
   id: string;
@@ -84,13 +75,14 @@ export async function getPinnedItems(): Promise<ItemWithDetails[]> {
 export async function getRecentItems(
   limit = 10
 ): Promise<ItemWithDetails[]> {
+  const cappedLimit = Math.min(limit, 100);
   const userId = await getDemoUserId();
   if (!userId) return [];
 
   const items = await prisma.item.findMany({
     where: { userId },
     orderBy: { createdAt: "desc" },
-    take: limit,
+    take: cappedLimit,
     select: itemSelect,
   });
 

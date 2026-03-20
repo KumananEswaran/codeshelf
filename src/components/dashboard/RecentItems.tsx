@@ -2,38 +2,15 @@ import {
   Clock,
   Star,
   Pin,
-  Code,
-  Sparkles,
-  Terminal,
-  StickyNote,
-  File,
-  Image,
-  LinkIcon,
 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { getIcon } from "@/lib/icon-map";
+import { formatDate } from "@/lib/utils";
 import type { ItemWithDetails } from "@/lib/db/items";
-
-const ICON_MAP: Record<string, LucideIcon> = {
-  Code,
-  Sparkles,
-  Terminal,
-  StickyNote,
-  File,
-  Image,
-  Link: LinkIcon,
-};
 
 interface RecentItemsProps {
   items: ItemWithDetails[];
-}
-
-function formatDate(date: Date) {
-  return date.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
 }
 
 export default function RecentItems({ items }: RecentItemsProps) {
@@ -58,12 +35,8 @@ export default function RecentItems({ items }: RecentItemsProps) {
                 style={item.type.color ? { color: item.type.color } : undefined}
               >
                 {(() => {
-                  const IconComponent = item.type.icon ? ICON_MAP[item.type.icon] : undefined;
-                  return IconComponent ? (
-                    <IconComponent className="h-5 w-5" />
-                  ) : (
-                    <span className="text-sm">{item.type.name[0]}</span>
-                  );
+                  const IconComponent = getIcon(item.type.icon);
+                  return <IconComponent className="h-5 w-5" />;
                 })()}
               </div>
               <div className="flex-1 min-w-0">

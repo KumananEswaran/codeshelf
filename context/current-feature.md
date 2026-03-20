@@ -1,12 +1,26 @@
 # Current Feature
 
-## None
+## Codebase Cleanup — Quick Wins
 
-No active feature.
+Low-risk housekeeping fixes identified during a codebase scan.
+
+### Tasks
+
+- [x] Extract duplicated `ICON_MAP` from 4 components into `src/lib/icon-map.ts`
+- [x] Extract duplicated `getDemoUserId()` from `items.ts` and `collections.ts` into `src/lib/db/user.ts`
+- [x] Extract duplicated `formatDate()` from `PinnedItems` and `RecentItems` into `src/lib/utils.ts`
+- [x] Add `generated/**` to ESLint `globalIgnores` in `eslint.config.mjs`
+- [x] Move `shadcn` from `dependencies` to `devDependencies` in `package.json`
+- [x] Fix N+1 query in collections.ts — use `_count` instead of loading all items
+- [x] Add missing `createdAt` index on Collection — via Prisma migration
+- [x] Add dashboard loading state — `loading.tsx` with skeleton UI
+- [x] Add dashboard error boundary — `error.tsx` with retry button
+- [x] Add query limit validation — cap limits in `getRecentItems` and `getRecentCollections`
+- [x] Fix unsafe icon lookup — return fallback `Code` icon from shared `getIcon()`
 
 ## Status
 
-Idle
+In Progress
 
 ## History
 
