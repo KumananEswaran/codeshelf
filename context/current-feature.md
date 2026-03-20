@@ -1,25 +1,16 @@
-# Current Feature: Auth UI — Sign In, Register & Sign Out
+# Current Feature
 
 ## Goals
 
-- Custom sign-in page (`/sign-in`) with email/password fields, GitHub OAuth button, and link to register
-- Custom register page (`/register`) with name, email, password, confirm password fields and validation
-- User avatar in bottom of sidebar (GitHub image or initials fallback)
-- Dropdown/up menu on avatar click with "Sign out" option
-- Avatar click navigates to `/profile`
-- Reusable avatar component handling both image and initials cases
+<!-- Goals for the current feature -->
 
 ## Notes
 
-- Replace NextAuth default pages with custom UI
-- Register form submits to existing `/api/auth/register` endpoint
-- Redirect to sign-in on successful registration
-- Avatar initials: extract from name (e.g., "Brad Traversy" → "BT")
-- Form validation: passwords match, email format, error display
+<!-- Additional context, constraints, or details -->
 
 ## Status
 
-In Progress
+Not Started
 
 ## History
 
@@ -43,3 +34,4 @@ In Progress
 - 2026-03-20: Codebase Cleanup — Quick Wins completed — extracted shared ICON_MAP/getDemoUserId/formatDate, fixed N+1 query with _count, added Collection createdAt index via migration, dashboard loading/error states, query limit caps, safe getIcon() fallback, ESLint generated ignore, shadcn moved to devDeps
 - 2026-03-20: Auth Setup — NextAuth + GitHub Provider completed — NextAuth v5 beta with Prisma adapter, split config (auth.config.ts + auth.ts) for edge compatibility, GitHub OAuth provider, JWT session strategy with user.id, proxy-based /dashboard/* route protection, API route handler, env vars configured
 - 2026-03-20: Auth Credentials — Email/Password Provider completed — Credentials provider with split pattern, bcrypt validation in auth.ts, registration API route with input validation and duplicate check, dark theme on default sign-in page
+- 2026-03-20: Auth UI — Sign In, Register & Sign Out completed — custom /sign-in and /register pages with server component + client form pattern, reusable UserAvatar component with initials fallback, sidebar user area with dropdown menu (Profile + Sign out), NextAuth custom pages config, Sonner toast on registration success
