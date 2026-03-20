@@ -1,19 +1,32 @@
 "use client";
 
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 import {
   ChevronDown,
   Star,
-  Settings,
+  LogOut,
 } from "lucide-react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import UserAvatar from "@/components/UserAvatar";
 import { getIcon } from "@/lib/icon-map";
 import type { ItemTypeWithCount } from "@/lib/db/items";
 import type { SidebarCollection } from "@/lib/db/collections";
 
 const PRO_TYPES = new Set(["file", "image"]);
+
+interface SessionUser {
+  name: string | null;
+  email: string | null;
+  image: string | null;
+}
 
 interface SidebarProps {
   itemTypes: ItemTypeWithCount[];
@@ -21,9 +34,10 @@ interface SidebarProps {
     favorites: SidebarCollection[];
     recents: SidebarCollection[];
   };
+  user: SessionUser | null;
 }
 
-export default function Sidebar({ itemTypes, sidebarCollections }: SidebarProps) {
+export default function Sidebar({ itemTypes, sidebarCollections, user }: SidebarProps) {
   const { favorites, recents } = sidebarCollections;
 
   return (
@@ -147,24 +161,31 @@ export default function Sidebar({ itemTypes, sidebarCollections }: SidebarProps)
       {/* User area */}
       <Separator />
       <div className="px-3 py-3">
-        <div className="flex items-center gap-3 px-2">
-          <Avatar className="h-8 w-8">
-            <AvatarFallback className="bg-sidebar-accent text-xs">
-              CS
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-sidebar-foreground truncate">
-              Demo User
-            </p>
-            <p className="text-xs text-muted-foreground truncate">
-              demo@codeshelf.io
-            </p>
-          </div>
-          <button className="text-muted-foreground hover:text-sidebar-foreground transition-colors">
-            <Settings className="h-4 w-4" />
-          </button>
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger className="flex items-center gap-3 px-2 w-full rounded-md hover:bg-sidebar-accent transition-colors outline-none py-1.5">
+            <UserAvatar name={user?.name} image={user?.image} className="h-8 w-8" />
+            <div className="flex-1 min-w-0 text-left">
+              <p className="text-sm font-medium text-sidebar-foreground truncate">
+                {user?.name ?? "Guest"}
+              </p>
+              <p className="text-xs text-muted-foreground truncate">
+                {user?.email ?? "Not signed in"}
+              </p>
+            </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent side="top" align="start" className="w-56">
+            <DropdownMenuItem render={<Link href="/profile" />}>
+              Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => signOut({ callbackUrl: "/sign-in" })}
+              className="text-destructive focus:text-destructive"
+            >
+              <LogOut className="h-4 w-4" />
+              Sign out
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );

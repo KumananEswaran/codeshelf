@@ -14,6 +14,12 @@ import TopBar from "./TopBar";
 import type { ItemTypeWithCount } from "@/lib/db/items";
 import type { SidebarCollection } from "@/lib/db/collections";
 
+interface SessionUser {
+  name: string | null;
+  email: string | null;
+  image: string | null;
+}
+
 interface DashboardShellProps {
   children: React.ReactNode;
   itemTypes: ItemTypeWithCount[];
@@ -21,12 +27,14 @@ interface DashboardShellProps {
     favorites: SidebarCollection[];
     recents: SidebarCollection[];
   };
+  user: SessionUser | null;
 }
 
 export default function DashboardShell({
   children,
   itemTypes,
   sidebarCollections,
+  user,
 }: DashboardShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
@@ -47,6 +55,7 @@ export default function DashboardShell({
           <Sidebar
             itemTypes={itemTypes}
             sidebarCollections={sidebarCollections}
+            user={user}
           />
         </div>
       </aside>
@@ -74,6 +83,7 @@ export default function DashboardShell({
               <Sidebar
                 itemTypes={itemTypes}
                 sidebarCollections={sidebarCollections}
+                user={user}
               />
             </SheetContent>
           </Sheet>
