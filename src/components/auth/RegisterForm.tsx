@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader2, MailCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,7 @@ export default function RegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const router = useRouter();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
@@ -47,7 +49,11 @@ export default function RegisterForm() {
       return;
     }
 
-    setEmailSent(true);
+    if (data.requireVerification) {
+      setEmailSent(true);
+    } else {
+      router.push("/sign-in?registered=true");
+    }
   }
 
   if (emailSent) {

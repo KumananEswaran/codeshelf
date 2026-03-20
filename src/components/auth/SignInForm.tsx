@@ -19,6 +19,7 @@ export default function SignInForm() {
   const [loading, setLoading] = useState(false);
 
   const verified = searchParams.get("verified") === "true";
+  const registered = searchParams.get("registered") === "true";
   const tokenError = searchParams.get("error");
 
   async function handleSubmit(e: React.FormEvent) {
@@ -128,6 +129,10 @@ export default function SignInForm() {
               required
             />
           </div>
+
+          {registered && (
+            <p className="text-sm text-green-500">Account created successfully. Sign in to continue.</p>
+          )}
 
           {error && (
             <p className="text-sm text-destructive">{error}</p>

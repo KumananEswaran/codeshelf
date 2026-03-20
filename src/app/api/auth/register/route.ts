@@ -48,27 +48,38 @@ export async function POST(request: Request) {
       },
     });
 
-    // Generate verification token (expires in 24 hours)
-    const token = crypto.randomBytes(32).toString("hex");
-    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    const requireVerification =
+      process.env.REQUIRE_EMAIL_VERIFICATION === "true";
 
-    // Remove any existing tokens for this email
-    await prisma.verificationToken.deleteMany({
-      where: { identifier: email },
-    });
+    if (requireVerification) {
+      // Generate verification token (expires in 24 hours)
+      const token = crypto.randomBytes(32).toString("hex");
+      const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
-    await prisma.verificationToken.create({
-      data: {
-        identifier: email,
-        token,
-        expires,
-      },
-    });
+      // Remove any existing tokens for this email
+      await prisma.verificationToken.deleteMany({
+        where: { identifier: email },
+      });
 
-    await sendVerificationEmail(email, token);
+      await prisma.verificationToken.create({
+        data: {
+          identifier: email,
+          token,
+          expires,
+        },
+      });
+
+      await sendVerificationEmail(email, token);
+    }
 
     return NextResponse.json(
-      { success: true, message: "Check your email to verify your account" },
+      {
+        success: true,
+        requireVerification,
+        message: requireVerification
+          ? "Check your email to verify your account"
+          : "Account created successfully",
+      },
       { status: 201 }
     );
   } catch {
