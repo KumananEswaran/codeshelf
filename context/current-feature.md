@@ -1,16 +1,27 @@
-# Current Feature
+# Current Feature: Forgot Password
 
 ## Goals
 
-<!-- Goals for the current feature -->
+- Add a "Forgot password?" link on the sign-in page
+- Create a `/forgot-password` page with email input to request a password reset
+- Generate a password reset token using the existing `VerificationToken` model (24h expiry)
+- Send a password reset email via Resend with a secure reset link
+- Create a `/reset-password` page where users enter a new password (with confirmation)
+- Create an API route to validate the reset token and update the password
+- Redirect to sign-in with success message after password reset
 
 ## Notes
 
-<!-- Additional context, constraints, or details -->
+- Reuse the existing `VerificationToken` model — use a `reset:` prefix on the identifier to distinguish from email verification tokens
+- Reuse the existing Resend email integration (`src/lib/email.ts`)
+- Follow the same server component + client form pattern used in sign-in and register pages
+- Only applies to credentials (email/password) users — not GitHub OAuth users
+- Password validation: same rules as registration (8+ characters, confirmation match)
+- Token should be single-use (deleted after successful reset)
 
 ## Status
 
-Not Started
+In Progress
 
 ## History
 

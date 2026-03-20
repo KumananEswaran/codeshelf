@@ -4,6 +4,33 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 const FROM_EMAIL = "CodeShelf <onboarding@resend.dev>";
 
+export async function sendPasswordResetEmail(email: string, token: string) {
+  const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL}/reset-password?token=${token}`;
+
+  await resend.emails.send({
+    from: FROM_EMAIL,
+    to: email,
+    subject: "Reset your CodeShelf password",
+    html: `
+      <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto; padding: 24px;">
+        <h2 style="color: #fff; margin-bottom: 16px;">Reset Your Password</h2>
+        <p style="color: #ccc; line-height: 1.6;">
+          We received a request to reset your password. Click the button below to choose a new password.
+        </p>
+        <a
+          href="${resetUrl}"
+          style="display: inline-block; margin: 24px 0; padding: 12px 24px; background: #6366f1; color: #fff; text-decoration: none; border-radius: 6px; font-weight: 600;"
+        >
+          Reset Password
+        </a>
+        <p style="color: #888; font-size: 14px; line-height: 1.6;">
+          This link expires in 24 hours. If you didn&rsquo;t request a password reset, you can ignore this email.
+        </p>
+      </div>
+    `,
+  });
+}
+
 export async function sendVerificationEmail(email: string, token: string) {
   const verifyUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/verify?token=${token}`;
 
