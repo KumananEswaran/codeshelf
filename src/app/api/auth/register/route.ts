@@ -1,40 +1,45 @@
 import { NextResponse } from "next/server";
-import crypto from "crypto";
 import bcrypt from "bcryptjs";
+import { z } from "zod/v4";
 import { prisma } from "@/lib/prisma";
 import { sendVerificationEmail } from "@/lib/email";
+import { generateToken } from "@/lib/tokens";
+
+const RegisterSchema = z
+  .object({
+    name: z.string().min(1, "Name is required").max(100, "Name is too long"),
+    email: z.email("Invalid email address"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
 export async function POST(request: Request) {
   try {
-    const { name, email, password, confirmPassword } = await request.json();
+    const body = await request.json();
+    const parsed = RegisterSchema.safeParse(body);
 
-    if (!name || !email || !password || !confirmPassword) {
-      return NextResponse.json(
-        { error: "All fields are required" },
-        { status: 400 }
-      );
+    if (!parsed.success) {
+      const firstError = parsed.error.issues[0]?.message || "Invalid input";
+      return NextResponse.json({ error: firstError }, { status: 400 });
     }
 
-    if (password !== confirmPassword) {
-      return NextResponse.json(
-        { error: "Passwords do not match" },
-        { status: 400 }
-      );
-    }
-
-    if (password.length < 8) {
-      return NextResponse.json(
-        { error: "Password must be at least 8 characters" },
-        { status: 400 }
-      );
-    }
+    const { name, email, password } = parsed.data;
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
 
     if (existingUser) {
+      // Return generic response to prevent email enumeration
       return NextResponse.json(
-        { error: "A user with this email already exists" },
-        { status: 409 }
+        {
+          success: true,
+          requireVerification: true,
+          message: "Check your email to verify your account",
+        },
+        { status: 201 }
       );
     }
 
@@ -53,7 +58,7 @@ export async function POST(request: Request) {
 
     if (requireVerification) {
       // Generate verification token (expires in 24 hours)
-      const token = crypto.randomBytes(32).toString("hex");
+      const { raw, hashed } = generateToken();
       const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
       // Remove any existing tokens for this email
@@ -64,12 +69,13 @@ export async function POST(request: Request) {
       await prisma.verificationToken.create({
         data: {
           identifier: email,
-          token,
+          token: hashed,
           expires,
         },
       });
 
-      await sendVerificationEmail(email, token);
+      // Send the raw token in the email — only the hash is stored
+      await sendVerificationEmail(email, raw);
     }
 
     return NextResponse.json(

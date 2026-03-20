@@ -1,20 +1,28 @@
 import { NextResponse } from "next/server";
-import crypto from "crypto";
+import { z } from "zod/v4";
 import { prisma } from "@/lib/prisma";
 import { sendPasswordResetEmail } from "@/lib/email";
+import { generateToken } from "@/lib/tokens";
 
 const RESET_PREFIX = "reset:";
 
+const ForgotPasswordSchema = z.object({
+  email: z.email("Invalid email address"),
+});
+
 export async function POST(request: Request) {
   try {
-    const { email } = await request.json();
+    const body = await request.json();
+    const parsed = ForgotPasswordSchema.safeParse(body);
 
-    if (!email) {
+    if (!parsed.success) {
       return NextResponse.json(
         { error: "Email is required" },
         { status: 400 }
       );
     }
+
+    const { email } = parsed.data;
 
     // Always return success to prevent email enumeration
     const user = await prisma.user.findUnique({ where: { email } });
@@ -28,7 +36,7 @@ export async function POST(request: Request) {
     }
 
     // Generate reset token (expires in 24 hours)
-    const token = crypto.randomBytes(32).toString("hex");
+    const { raw, hashed } = generateToken();
     const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
     // Remove any existing reset tokens for this user
@@ -39,12 +47,13 @@ export async function POST(request: Request) {
     await prisma.verificationToken.create({
       data: {
         identifier: `${RESET_PREFIX}${email}`,
-        token,
+        token: hashed,
         expires,
       },
     });
 
-    await sendPasswordResetEmail(email, token);
+    // Send the raw token in the email — only the hash is stored
+    await sendPasswordResetEmail(email, raw);
 
     return NextResponse.json({
       success: true,

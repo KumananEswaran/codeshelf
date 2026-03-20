@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { hashToken } from "@/lib/tokens";
 
 const RESET_PREFIX = "reset:";
 
@@ -29,8 +30,10 @@ export async function POST(request: Request) {
       );
     }
 
+    const tokenHash = hashToken(token);
+
     const resetToken = await prisma.verificationToken.findUnique({
-      where: { token },
+      where: { token: tokenHash },
     });
 
     if (!resetToken || !resetToken.identifier.startsWith(RESET_PREFIX)) {
@@ -41,7 +44,7 @@ export async function POST(request: Request) {
     }
 
     if (resetToken.expires < new Date()) {
-      await prisma.verificationToken.delete({ where: { token } });
+      await prisma.verificationToken.delete({ where: { token: tokenHash } });
       return NextResponse.json(
         { error: "Reset link has expired. Please request a new one." },
         { status: 400 }
@@ -53,10 +56,10 @@ export async function POST(request: Request) {
 
     await prisma.user.update({
       where: { email },
-      data: { password: hashedPassword },
+      data: { password: hashedPassword, passwordChangedAt: new Date() },
     });
 
-    await prisma.verificationToken.delete({ where: { token } });
+    await prisma.verificationToken.delete({ where: { token: tokenHash } });
 
     return NextResponse.json({
       success: true,

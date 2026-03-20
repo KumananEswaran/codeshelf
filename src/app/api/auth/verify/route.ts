@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { hashToken } from "@/lib/tokens";
 
 export async function GET(request: Request) {
   try {
@@ -12,8 +13,10 @@ export async function GET(request: Request) {
       );
     }
 
+    const tokenHash = hashToken(token);
+
     const verificationToken = await prisma.verificationToken.findUnique({
-      where: { token },
+      where: { token: tokenHash },
     });
 
     if (!verificationToken) {
@@ -25,7 +28,7 @@ export async function GET(request: Request) {
     if (verificationToken.expires < new Date()) {
       // Clean up expired token
       await prisma.verificationToken.delete({
-        where: { token },
+        where: { token: tokenHash },
       });
       return NextResponse.redirect(
         new URL("/sign-in?error=expired-token", request.url)
@@ -39,7 +42,7 @@ export async function GET(request: Request) {
     });
 
     await prisma.verificationToken.delete({
-      where: { token },
+      where: { token: tokenHash },
     });
 
     return NextResponse.redirect(

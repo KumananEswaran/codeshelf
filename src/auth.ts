@@ -14,6 +14,26 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
   session: { strategy: "jwt" },
   theme: { colorScheme: "dark" },
   callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.sub = user.id;
+        token.issuedAt = Date.now();
+      }
+      // Invalidate token if password was changed after token was issued
+      if (token.sub && token.issuedAt) {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.sub },
+          select: { passwordChangedAt: true },
+        });
+        if (
+          dbUser?.passwordChangedAt &&
+          dbUser.passwordChangedAt.getTime() > (token.issuedAt as number)
+        ) {
+          return null as unknown as typeof token;
+        }
+      }
+      return token;
+    },
     session({ session, token }) {
       if (token.sub) {
         session.user.id = token.sub;
