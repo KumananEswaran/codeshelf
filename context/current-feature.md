@@ -1,22 +1,16 @@
-# Current Feature — Delete Item
+# Current Feature
 
 ## Goals
 
-- Add delete functionality for items from the item drawer
-- Show a ShadCN confirmation dialog before deleting
-- Display a toast notification on successful deletion
-- Remove the item from the UI after deletion
+<!-- Goals for the current feature -->
 
 ## Notes
 
-- Use a ShadCN AlertDialog for the delete confirmation
-- Use a server action for the delete operation with proper auth checks
-- Show success toast via Sonner after deletion
-- Close the drawer and refresh the items list after delete
+<!-- Additional context, constraints, or details -->
 
 ## Status
 
-In Progress
+Not Started
 
 ## History
 
@@ -52,3 +46,4 @@ In Progress
 - 2026-03-21: Items Grid 3-Column Layout completed — changed items grid from 2 to 3 columns on lg+ screens, responsive 1/2/3 column breakpoints
 - 2026-03-21: Item Drawer completed — right-side Sheet drawer on item click, getItemById query, GET /api/items/[id] with auth, ItemDrawer with type badge/action bar/content/tags/collection/dates, DashboardItems and ItemsListWithDrawer client wrappers, loading state
 - 2026-03-21: Item Drawer Edit Mode completed — inline edit mode with Save/Cancel, editable title/description/tags + type-specific content/language/URL fields, updateItem server action with Zod validation, updateItem query with tag disconnect/connect-or-create, toast feedback and router.refresh()
+- 2026-03-21: Delete Item completed — deleteItem DB query and server action with auth, AlertDialog confirmation in ItemDrawer, destructive styling, toast on success, drawer close and list refresh
