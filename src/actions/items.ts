@@ -3,9 +3,50 @@
 import { z } from "zod";
 import { auth } from "@/auth";
 import {
+  createItem as createItemQuery,
   updateItem as updateItemQuery,
   deleteItem as deleteItemQuery,
 } from "@/lib/db/items";
+
+const ALLOWED_TYPES = ["snippet", "prompt", "command", "note", "link"] as const;
+
+const createItemSchema = z.object({
+  title: z.string().trim().min(1, "Title is required"),
+  description: z.string().trim().nullable().optional().default(null),
+  content: z.string().nullable().optional().default(null),
+  language: z.string().trim().nullable().optional().default(null),
+  url: z
+    .string()
+    .trim()
+    .nullable()
+    .optional()
+    .default(null)
+    .refine((val) => !val || z.string().url().safeParse(val).success, {
+      message: "Invalid URL",
+    }),
+  typeName: z.enum(ALLOWED_TYPES, { message: "Invalid item type" }),
+  tags: z.array(z.string().trim().min(1)).default([]),
+});
+
+export async function createItem(
+  data: z.input<typeof createItemSchema>
+) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false as const, error: "Unauthorized" };
+  }
+
+  const parsed = createItemSchema.safeParse(data);
+  if (!parsed.success) {
+    return {
+      success: false as const,
+      error: parsed.error.flatten().fieldErrors,
+    };
+  }
+
+  const item = await createItemQuery(session.user.id, parsed.data);
+  return { success: true as const, data: item };
+}
 
 const updateItemSchema = z.object({
   title: z.string().trim().min(1, "Title is required"),

@@ -1,0 +1,252 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Plus,
+  Code,
+  Sparkles,
+  Terminal,
+  StickyNote,
+  Link as LinkIcon,
+} from "lucide-react";
+import { toast } from "sonner";
+import { createItem } from "@/actions/items";
+
+const ITEM_TYPES = [
+  { value: "snippet" as const, label: "Snippet", color: "#3b82f6", icon: Code },
+  { value: "prompt" as const, label: "Prompt", color: "#8b5cf6", icon: Sparkles },
+  { value: "command" as const, label: "Command", color: "#f97316", icon: Terminal },
+  { value: "note" as const, label: "Note", color: "#fde047", icon: StickyNote },
+  { value: "link" as const, label: "Link", color: "#10b981", icon: LinkIcon },
+];
+
+type ItemType = (typeof ITEM_TYPES)[number]["value"];
+
+export default function NewItemDialog() {
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [typeName, setTypeName] = useState<ItemType>("snippet");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [content, setContent] = useState("");
+  const [language, setLanguage] = useState("");
+  const [url, setUrl] = useState("");
+  const [tagsInput, setTagsInput] = useState("");
+
+  function resetForm() {
+    setTypeName("snippet");
+    setTitle("");
+    setDescription("");
+    setContent("");
+    setLanguage("");
+    setUrl("");
+    setTagsInput("");
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+
+    const tags = tagsInput
+      .split(",")
+      .map((t) => t.trim())
+      .filter(Boolean);
+
+    const result = await createItem({
+      title,
+      description: description || null,
+      content: content || null,
+      language: language || null,
+      url: url || null,
+      typeName,
+      tags,
+    });
+
+    setLoading(false);
+
+    if (!result.success) {
+      const errorMsg =
+        typeof result.error === "string"
+          ? result.error
+          : "Please check your input";
+      toast.error(errorMsg);
+      return;
+    }
+
+    toast.success("Item created");
+    setOpen(false);
+    resetForm();
+    router.refresh();
+  }
+
+  const showContent = typeName !== "link";
+  const showLanguage = typeName === "snippet" || typeName === "command";
+  const showUrl = typeName === "link";
+
+  return (
+    <Dialog open={open} onOpenChange={(isOpen) => {
+      setOpen(isOpen);
+      if (!isOpen) resetForm();
+    }}>
+      <DialogTrigger render={<Button />}>
+        <Plus className="h-4 w-4 mr-2" />
+        New Item
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            {(() => {
+              const selected = ITEM_TYPES.find((t) => t.value === typeName);
+              if (!selected) return null;
+              const Icon = selected.icon;
+              return <Icon className="h-5 w-5" style={{ color: selected.color }} />;
+            })()}
+            New Item
+          </DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="type">Type</Label>
+            <Select
+              value={typeName}
+              onValueChange={(val) => setTypeName(val as ItemType)}
+            >
+              <SelectTrigger id="type">
+                {(() => {
+                  const selected = ITEM_TYPES.find((t) => t.value === typeName);
+                  if (!selected) return <SelectValue />;
+                  const Icon = selected.icon;
+                  return (
+                    <span className="flex items-center gap-2">
+                      <Icon className="h-4 w-4 shrink-0" style={{ color: selected.color }} />
+                      <SelectValue />
+                    </span>
+                  );
+                })()}
+              </SelectTrigger>
+              <SelectContent>
+                {ITEM_TYPES.map((t) => (
+                  <SelectItem key={t.value} value={t.value}>
+                    <span className="flex items-center gap-2">
+                      <t.icon className="h-4 w-4" style={{ color: t.color }} />
+                      {t.label}
+                    </span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="title">Title *</Label>
+            <Input
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Item title"
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="description">Description</Label>
+            <Input
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Brief description"
+            />
+          </div>
+
+          {showContent && (
+            <div className="space-y-2">
+              <Label htmlFor="content">Content</Label>
+              <Textarea
+                id="content"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                placeholder={
+                  typeName === "snippet"
+                    ? "Paste your code..."
+                    : typeName === "command"
+                      ? "Enter command..."
+                      : typeName === "prompt"
+                        ? "Enter prompt..."
+                        : "Write your note..."
+                }
+                rows={5}
+                className="font-mono text-sm"
+              />
+            </div>
+          )}
+
+          {showLanguage && (
+            <div className="space-y-2">
+              <Label htmlFor="language">Language</Label>
+              <Input
+                id="language"
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+                placeholder="e.g. javascript, python, bash"
+              />
+            </div>
+          )}
+
+          {showUrl && (
+            <div className="space-y-2">
+              <Label htmlFor="url">URL *</Label>
+              <Input
+                id="url"
+                type="url"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                placeholder="https://..."
+                required
+              />
+            </div>
+          )}
+
+          <div className="space-y-2">
+            <Label htmlFor="tags">Tags</Label>
+            <Input
+              id="tags"
+              value={tagsInput}
+              onChange={(e) => setTagsInput(e.target.value)}
+              placeholder="Comma-separated tags"
+            />
+          </div>
+
+          <div className="flex justify-end gap-2 pt-2">
+            <DialogClose render={<Button type="button" variant="outline" />}>
+              Cancel
+            </DialogClose>
+            <Button type="submit" disabled={loading}>
+              {loading ? "Creating..." : "Create Item"}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}

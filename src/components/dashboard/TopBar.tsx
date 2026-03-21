@@ -1,6 +1,7 @@
 import { Search, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import NewItemDialog from "@/components/dashboard/NewItemDialog";
 
 export default function TopBar() {
   return (
@@ -14,10 +15,7 @@ export default function TopBar() {
           <Plus className="h-4 w-4 mr-2" />
           New Collection
         </Button>
-        <Button>
-          <Plus className="h-4 w-4 mr-2" />
-          New Item
-        </Button>
+        <NewItemDialog />
       </div>
     </div>
   );
