@@ -1,30 +1,16 @@
-# Current Feature: Item Drawer — Edit Mode
+# Current Feature
 
 ## Goals
 
-- Edit button in drawer action bar toggles to inline edit mode (same drawer stays open)
-- Action bar replaced with Save and Cancel buttons in edit mode
-- Editable fields: Title (required), Description, Tags (comma-separated input → tag array)
-- Type-specific fields: Content (snippet/prompt/command/note), Language (snippet/command), URL (link)
-- Non-editable display: item type, collection, dates
-- Zod validation in server action with `{ success, data, error }` pattern
-- `updateItem` server action in `src/actions/items.ts` with auth + ownership check
-- `updateItem` query in `src/lib/db/items.ts` with tag disconnect/connect-or-create
-- Toast on save success/error, `router.refresh()` after save
-- No form library — controlled inputs with local state
+<!-- Goals for the current feature -->
 
 ## Notes
 
-- Content textarea is plain text, not a code editor (comes later)
-- Disable Save button client-side when title is empty
-- Server-side Zod is source of truth for validation
-- Return Zod errors so client can display them
-- Tags: disconnect all existing, connect-or-create new ones on update
-- Returns updated ItemDetail so drawer refreshes without second fetch
+<!-- Additional context, constraints, or details -->
 
 ## Status
 
-In Progress
+Not Started
 
 ## History
 
@@ -59,3 +45,4 @@ In Progress
 - 2026-03-21: Vitest Setup completed — vitest and coverage configured for server actions and utilities only, sample utils tests, test/test:watch/test:coverage scripts, docs updated
 - 2026-03-21: Items Grid 3-Column Layout completed — changed items grid from 2 to 3 columns on lg+ screens, responsive 1/2/3 column breakpoints
 - 2026-03-21: Item Drawer completed — right-side Sheet drawer on item click, getItemById query, GET /api/items/[id] with auth, ItemDrawer with type badge/action bar/content/tags/collection/dates, DashboardItems and ItemsListWithDrawer client wrappers, loading state
+- 2026-03-21: Item Drawer Edit Mode completed — inline edit mode with Save/Cancel, editable title/description/tags + type-specific content/language/URL fields, updateItem server action with Zod validation, updateItem query with tag disconnect/connect-or-create, toast feedback and router.refresh()
