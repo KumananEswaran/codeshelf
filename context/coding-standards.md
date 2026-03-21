@@ -89,6 +89,13 @@ Example v4 configuration:
 - Return `{ success, data, error }` pattern from actions
 - Display user-friendly error messages via toast
 
+## Testing
+
+- Vitest for unit tests (server actions and utilities only, not components)
+- Test files: `*.test.ts` colocated next to source files
+- Run tests: `npm test` (single run), `npm run test:watch` (watch mode)
+- Coverage: `npm run test:coverage` (covers `src/actions/` and `src/lib/`)
+
 ## Code Quality
 
 - No commented-out code unless specified
