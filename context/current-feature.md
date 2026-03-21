@@ -1,25 +1,16 @@
-# Current Feature: Item Drawer
+# Current Feature
 
 ## Goals
 
-- Right-side slide-in drawer (shadcn Sheet) opens when clicking an ItemCard
-- Works on both dashboard and items list pages
-- Action bar with Favorite (star, yellow when active), Pin, Copy, Edit (pencil), Delete (trash, right-aligned)
-- Client wrapper component to manage drawer state (pages are server components)
-- Full item detail fetched on click via API route (`/api/items/[id]`), no page navigation
-- Skeleton/loading state while fetching
-- Display item details only (no code editor or item-specific features yet)
+<!-- Goals for the current feature -->
 
 ## Notes
 
-- Card data (title, description, tags) already fetched by server components
-- Full item detail (content, collections, language) fetched on click via `/api/items/[id]`
-- Query function in `lib/db/items.ts`, API route with auth check
-- Reference screenshot: `context/screenshots/dashboard-ui-drawer.png`
+<!-- Additional context, constraints, or details -->
 
 ## Status
 
-In Progress
+Not Started
 
 ## History
 
@@ -53,3 +44,4 @@ In Progress
 - 2026-03-21: Items List View completed — dynamic /dashboard/items/[type] route with getItemsByType query, reusable ItemCard component, responsive 2-column grid with type-colored left borders, sidebar links updated
 - 2026-03-21: Vitest Setup completed — vitest and coverage configured for server actions and utilities only, sample utils tests, test/test:watch/test:coverage scripts, docs updated
 - 2026-03-21: Items Grid 3-Column Layout completed — changed items grid from 2 to 3 columns on lg+ screens, responsive 1/2/3 column breakpoints
+- 2026-03-21: Item Drawer completed — right-side Sheet drawer on item click, getItemById query, GET /api/items/[id] with auth, ItemDrawer with type badge/action bar/content/tags/collection/dates, DashboardItems and ItemsListWithDrawer client wrappers, loading state
