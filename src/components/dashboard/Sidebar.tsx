@@ -54,7 +54,7 @@ export default function Sidebar({ itemTypes, sidebarCollections, user }: Sidebar
             return (
               <Link
                 key={type.id}
-                href={`/items/${slug}`}
+                href={`/dashboard/items/${slug}`}
                 className="flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
               >
                 <span className="flex items-center gap-2">

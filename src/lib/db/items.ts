@@ -135,6 +135,22 @@ export async function getItemTypesWithCounts(userId: string): Promise<ItemTypeWi
   return mapped;
 }
 
+export async function getItemsByType(
+  userId: string,
+  typeName: string
+): Promise<ItemWithDetails[]> {
+  const items = await prisma.item.findMany({
+    where: {
+      userId,
+      type: { name: typeName },
+    },
+    orderBy: { createdAt: "desc" },
+    select: itemSelect,
+  });
+
+  return items.map(formatItem);
+}
+
 export async function getItemStats(userId: string) {
   const [totalItems, favoriteItems] = await Promise.all([
     prisma.item.count({ where: { userId } }),
