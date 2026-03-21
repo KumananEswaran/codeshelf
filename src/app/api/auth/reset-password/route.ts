@@ -2,11 +2,15 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { hashToken } from "@/lib/tokens";
+import { checkRateLimit, rateLimitResponse } from "@/lib/rate-limit";
 
 const RESET_PREFIX = "reset:";
 
 export async function POST(request: Request) {
   try {
+    const { success, reset } = await checkRateLimit("resetPassword", request);
+    if (!success) return rateLimitResponse(reset);
+
     const { token, password, confirmPassword } = await request.json();
 
     if (!token || !password || !confirmPassword) {

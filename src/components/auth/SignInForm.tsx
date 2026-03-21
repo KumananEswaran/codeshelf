@@ -27,23 +27,26 @@ export default function SignInForm() {
     setError("");
     setLoading(true);
 
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (result?.error) {
-      if (result.code === "email-not-verified") {
-        setError("Please verify your email before signing in. Check your inbox.");
-      } else {
-        setError("Invalid email or password");
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Invalid email or password");
+        setLoading(false);
+        return;
       }
-      setLoading(false);
-      return;
-    }
 
-    router.push("/dashboard");
+      router.push("/dashboard");
+    } catch {
+      setError("Something went wrong");
+      setLoading(false);
+    }
   }
 
   if (verified) {
