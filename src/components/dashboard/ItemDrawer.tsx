@@ -29,8 +29,19 @@ import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { getIcon } from "@/lib/icon-map";
 import { formatDate } from "@/lib/utils";
-import { updateItem } from "@/actions/items";
+import { updateItem, deleteItem } from "@/actions/items";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import type { ItemDetail } from "@/lib/db/items";
 
 interface ItemDrawerProps {
@@ -47,6 +58,7 @@ export default function ItemDrawer({ itemId, onClose }: ItemDrawerProps) {
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   // Edit form state
   const [title, setTitle] = useState("");
@@ -131,6 +143,23 @@ export default function ItemDrawer({ itemId, onClose }: ItemDrawerProps) {
     });
     setEditing(false);
     toast.success("Item updated");
+    router.refresh();
+  }
+
+  async function handleDelete() {
+    if (!item) return;
+
+    setDeleting(true);
+    const result = await deleteItem(item.id);
+    setDeleting(false);
+
+    if (!result.success) {
+      toast.error(result.error ?? "Failed to delete item");
+      return;
+    }
+
+    toast.success("Item deleted");
+    onClose();
     router.refresh();
   }
 
@@ -252,13 +281,42 @@ export default function ItemDrawer({ itemId, onClose }: ItemDrawerProps) {
                   Edit
                 </Button>
                 <div className="flex-1" />
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-destructive hover:text-destructive"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger
+                    render={
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-destructive hover:text-destructive"
+                        disabled={deleting}
+                      />
+                    }
+                  >
+                    {deleting ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Trash2 className="h-4 w-4" />
+                    )}
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Delete item?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This will permanently delete &quot;{item.title}&quot;.
+                        This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={handleDelete}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             )}
 

@@ -1,16 +1,22 @@
-# Current Feature
+# Current Feature — Delete Item
 
 ## Goals
 
-<!-- Goals for the current feature -->
+- Add delete functionality for items from the item drawer
+- Show a ShadCN confirmation dialog before deleting
+- Display a toast notification on successful deletion
+- Remove the item from the UI after deletion
 
 ## Notes
 
-<!-- Additional context, constraints, or details -->
+- Use a ShadCN AlertDialog for the delete confirmation
+- Use a server action for the delete operation with proper auth checks
+- Show success toast via Sonner after deletion
+- Close the drawer and refresh the items list after delete
 
 ## Status
 
-Not Started
+In Progress
 
 ## History
 

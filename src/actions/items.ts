@@ -2,7 +2,10 @@
 
 import { z } from "zod";
 import { auth } from "@/auth";
-import { updateItem as updateItemQuery } from "@/lib/db/items";
+import {
+  updateItem as updateItemQuery,
+  deleteItem as deleteItemQuery,
+} from "@/lib/db/items";
 
 const updateItemSchema = z.object({
   title: z.string().trim().min(1, "Title is required"),
@@ -46,4 +49,18 @@ export async function updateItem(
   }
 
   return { success: true as const, data: updated };
+}
+
+export async function deleteItem(itemId: string) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false as const, error: "Unauthorized" };
+  }
+
+  const deleted = await deleteItemQuery(itemId, session.user.id);
+  if (!deleted) {
+    return { success: false as const, error: "Item not found" };
+  }
+
+  return { success: true as const };
 }
