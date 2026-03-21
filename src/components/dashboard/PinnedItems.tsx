@@ -10,9 +10,10 @@ import type { ItemWithDetails } from "@/lib/db/items";
 
 interface PinnedItemsProps {
   items: ItemWithDetails[];
+  onItemClick?: (id: string) => void;
 }
 
-export default function PinnedItems({ items }: PinnedItemsProps) {
+export default function PinnedItems({ items, onItemClick }: PinnedItemsProps) {
   if (items.length === 0) return null;
 
   return (
@@ -27,6 +28,7 @@ export default function PinnedItems({ items }: PinnedItemsProps) {
             key={item.id}
             className="hover:ring-foreground/20 transition-all cursor-pointer"
             style={item.type.color ? { borderLeftColor: item.type.color, borderLeftWidth: 3 } : undefined}
+            onClick={() => onItemClick?.(item.id)}
           >
             <CardContent className="flex items-center gap-4">
               <div

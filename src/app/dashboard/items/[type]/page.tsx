@@ -3,7 +3,7 @@ import type { LucideIcon } from "lucide-react";
 import { Code, Sparkles, Terminal, StickyNote, File, Image, Link as LinkIcon } from "lucide-react";
 import { auth } from "@/auth";
 import { getItemsByType } from "@/lib/db/items";
-import ItemCard from "@/components/dashboard/ItemCard";
+import ItemsListWithDrawer from "@/components/dashboard/ItemsListWithDrawer";
 
 const SLUG_CONFIG: Record<string, { typeName: string; icon: LucideIcon }> = {
   snippets: { typeName: "snippet", icon: Code },
@@ -48,11 +48,7 @@ export default async function ItemsListPage({
           <p>No {displayName.toLowerCase()} yet</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {items.map((item) => (
-            <ItemCard key={item.id} item={item} />
-          ))}
-        </div>
+        <ItemsListWithDrawer items={items} />
       )}
     </div>
   );

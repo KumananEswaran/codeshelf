@@ -7,12 +7,14 @@ import type { ItemWithDetails } from "@/lib/db/items";
 
 interface ItemCardProps {
   item: ItemWithDetails;
+  onClick?: () => void;
 }
 
-export default function ItemCard({ item }: ItemCardProps) {
+export default function ItemCard({ item, onClick }: ItemCardProps) {
   return (
     <Card
       className="hover:ring-foreground/20 transition-all cursor-pointer"
+      onClick={onClick}
       style={
         item.type.color
           ? { borderLeftColor: item.type.color, borderLeftWidth: 3 }

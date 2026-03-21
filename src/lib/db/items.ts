@@ -151,6 +151,73 @@ export async function getItemsByType(
   return items.map(formatItem);
 }
 
+export interface ItemDetail {
+  id: string;
+  title: string;
+  description: string | null;
+  content: string | null;
+  contentType: string;
+  language: string | null;
+  url: string | null;
+  fileName: string | null;
+  fileSize: number | null;
+  isFavorite: boolean;
+  isPinned: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  type: {
+    name: string;
+    icon: string | null;
+    color: string | null;
+  };
+  tags: { name: string }[];
+  collection: { id: string; name: string } | null;
+}
+
+export async function getItemById(
+  itemId: string,
+  userId: string
+): Promise<ItemDetail | null> {
+  const item = await prisma.item.findFirst({
+    where: { id: itemId, userId },
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      content: true,
+      contentType: true,
+      language: true,
+      url: true,
+      fileName: true,
+      fileSize: true,
+      isFavorite: true,
+      isPinned: true,
+      createdAt: true,
+      updatedAt: true,
+      type: {
+        select: { name: true, icon: true, color: true },
+      },
+      tags: {
+        select: {
+          tag: {
+            select: { name: true },
+          },
+        },
+      },
+      collection: {
+        select: { id: true, name: true },
+      },
+    },
+  });
+
+  if (!item) return null;
+
+  return {
+    ...item,
+    tags: item.tags.map((t) => ({ name: t.tag.name })),
+  };
+}
+
 export async function getItemStats(userId: string) {
   const [totalItems, favoriteItems] = await Promise.all([
     prisma.item.count({ where: { userId } }),

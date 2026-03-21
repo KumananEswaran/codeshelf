@@ -11,9 +11,10 @@ import type { ItemWithDetails } from "@/lib/db/items";
 
 interface RecentItemsProps {
   items: ItemWithDetails[];
+  onItemClick?: (id: string) => void;
 }
 
-export default function RecentItems({ items }: RecentItemsProps) {
+export default function RecentItems({ items, onItemClick }: RecentItemsProps) {
   if (items.length === 0) return null;
 
   return (
@@ -28,6 +29,7 @@ export default function RecentItems({ items }: RecentItemsProps) {
             key={item.id}
             className="hover:ring-foreground/20 transition-all cursor-pointer"
             style={item.type.color ? { borderLeftColor: item.type.color, borderLeftWidth: 3 } : undefined}
+            onClick={() => onItemClick?.(item.id)}
           >
             <CardContent className="flex items-center gap-4">
               <div
