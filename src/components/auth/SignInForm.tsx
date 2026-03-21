@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { signInWithGitHub } from "@/actions/auth";
 import Link from "next/link";
 import { CircleCheck, Github, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -164,14 +164,12 @@ export default function SignInForm() {
           </div>
         </div>
 
-        <Button
-          variant="outline"
-          className="w-full"
-          onClick={() => signIn("github", { callbackUrl: "/dashboard" })}
-        >
-          <Github className="h-4 w-4" />
-          Sign in with GitHub
-        </Button>
+        <form action={signInWithGitHub}>
+          <Button variant="outline" className="w-full" type="submit">
+            <Github className="h-4 w-4" />
+            Sign in with GitHub
+          </Button>
+        </form>
 
         <p className="text-center text-sm text-muted-foreground">
           Don&apos;t have an account?{" "}
