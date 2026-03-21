@@ -1,26 +1,16 @@
-# Current Feature: Rate Limiting for Auth
+# Current Feature
 
 ## Goals
 
-- Add rate limiting to auth-related API routes using Upstash Redis with `@upstash/ratelimit`
-- Create reusable `src/lib/rate-limit.ts` utility with sliding window algorithm
-- Protect endpoints: login (5/15min), register (3/1hr), forgot-password (3/1hr), reset-password (5/15min), resend-verification (3/15min)
-- Key rate limits by IP or IP + email depending on endpoint
-- Return 429 responses with `Retry-After` header and user-friendly error messages
-- Display rate limit errors via toast notifications on the frontend
-- Fail open if Upstash is unavailable
+<!-- Goals for the current feature -->
 
 ## Notes
 
-- Requires Upstash Redis env vars: `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`
-- Upstash free tier allows 10k requests/day (sufficient for auth limiting)
-- Login limiting with NextAuth credentials may need custom sign-in handler
-- Extract IP from `x-forwarded-for` header (Vercel) or request
-- Consider adding rate limiting middleware for cleaner implementation later
+<!-- Additional context, constraints, or details -->
 
 ## Status
 
-In Progress
+Not Started
 
 ## History
 
@@ -49,3 +39,4 @@ In Progress
 - 2026-03-20: Email Verification Toggle completed — REQUIRE_EMAIL_VERIFICATION env variable to enable/disable email verification, default false for development without Resend domain
 - 2026-03-20: Forgot Password completed — forgot password link on sign-in, /forgot-password and /reset-password pages, reset token via VerificationToken with reset: prefix, Resend email, single-use 24h tokens, OAuth users excluded
 - 2026-03-20: Profile Page completed — /profile route with user info (avatar, email, join date), usage stats with per-type breakdown, change password for email users, delete account with confirmation dialog, shadcn dialog component added
+- 2026-03-21: Rate Limiting for Auth completed — Upstash Redis with @upstash/ratelimit, reusable rate-limit.ts utility with sliding window, custom /api/auth/login route for credentials with rate limiting, protected register/forgot-password/reset-password endpoints, 429 responses with Retry-After header, fail-open design
