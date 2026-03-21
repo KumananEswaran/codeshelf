@@ -218,6 +218,85 @@ export async function getItemById(
   };
 }
 
+export interface UpdateItemData {
+  title: string;
+  description: string | null;
+  content: string | null;
+  language: string | null;
+  url: string | null;
+  tags: string[];
+}
+
+export async function updateItem(
+  itemId: string,
+  userId: string,
+  data: UpdateItemData
+): Promise<ItemDetail | null> {
+  const item = await prisma.item.findFirst({
+    where: { id: itemId, userId },
+    select: { id: true },
+  });
+
+  if (!item) return null;
+
+  // Delete existing tag associations
+  await prisma.itemTag.deleteMany({ where: { itemId } });
+
+  const updated = await prisma.item.update({
+    where: { id: itemId },
+    data: {
+      title: data.title,
+      description: data.description,
+      content: data.content,
+      language: data.language,
+      url: data.url,
+      tags: {
+        create: data.tags.map((tagName) => ({
+          tag: {
+            connectOrCreate: {
+              where: { name_userId: { name: tagName, userId } },
+              create: { name: tagName, userId },
+            },
+          },
+        })),
+      },
+    },
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      content: true,
+      contentType: true,
+      language: true,
+      url: true,
+      fileName: true,
+      fileSize: true,
+      isFavorite: true,
+      isPinned: true,
+      createdAt: true,
+      updatedAt: true,
+      type: {
+        select: { name: true, icon: true, color: true },
+      },
+      tags: {
+        select: {
+          tag: {
+            select: { name: true },
+          },
+        },
+      },
+      collection: {
+        select: { id: true, name: true },
+      },
+    },
+  });
+
+  return {
+    ...updated,
+    tags: updated.tags.map((t) => ({ name: t.tag.name })),
+  };
+}
+
 export async function getItemStats(userId: string) {
   const [totalItems, favoriteItems] = await Promise.all([
     prisma.item.count({ where: { userId } }),
