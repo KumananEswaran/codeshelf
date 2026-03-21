@@ -1,27 +1,16 @@
-# Current Feature: Item Create
+# Current Feature
 
 ## Goals
 
-- "New Item" button in top bar opens a shadcn Dialog modal
-- Type selector for snippet, prompt, command, note, link
-- Dynamic fields based on selected type:
-  - All types: title (required), description, tags
-  - snippet/command: content, language
-  - prompt/note: content
-  - link: URL (required)
-- Server action `createItem` with Zod validation
-- Query function `createItem` in `lib/db/items.ts`
-- Toast on success, close modal and refresh list
+<!-- Goals for the current feature -->
 
 ## Notes
 
-- Uses existing shadcn Dialog component
-- Follows existing patterns from updateItem action/query
-- File and Image types excluded from create (pro feature / upload flow)
+<!-- Additional context, constraints, or details -->
 
 ## Status
 
-In Progress
+Not Started
 
 ## History
 
@@ -58,3 +47,4 @@ In Progress
 - 2026-03-21: Item Drawer completed — right-side Sheet drawer on item click, getItemById query, GET /api/items/[id] with auth, ItemDrawer with type badge/action bar/content/tags/collection/dates, DashboardItems and ItemsListWithDrawer client wrappers, loading state
 - 2026-03-21: Item Drawer Edit Mode completed — inline edit mode with Save/Cancel, editable title/description/tags + type-specific content/language/URL fields, updateItem server action with Zod validation, updateItem query with tag disconnect/connect-or-create, toast feedback and router.refresh()
 - 2026-03-21: Delete Item completed — deleteItem DB query and server action with auth, AlertDialog confirmation in ItemDrawer, destructive styling, toast on success, drawer close and list refresh
+- 2026-03-21: Item Create completed — NewItemDialog with type selector (snippet/prompt/command/note/link), dynamic fields per type, createItem server action with Zod validation, createItem query with tag connectOrCreate, shadcn Select component added
