@@ -1,20 +1,16 @@
-# Current Feature: Items Grid 3-Column Layout
+# Current Feature
 
 ## Goals
 
-- Change the items list grid from 2 columns to 3 columns on larger screens
-- Keep responsive behavior: 1 column on mobile, 2 on medium, 3 on large+
-- No layout or component changes beyond the grid column count
+<!-- Goals for the current feature -->
 
 ## Notes
 
-- Affected file: `src/app/dashboard/items/[type]/page.tsx`
-- Current grid: `grid-cols-1 md:grid-cols-2`
-- Target grid: `grid-cols-1 md:grid-cols-2 lg:grid-cols-3`
+<!-- Additional context, constraints, or details -->
 
 ## Status
 
-In Progress
+Not Started
 
 ## History
 
@@ -46,3 +42,5 @@ In Progress
 - 2026-03-21: Rate Limiting for Auth completed — Upstash Redis with @upstash/ratelimit, reusable rate-limit.ts utility with sliding window, custom /api/auth/login route for credentials with rate limiting, protected register/forgot-password/reset-password endpoints, 429 responses with Retry-After header, fail-open design
 - 2026-03-21: Fix GitHub OAuth Redirect completed — switched GitHub sign-in from client-side signIn (next-auth/react) to server-side signIn via Server Action, fixing two-click redirect issue
 - 2026-03-21: Items List View completed — dynamic /dashboard/items/[type] route with getItemsByType query, reusable ItemCard component, responsive 2-column grid with type-colored left borders, sidebar links updated
+- 2026-03-21: Vitest Setup completed — vitest and coverage configured for server actions and utilities only, sample utils tests, test/test:watch/test:coverage scripts, docs updated
+- 2026-03-21: Items Grid 3-Column Layout completed — changed items grid from 2 to 3 columns on lg+ screens, responsive 1/2/3 column breakpoints
