@@ -41,3 +41,4 @@ Not Started
 - 2026-03-20: Profile Page completed — /profile route with user info (avatar, email, join date), usage stats with per-type breakdown, change password for email users, delete account with confirmation dialog, shadcn dialog component added
 - 2026-03-21: Rate Limiting for Auth completed — Upstash Redis with @upstash/ratelimit, reusable rate-limit.ts utility with sliding window, custom /api/auth/login route for credentials with rate limiting, protected register/forgot-password/reset-password endpoints, 429 responses with Retry-After header, fail-open design
 - 2026-03-21: Fix GitHub OAuth Redirect completed — switched GitHub sign-in from client-side signIn (next-auth/react) to server-side signIn via Server Action, fixing two-click redirect issue
+- 2026-03-21: Items List View completed — dynamic /dashboard/items/[type] route with getItemsByType query, reusable ItemCard component, responsive 2-column grid with type-colored left borders, sidebar links updated
