@@ -1,16 +1,20 @@
-# Current Feature
+# Current Feature: Items Grid 3-Column Layout
 
 ## Goals
 
-<!-- Goals for the current feature -->
+- Change the items list grid from 2 columns to 3 columns on larger screens
+- Keep responsive behavior: 1 column on mobile, 2 on medium, 3 on large+
+- No layout or component changes beyond the grid column count
 
 ## Notes
 
-<!-- Additional context, constraints, or details -->
+- Affected file: `src/app/dashboard/items/[type]/page.tsx`
+- Current grid: `grid-cols-1 md:grid-cols-2`
+- Target grid: `grid-cols-1 md:grid-cols-2 lg:grid-cols-3`
 
 ## Status
 
-Not Started
+In Progress
 
 ## History
 
