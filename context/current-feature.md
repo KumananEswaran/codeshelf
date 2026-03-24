@@ -1,25 +1,16 @@
-# Current Feature: Code Editor
+# Current Feature
 
 ## Goals
 
-- Create CodeEditor component using Monaco Editor with dark theme
-- Replace Textarea with CodeEditor for snippets and commands only
-- Keep Textarea for notes, prompts, and other non-code types
-- Add macOS-style window dots (red/yellow/green) at top of editor
-- Add quick copy button in editor header
-- Add the language in editor header next to copy
-- Support both display (readonly) and edit modes
-- Make the height of the editor fluid but a max height of 400px with a theme-matching scrollbar
+<!-- Goals for the current feature -->
 
 ## Notes
 
-- Monaco Editor integration — will need `@monaco-editor/react` package
-- Only applies to snippet and command item types; other types keep Textarea
-- Component needs both readonly (drawer view) and editable (edit mode) states
+<!-- Additional context, constraints, or details -->
 
 ## Status
 
-In Progress
+Not Started
 
 ## History
 
@@ -57,3 +48,4 @@ In Progress
 - 2026-03-21: Item Drawer Edit Mode completed — inline edit mode with Save/Cancel, editable title/description/tags + type-specific content/language/URL fields, updateItem server action with Zod validation, updateItem query with tag disconnect/connect-or-create, toast feedback and router.refresh()
 - 2026-03-21: Delete Item completed — deleteItem DB query and server action with auth, AlertDialog confirmation in ItemDrawer, destructive styling, toast on success, drawer close and list refresh
 - 2026-03-21: Item Create completed — NewItemDialog with type selector (snippet/prompt/command/note/link), dynamic fields per type, createItem server action with Zod validation, createItem query with tag connectOrCreate, shadcn Select component added
+- 2026-03-24: Code Editor completed — Monaco Editor component with macOS window dots, copy button, language label, readonly/edit modes, fluid height (400px max), replaces textarea for snippet/command types in ItemDrawer and NewItemDialog, type-specific "New Item" button on item type pages with preselected type
