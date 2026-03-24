@@ -1,9 +1,12 @@
 import { redirect, notFound } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
-import { Code, Sparkles, Terminal, StickyNote, File, Image, Link as LinkIcon } from "lucide-react";
+import { Code, Sparkles, Terminal, StickyNote, File, Image, Link as LinkIcon, Plus } from "lucide-react";
 import { auth } from "@/auth";
 import { getItemsByType } from "@/lib/db/items";
 import ItemsListWithDrawer from "@/components/dashboard/ItemsListWithDrawer";
+import NewItemDialog, { type ItemType } from "@/components/dashboard/NewItemDialog";
+
+const DIALOG_TYPES = new Set<string>(["snippet", "prompt", "command", "note", "link"]);
 
 const SLUG_CONFIG: Record<string, { typeName: string; icon: LucideIcon }> = {
   snippets: { typeName: "snippet", icon: Code },
@@ -40,6 +43,14 @@ export default async function ItemsListPage({
         <span className="text-sm text-muted-foreground">
           {items.length} {items.length === 1 ? "item" : "items"}
         </span>
+        {DIALOG_TYPES.has(typeName) && (
+          <div className="ml-auto">
+            <NewItemDialog defaultType={typeName as ItemType}>
+              <Plus className="h-4 w-4 mr-2" />
+              New {typeName.charAt(0).toUpperCase() + typeName.slice(1)}
+            </NewItemDialog>
+          </div>
+        )}
       </div>
 
       {items.length === 0 ? (

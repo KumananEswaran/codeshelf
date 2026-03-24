@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { CodeEditor } from "@/components/ui/code-editor";
 import {
   Plus,
   Code,
@@ -40,13 +41,18 @@ const ITEM_TYPES = [
   { value: "link" as const, label: "Link", color: "#10b981", icon: LinkIcon },
 ];
 
-type ItemType = (typeof ITEM_TYPES)[number]["value"];
+export type ItemType = (typeof ITEM_TYPES)[number]["value"];
 
-export default function NewItemDialog() {
+interface NewItemDialogProps {
+  defaultType?: ItemType;
+  children?: React.ReactNode;
+}
+
+export default function NewItemDialog({ defaultType, children }: NewItemDialogProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [typeName, setTypeName] = useState<ItemType>("snippet");
+  const [typeName, setTypeName] = useState<ItemType>(defaultType ?? "snippet");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [content, setContent] = useState("");
@@ -55,7 +61,7 @@ export default function NewItemDialog() {
   const [tagsInput, setTagsInput] = useState("");
 
   function resetForm() {
-    setTypeName("snippet");
+    setTypeName(defaultType ?? "snippet");
     setTitle("");
     setDescription("");
     setContent("");
@@ -110,8 +116,12 @@ export default function NewItemDialog() {
       if (!isOpen) resetForm();
     }}>
       <DialogTrigger render={<Button />}>
-        <Plus className="h-4 w-4 mr-2" />
-        New Item
+        {children ?? (
+          <>
+            <Plus className="h-4 w-4 mr-2" />
+            New Item
+          </>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
@@ -182,22 +192,26 @@ export default function NewItemDialog() {
           {showContent && (
             <div className="space-y-2">
               <Label htmlFor="content">Content</Label>
-              <Textarea
-                id="content"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                placeholder={
-                  typeName === "snippet"
-                    ? "Paste your code..."
-                    : typeName === "command"
-                      ? "Enter command..."
-                      : typeName === "prompt"
-                        ? "Enter prompt..."
-                        : "Write your note..."
-                }
-                rows={5}
-                className="font-mono text-sm"
-              />
+              {showLanguage ? (
+                <CodeEditor
+                  value={content}
+                  onChange={setContent}
+                  language={language}
+                />
+              ) : (
+                <Textarea
+                  id="content"
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  placeholder={
+                    typeName === "prompt"
+                      ? "Enter prompt..."
+                      : "Write your note..."
+                  }
+                  rows={5}
+                  className="font-mono text-sm"
+                />
+              )}
             </div>
           )}
 

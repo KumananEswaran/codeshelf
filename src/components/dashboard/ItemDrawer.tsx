@@ -26,6 +26,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { CodeEditor } from "@/components/ui/code-editor";
 import { Separator } from "@/components/ui/separator";
 import { getIcon } from "@/lib/icon-map";
 import { formatDate } from "@/lib/utils";
@@ -350,21 +351,37 @@ export default function ItemDrawer({ itemId, onClose }: ItemDrawerProps) {
               {editing && CONTENT_TYPES.includes(typeName) ? (
                 <div>
                   <h4 className="text-sm font-medium mb-1">Content</h4>
-                  <Textarea
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                    placeholder="Item content"
-                    rows={6}
-                    className="font-mono text-sm"
-                  />
+                  {LANGUAGE_TYPES.includes(typeName) ? (
+                    <CodeEditor
+                      value={content}
+                      onChange={setContent}
+                      language={language}
+                    />
+                  ) : (
+                    <Textarea
+                      value={content}
+                      onChange={(e) => setContent(e.target.value)}
+                      placeholder="Item content"
+                      rows={6}
+                      className="font-mono text-sm"
+                    />
+                  )}
                 </div>
               ) : (
                 item.content && (
                   <div>
                     <h4 className="text-sm font-medium mb-1">Content</h4>
-                    <pre className="text-sm bg-muted rounded-md p-3 overflow-x-auto font-mono whitespace-pre-wrap">
-                      {item.content}
-                    </pre>
+                    {LANGUAGE_TYPES.includes(typeName) ? (
+                      <CodeEditor
+                        value={item.content}
+                        language={item.language ?? undefined}
+                        readOnly
+                      />
+                    ) : (
+                      <pre className="text-sm bg-muted rounded-md p-3 overflow-x-auto font-mono whitespace-pre-wrap">
+                        {item.content}
+                      </pre>
+                    )}
                   </div>
                 )
               )}
