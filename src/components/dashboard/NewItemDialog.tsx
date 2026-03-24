@@ -20,8 +20,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { CodeEditor } from "@/components/ui/code-editor";
+import { MarkdownEditor } from "@/components/ui/markdown-editor";
 import {
   Plus,
   Code,
@@ -199,17 +199,9 @@ export default function NewItemDialog({ defaultType, children }: NewItemDialogPr
                   language={language}
                 />
               ) : (
-                <Textarea
-                  id="content"
+                <MarkdownEditor
                   value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  placeholder={
-                    typeName === "prompt"
-                      ? "Enter prompt..."
-                      : "Write your note..."
-                  }
-                  rows={5}
-                  className="font-mono text-sm"
+                  onChange={setContent}
                 />
               )}
             </div>

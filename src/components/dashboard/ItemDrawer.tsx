@@ -27,6 +27,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { CodeEditor } from "@/components/ui/code-editor";
+import { MarkdownEditor } from "@/components/ui/markdown-editor";
 import { Separator } from "@/components/ui/separator";
 import { getIcon } from "@/lib/icon-map";
 import { formatDate } from "@/lib/utils";
@@ -358,12 +359,9 @@ export default function ItemDrawer({ itemId, onClose }: ItemDrawerProps) {
                       language={language}
                     />
                   ) : (
-                    <Textarea
+                    <MarkdownEditor
                       value={content}
-                      onChange={(e) => setContent(e.target.value)}
-                      placeholder="Item content"
-                      rows={6}
-                      className="font-mono text-sm"
+                      onChange={setContent}
                     />
                   )}
                 </div>
@@ -378,9 +376,10 @@ export default function ItemDrawer({ itemId, onClose }: ItemDrawerProps) {
                         readOnly
                       />
                     ) : (
-                      <pre className="text-sm bg-muted rounded-md p-3 overflow-x-auto font-mono whitespace-pre-wrap">
-                        {item.content}
-                      </pre>
+                      <MarkdownEditor
+                        value={item.content}
+                        readOnly
+                      />
                     )}
                   </div>
                 )
