@@ -1,22 +1,16 @@
-# Current Feature: File List View
+# Current Feature
 
 ## Goals
 
-- Update `/dashboard/items/files` to display as a single-column list layout (like Google Drive/Dropbox) instead of grid cards
-- Each row shows: file icon (by extension), file name, file size, upload date, download button
-- Row hover highlight
-- Click row opens ItemDrawer
-- Download button triggers direct download (stop propagation so drawer doesn't open)
-- Responsive: stack info vertically on mobile
+<!-- Goals for the current feature -->
 
 ## Notes
 
-- Spec file: context/features/file-display-spec.md
-- Only affects the "files" item type page — other types keep their current grid layout
+<!-- Additional context, constraints, or details -->
 
 ## Status
 
-In Progress
+Not Started
 
 ## History
 
@@ -58,3 +52,4 @@ In Progress
 - 2026-03-24: Markdown Editor completed — MarkdownEditor component with Write/Preview tabs, react-markdown + remark-gfm, dark theme CSS matching CodeEditor, replaces Textarea for note/prompt types in ItemDrawer and NewItemDialog, readonly preview mode for view
 - 2026-03-28: File Upload with Cloudflare R2 completed — R2 client (src/lib/r2.ts) with upload/download/delete and validation, drag-and-drop FileUpload component with progress, upload and download proxy API routes, image preview and file info with download button in ItemDrawer, R2 cleanup on item deletion, file/image types added to NewItemDialog and type pages
 - 2026-03-28: Image Gallery View completed — ImageCard component with 16:9 aspect-video thumbnails, object-cover fill, hover zoom effect, fileUrl added to ItemWithDetails query, ItemsListWithDrawer conditionally renders ImageCard for image type
+- 2026-03-28: File List View completed — FileListItem component with extension-based icons, single-column list layout for /dashboard/items/files, file name/description/size/date/download per row, responsive mobile stacking, formatFileSize utility added
