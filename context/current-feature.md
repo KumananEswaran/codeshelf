@@ -1,22 +1,16 @@
-# Current Feature: Image Gallery View
+# Current Feature
 
 ## Goals
 
-- Create an image thumbnail card to replace the current item card on image type pages
-- Show an image grid/gallery with 3 columns
-- Display image thumbnail with 16:9 aspect ratio (`aspect-video`)
-- Use `object-cover` to fill the card (may crop edges)
-- Add subtle hover zoom effect (5% scale with 300ms transition)
+<!-- Goals for the current feature -->
 
 ## Notes
 
-- Spec file: context/features/image-display-spec.md
-- This replaces the standard ItemCard with a visual thumbnail card specifically for image items
-- The grid layout should be responsive (1/2/3 columns)
+<!-- Additional context, constraints, or details -->
 
 ## Status
 
-In Progress
+Not Started
 
 ## History
 
@@ -57,3 +51,4 @@ In Progress
 - 2026-03-24: Code Editor completed — Monaco Editor component with macOS window dots, copy button, language label, readonly/edit modes, fluid height (400px max), replaces textarea for snippet/command types in ItemDrawer and NewItemDialog, type-specific "New Item" button on item type pages with preselected type
 - 2026-03-24: Markdown Editor completed — MarkdownEditor component with Write/Preview tabs, react-markdown + remark-gfm, dark theme CSS matching CodeEditor, replaces Textarea for note/prompt types in ItemDrawer and NewItemDialog, readonly preview mode for view
 - 2026-03-28: File Upload with Cloudflare R2 completed — R2 client (src/lib/r2.ts) with upload/download/delete and validation, drag-and-drop FileUpload component with progress, upload and download proxy API routes, image preview and file info with download button in ItemDrawer, R2 cleanup on item deletion, file/image types added to NewItemDialog and type pages
+- 2026-03-28: Image Gallery View completed — ImageCard component with 16:9 aspect-video thumbnails, object-cover fill, hover zoom effect, fileUrl added to ItemWithDetails query, ItemsListWithDrawer conditionally renders ImageCard for image type
