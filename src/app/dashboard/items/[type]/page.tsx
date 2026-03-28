@@ -6,7 +6,7 @@ import { getItemsByType } from "@/lib/db/items";
 import ItemsListWithDrawer from "@/components/dashboard/ItemsListWithDrawer";
 import NewItemDialog, { type ItemType } from "@/components/dashboard/NewItemDialog";
 
-const DIALOG_TYPES = new Set<string>(["snippet", "prompt", "command", "note", "link"]);
+const DIALOG_TYPES = new Set<string>(["snippet", "prompt", "command", "note", "file", "image", "link"]);
 
 const SLUG_CONFIG: Record<string, { typeName: string; icon: LucideIcon }> = {
   snippets: { typeName: "snippet", icon: Code },

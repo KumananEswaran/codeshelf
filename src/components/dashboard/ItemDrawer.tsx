@@ -14,6 +14,8 @@ import {
   Loader2,
   Save,
   X,
+  Download,
+  FileIcon,
 } from "lucide-react";
 import {
   Sheet,
@@ -423,17 +425,57 @@ export default function ItemDrawer({ itemId, onClose }: ItemDrawerProps) {
                 )
               )}
 
+              {/* Image Preview */}
+              {item.fileUrl && typeName === "image" && !editing && (
+                <div>
+                  <h4 className="text-sm font-medium mb-2">Preview</h4>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={item.fileUrl}
+                    alt={item.fileName ?? item.title}
+                    className="max-h-64 rounded-md object-contain border border-border"
+                  />
+                </div>
+              )}
+
+              {/* File Info & Download */}
               {item.fileName && !editing && (
                 <div>
-                  <h4 className="text-sm font-medium mb-1">File</h4>
-                  <p className="text-sm text-muted-foreground">
-                    {item.fileName}
-                    {item.fileSize && (
-                      <span className="ml-2">
-                        ({(item.fileSize / 1024).toFixed(1)} KB)
-                      </span>
+                  <h4 className="text-sm font-medium mb-2">File</h4>
+                  <div className="flex items-center gap-3 rounded-lg border border-border bg-muted/50 p-3">
+                    <FileIcon className="h-5 w-5 text-muted-foreground shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">
+                        {item.fileName}
+                      </p>
+                      {item.fileSize && (
+                        <p className="text-xs text-muted-foreground">
+                          {item.fileSize >= 1024 * 1024
+                            ? `${(item.fileSize / (1024 * 1024)).toFixed(1)} MB`
+                            : `${(item.fileSize / 1024).toFixed(1)} KB`}
+                        </p>
+                      )}
+                    </div>
+                    {item.fileUrl && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          const publicUrl = item.fileUrl!;
+                          // Extract key from public URL for the download proxy
+                          const urlParts = publicUrl.split("/");
+                          const key = urlParts.slice(3).join("/");
+                          window.open(
+                            `/api/download/${encodeURIComponent(key)}`,
+                            "_blank"
+                          );
+                        }}
+                      >
+                        <Download className="h-4 w-4 mr-1" />
+                        Download
+                      </Button>
                     )}
-                  </p>
+                  </div>
                 </div>
               )}
 

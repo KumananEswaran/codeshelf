@@ -7,8 +7,9 @@ import {
   updateItem as updateItemQuery,
   deleteItem as deleteItemQuery,
 } from "@/lib/db/items";
+import { deleteFromR2, getR2KeyFromUrl } from "@/lib/r2";
 
-const ALLOWED_TYPES = ["snippet", "prompt", "command", "note", "link"] as const;
+const ALLOWED_TYPES = ["snippet", "prompt", "command", "note", "link", "file", "image"] as const;
 
 const createItemSchema = z.object({
   title: z.string().trim().min(1, "Title is required"),
@@ -26,6 +27,9 @@ const createItemSchema = z.object({
     }),
   typeName: z.enum(ALLOWED_TYPES, { message: "Invalid item type" }),
   tags: z.array(z.string().trim().min(1)).default([]),
+  fileUrl: z.string().url().nullable().optional().default(null),
+  fileName: z.string().nullable().optional().default(null),
+  fileSize: z.number().int().positive().nullable().optional().default(null),
 });
 
 export async function createItem(
@@ -98,9 +102,21 @@ export async function deleteItem(itemId: string) {
     return { success: false as const, error: "Unauthorized" };
   }
 
-  const deleted = await deleteItemQuery(itemId, session.user.id);
-  if (!deleted) {
+  const result = await deleteItemQuery(itemId, session.user.id);
+  if (!result.deleted) {
     return { success: false as const, error: "Item not found" };
+  }
+
+  // Clean up R2 file if present
+  if (result.fileUrl) {
+    const key = getR2KeyFromUrl(result.fileUrl);
+    if (key) {
+      try {
+        await deleteFromR2(key);
+      } catch {
+        // File cleanup is best-effort
+      }
+    }
   }
 
   return { success: true as const };

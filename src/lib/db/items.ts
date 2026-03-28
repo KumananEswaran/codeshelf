@@ -159,6 +159,7 @@ export interface ItemDetail {
   contentType: string;
   language: string | null;
   url: string | null;
+  fileUrl: string | null;
   fileName: string | null;
   fileSize: number | null;
   isFavorite: boolean;
@@ -188,6 +189,7 @@ export async function getItemById(
       contentType: true,
       language: true,
       url: true,
+      fileUrl: true,
       fileName: true,
       fileSize: true,
       isFavorite: true,
@@ -269,6 +271,7 @@ export async function updateItem(
       contentType: true,
       language: true,
       url: true,
+      fileUrl: true,
       fileName: true,
       fileSize: true,
       isFavorite: true,
@@ -305,6 +308,9 @@ export interface CreateItemData {
   url: string | null;
   typeName: string;
   tags: string[];
+  fileUrl?: string | null;
+  fileName?: string | null;
+  fileSize?: number | null;
 }
 
 export async function createItem(
@@ -325,9 +331,12 @@ export async function createItem(
       title: data.title,
       description: data.description,
       content: data.content,
-      contentType: "text",
+      contentType: data.fileUrl ? "file" : "text",
       language: data.language,
       url: data.url,
+      fileUrl: data.fileUrl ?? null,
+      fileName: data.fileName ?? null,
+      fileSize: data.fileSize ?? null,
       userId,
       typeId: itemType.id,
       tags: {
@@ -349,6 +358,7 @@ export async function createItem(
       contentType: true,
       language: true,
       url: true,
+      fileUrl: true,
       fileName: true,
       fileSize: true,
       isFavorite: true,
@@ -380,18 +390,18 @@ export async function createItem(
 export async function deleteItem(
   itemId: string,
   userId: string
-): Promise<boolean> {
+): Promise<{ deleted: false } | { deleted: true; fileUrl: string | null }> {
   const item = await prisma.item.findFirst({
     where: { id: itemId, userId },
-    select: { id: true },
+    select: { id: true, fileUrl: true },
   });
 
-  if (!item) return false;
+  if (!item) return { deleted: false };
 
   await prisma.itemTag.deleteMany({ where: { itemId } });
   await prisma.item.delete({ where: { id: itemId } });
 
-  return true;
+  return { deleted: true, fileUrl: item.fileUrl };
 }
 
 export async function getItemStats(userId: string) {

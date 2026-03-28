@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CodeEditor } from "@/components/ui/code-editor";
 import { MarkdownEditor } from "@/components/ui/markdown-editor";
+import { FileUpload } from "@/components/ui/file-upload";
 import {
   Plus,
   Code,
@@ -29,6 +30,8 @@ import {
   Terminal,
   StickyNote,
   Link as LinkIcon,
+  FileIcon,
+  ImageIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 import { createItem } from "@/actions/items";
@@ -38,6 +41,8 @@ const ITEM_TYPES = [
   { value: "prompt" as const, label: "Prompt", color: "#8b5cf6", icon: Sparkles },
   { value: "command" as const, label: "Command", color: "#f97316", icon: Terminal },
   { value: "note" as const, label: "Note", color: "#fde047", icon: StickyNote },
+  { value: "file" as const, label: "File", color: "#6b7280", icon: FileIcon },
+  { value: "image" as const, label: "Image", color: "#ec4899", icon: ImageIcon },
   { value: "link" as const, label: "Link", color: "#10b981", icon: LinkIcon },
 ];
 
@@ -59,6 +64,9 @@ export default function NewItemDialog({ defaultType, children }: NewItemDialogPr
   const [language, setLanguage] = useState("");
   const [url, setUrl] = useState("");
   const [tagsInput, setTagsInput] = useState("");
+  const [fileUrl, setFileUrl] = useState("");
+  const [fileName, setFileName] = useState("");
+  const [fileSize, setFileSize] = useState(0);
 
   function resetForm() {
     setTypeName(defaultType ?? "snippet");
@@ -68,6 +76,9 @@ export default function NewItemDialog({ defaultType, children }: NewItemDialogPr
     setLanguage("");
     setUrl("");
     setTagsInput("");
+    setFileUrl("");
+    setFileName("");
+    setFileSize(0);
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -79,6 +90,14 @@ export default function NewItemDialog({ defaultType, children }: NewItemDialogPr
       .map((t) => t.trim())
       .filter(Boolean);
 
+    const isFileType = typeName === "file" || typeName === "image";
+
+    if (isFileType && !fileUrl) {
+      toast.error("Please upload a file first");
+      setLoading(false);
+      return;
+    }
+
     const result = await createItem({
       title,
       description: description || null,
@@ -87,6 +106,9 @@ export default function NewItemDialog({ defaultType, children }: NewItemDialogPr
       url: url || null,
       typeName,
       tags,
+      fileUrl: isFileType ? fileUrl : null,
+      fileName: isFileType ? fileName : null,
+      fileSize: isFileType ? fileSize : null,
     });
 
     setLoading(false);
@@ -106,7 +128,8 @@ export default function NewItemDialog({ defaultType, children }: NewItemDialogPr
     router.refresh();
   }
 
-  const showContent = typeName !== "link";
+  const isFileType = typeName === "file" || typeName === "image";
+  const showContent = !isFileType && typeName !== "link";
   const showLanguage = typeName === "snippet" || typeName === "command";
   const showUrl = typeName === "link";
 
@@ -229,6 +252,22 @@ export default function NewItemDialog({ defaultType, children }: NewItemDialogPr
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="https://..."
                 required
+              />
+            </div>
+          )}
+
+          {isFileType && (
+            <div className="space-y-2">
+              <Label>{typeName === "image" ? "Image" : "File"} *</Label>
+              <FileUpload
+                itemType={typeName as "file" | "image"}
+                onUploadComplete={({ fileUrl, fileName, fileSize }) => {
+                  setFileUrl(fileUrl);
+                  setFileName(fileName);
+                  setFileSize(fileSize);
+                }}
+                onUploadError={(error) => toast.error(error)}
+                disabled={loading}
               />
             </div>
           )}
