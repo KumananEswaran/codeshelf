@@ -1,16 +1,22 @@
-# Current Feature
+# Current Feature: File List View
 
 ## Goals
 
-<!-- Goals for the current feature -->
+- Update `/dashboard/items/files` to display as a single-column list layout (like Google Drive/Dropbox) instead of grid cards
+- Each row shows: file icon (by extension), file name, file size, upload date, download button
+- Row hover highlight
+- Click row opens ItemDrawer
+- Download button triggers direct download (stop propagation so drawer doesn't open)
+- Responsive: stack info vertically on mobile
 
 ## Notes
 
-<!-- Additional context, constraints, or details -->
+- Spec file: context/features/file-display-spec.md
+- Only affects the "files" item type page — other types keep their current grid layout
 
 ## Status
 
-Not Started
+In Progress
 
 ## History
 
