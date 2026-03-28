@@ -1,27 +1,16 @@
-# Current Feature: File Upload with Cloudflare R2
+# Current Feature
 
 ## Goals
 
-- Create upload API route for R2 storage
-- Create FileUpload component with drag-and-drop
-- Update create item modal to use FileUpload for file/image types
-- Delete files from R2 when items are deleted
-- Create download proxy API route (avoids CORS issues)
-- Add download button in ItemDrawer for file types
-- Show upload progress indicator
-- Display image preview for images, file info for files
+<!-- Goals for the current feature -->
 
 ## Notes
 
-- Use lib/db/items.ts for prisma/db functions
-- Images: max 5 MB, extensions: .png, .jpg, .jpeg, .gif, .webp, .svg
-- Files: max 10 MB, extensions: .pdf, .txt, .md, .json, .yaml, .yml, .xml, .csv, .toml, .ini
-- MIME types for images: image/png, image/jpeg, image/gif, image/webp, image/svg+xml
-- MIME types for files: application/pdf, text/plain, text/markdown, application/json, application/x-yaml, text/yaml, application/xml, text/xml, text/csv, application/toml, text/plain (for .ini)
+<!-- Additional context, constraints, or details -->
 
 ## Status
 
-In Progress
+Not Started
 
 ## History
 
@@ -61,3 +50,4 @@ In Progress
 - 2026-03-21: Item Create completed — NewItemDialog with type selector (snippet/prompt/command/note/link), dynamic fields per type, createItem server action with Zod validation, createItem query with tag connectOrCreate, shadcn Select component added
 - 2026-03-24: Code Editor completed — Monaco Editor component with macOS window dots, copy button, language label, readonly/edit modes, fluid height (400px max), replaces textarea for snippet/command types in ItemDrawer and NewItemDialog, type-specific "New Item" button on item type pages with preselected type
 - 2026-03-24: Markdown Editor completed — MarkdownEditor component with Write/Preview tabs, react-markdown + remark-gfm, dark theme CSS matching CodeEditor, replaces Textarea for note/prompt types in ItemDrawer and NewItemDialog, readonly preview mode for view
+- 2026-03-28: File Upload with Cloudflare R2 completed — R2 client (src/lib/r2.ts) with upload/download/delete and validation, drag-and-drop FileUpload component with progress, upload and download proxy API routes, image preview and file info with download button in ItemDrawer, R2 cleanup on item deletion, file/image types added to NewItemDialog and type pages
