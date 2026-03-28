@@ -4,6 +4,7 @@ export interface ItemWithDetails {
   id: string;
   title: string;
   description: string | null;
+  fileUrl: string | null;
   isFavorite: boolean;
   isPinned: boolean;
   createdAt: Date;
@@ -19,6 +20,7 @@ const itemSelect = {
   id: true,
   title: true,
   description: true,
+  fileUrl: true,
   isFavorite: true,
   isPinned: true,
   createdAt: true,
@@ -39,6 +41,7 @@ function formatItem(
     id: string;
     title: string;
     description: string | null;
+    fileUrl: string | null;
     isFavorite: boolean;
     isPinned: boolean;
     createdAt: Date;
@@ -50,6 +53,7 @@ function formatItem(
     id: item.id,
     title: item.title,
     description: item.description,
+    fileUrl: item.fileUrl,
     isFavorite: item.isFavorite,
     isPinned: item.isPinned,
     createdAt: item.createdAt,
