@@ -1,6 +1,7 @@
 import { Pin, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import CopyButton from "@/components/dashboard/CopyButton";
 import { getIcon } from "@/lib/icon-map";
 import { formatDate } from "@/lib/utils";
 import type { ItemWithDetails } from "@/lib/db/items";
@@ -13,7 +14,7 @@ interface ItemCardProps {
 export default function ItemCard({ item, onClick }: ItemCardProps) {
   return (
     <Card
-      className="hover:ring-foreground/20 transition-all cursor-pointer"
+      className="hover:ring-foreground/20 transition-all cursor-pointer group relative"
       onClick={onClick}
       style={
         item.type.color
@@ -62,6 +63,7 @@ export default function ItemCard({ item, onClick }: ItemCardProps) {
           {formatDate(item.createdAt)}
         </span>
       </CardContent>
+      <CopyButton item={item} className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100" />
     </Card>
   );
 }
