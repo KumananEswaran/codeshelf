@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import AuthStatusCard from "@/components/auth/AuthStatusCard";
 
 export default function RegisterForm() {
   const [name, setName] = useState("");
@@ -58,18 +59,17 @@ export default function RegisterForm() {
 
   if (emailSent) {
     return (
-      <Card className="w-full max-w-sm">
-        <CardHeader className="text-center">
-          <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-            <MailCheck className="h-6 w-6 text-primary" />
-          </div>
-          <CardTitle className="text-2xl font-bold">Check your email</CardTitle>
-          <CardDescription>
+      <AuthStatusCard
+        icon={MailCheck}
+        title="Check your email"
+        description={
+          <>
             We sent a verification link to{" "}
             <span className="font-medium text-foreground">{email}</span>
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
+          </>
+        }
+      >
+        <div className="flex flex-col gap-4">
           <p className="text-center text-sm text-muted-foreground">
             Click the link in the email to verify your account. The link expires in 24 hours.
           </p>
@@ -78,8 +78,8 @@ export default function RegisterForm() {
               Back to Sign In
             </Button>
           </Link>
-        </CardContent>
-      </Card>
+        </div>
+      </AuthStatusCard>
     );
   }
 

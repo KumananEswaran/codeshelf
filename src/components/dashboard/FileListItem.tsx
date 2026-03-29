@@ -9,7 +9,7 @@ import {
   Star,
   Pin,
 } from "lucide-react";
-import { formatDate, formatFileSize } from "@/lib/utils";
+import { formatDate, formatFileSize, getDownloadUrl } from "@/lib/utils";
 import type { ItemWithDetails } from "@/lib/db/items";
 
 const EXTENSION_ICONS: Record<string, typeof File> = {
@@ -65,9 +65,7 @@ export default function FileListItem({ item, onClick }: FileListItemProps) {
   function handleDownload(e: React.MouseEvent) {
     e.stopPropagation();
     if (!item.fileUrl) return;
-    const urlParts = item.fileUrl.split("/");
-    const key = urlParts.slice(3).join("/");
-    window.open(`/api/download/${encodeURIComponent(key)}`, "_blank");
+    window.open(getDownloadUrl(item.fileUrl), "_blank");
   }
 
   return (

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import AuthStatusCard from "@/components/auth/AuthStatusCard";
 
 export default function ForgotPasswordForm() {
   const [email, setEmail] = useState("");
@@ -44,25 +45,22 @@ export default function ForgotPasswordForm() {
 
   if (sent) {
     return (
-      <Card className="w-full max-w-sm">
-        <CardHeader className="text-center">
-          <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-            <Mail className="h-6 w-6 text-primary" />
-          </div>
-          <CardTitle className="text-2xl font-bold">Check Your Email</CardTitle>
-          <CardDescription>
+      <AuthStatusCard
+        icon={Mail}
+        title="Check Your Email"
+        description={
+          <>
             If an account exists for <span className="font-medium text-foreground">{email}</span>, we&apos;ve sent a password reset link.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Link href="/sign-in">
-            <Button variant="outline" className="w-full">
-              <ArrowLeft className="h-4 w-4" />
-              Back to Sign In
-            </Button>
-          </Link>
-        </CardContent>
-      </Card>
+          </>
+        }
+      >
+        <Link href="/sign-in">
+          <Button variant="outline" className="w-full">
+            <ArrowLeft className="h-4 w-4" />
+            Back to Sign In
+          </Button>
+        </Link>
+      </AuthStatusCard>
     );
   }
 

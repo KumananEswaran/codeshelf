@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import AuthStatusCard from "@/components/auth/AuthStatusCard";
 
 export default function ResetPasswordForm() {
   const searchParams = useSearchParams();
@@ -60,24 +61,19 @@ export default function ResetPasswordForm() {
 
   if (success) {
     return (
-      <Card className="w-full max-w-sm">
-        <CardHeader className="text-center">
-          <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-green-500/10">
-            <CircleCheck className="h-6 w-6 text-green-500" />
-          </div>
-          <CardTitle className="text-2xl font-bold">Password Reset</CardTitle>
-          <CardDescription>
-            Your password has been reset successfully.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Link href="/sign-in">
-            <Button className="w-full">
-              Sign in to your account
-            </Button>
-          </Link>
-        </CardContent>
-      </Card>
+      <AuthStatusCard
+        icon={CircleCheck}
+        iconClassName="text-green-500"
+        iconBgClassName="bg-green-500/10"
+        title="Password Reset"
+        description="Your password has been reset successfully."
+      >
+        <Link href="/sign-in">
+          <Button className="w-full">
+            Sign in to your account
+          </Button>
+        </Link>
+      </AuthStatusCard>
     );
   }
 

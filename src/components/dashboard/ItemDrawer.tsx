@@ -32,7 +32,7 @@ import { CodeEditor } from "@/components/ui/code-editor";
 import { MarkdownEditor } from "@/components/ui/markdown-editor";
 import { Separator } from "@/components/ui/separator";
 import { getIcon } from "@/lib/icon-map";
-import { formatDate } from "@/lib/utils";
+import { formatDate, formatFileSize, getDownloadUrl } from "@/lib/utils";
 import { updateItem, deleteItem } from "@/actions/items";
 import { toast } from "sonner";
 import {
@@ -450,9 +450,7 @@ export default function ItemDrawer({ itemId, onClose }: ItemDrawerProps) {
                       </p>
                       {item.fileSize && (
                         <p className="text-xs text-muted-foreground">
-                          {item.fileSize >= 1024 * 1024
-                            ? `${(item.fileSize / (1024 * 1024)).toFixed(1)} MB`
-                            : `${(item.fileSize / 1024).toFixed(1)} KB`}
+                          {formatFileSize(item.fileSize)}
                         </p>
                       )}
                     </div>
@@ -461,14 +459,7 @@ export default function ItemDrawer({ itemId, onClose }: ItemDrawerProps) {
                         variant="outline"
                         size="sm"
                         onClick={() => {
-                          const publicUrl = item.fileUrl!;
-                          // Extract key from public URL for the download proxy
-                          const urlParts = publicUrl.split("/");
-                          const key = urlParts.slice(3).join("/");
-                          window.open(
-                            `/api/download/${encodeURIComponent(key)}`,
-                            "_blank"
-                          );
+                          window.open(getDownloadUrl(item.fileUrl!), "_blank");
                         }}
                       >
                         <Download className="h-4 w-4 mr-1" />

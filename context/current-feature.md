@@ -2,15 +2,23 @@
 
 ## Goals
 
-<!-- Goals for the current feature -->
+Code decomposition to reduce duplication and improve maintainability:
+
+1. **Reuse ItemCard in PinnedItems & RecentItems** — Replace duplicated card markup with existing `<ItemCard>` component
+2. **Extract `getDownloadUrl` utility** — Centralize R2 key extraction from ItemDrawer and FileListItem into `src/lib/utils.ts`
+3. **Extract `computeDominantColor` helper** — Deduplicate identical 12-line block in `getRecentCollections` and `getSidebarCollections`
+4. **Use existing `formatFileSize` in ItemDrawer** — Replace inline reimplementation with utility from `src/lib/utils.ts`
+5. **Extract `AuthStatusCard` component** — Deduplicate status card layout across 4 auth forms
 
 ## Notes
 
-<!-- Additional context, constraints, or details -->
+- ItemDrawer decomposition (#4 from review) is deferred — it's the largest change and should be its own feature
+- All changes should be behavior-preserving refactors with no visual differences
+- Run build + tests after each extraction to verify nothing breaks
 
 ## Status
 
-Not Started
+In Progress
 
 ## History
 
