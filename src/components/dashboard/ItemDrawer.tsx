@@ -46,6 +46,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import CollectionPicker from "@/components/dashboard/CollectionPicker";
 import type { ItemDetail } from "@/lib/db/items";
 
 interface ItemDrawerProps {
@@ -71,6 +72,8 @@ export default function ItemDrawer({ itemId, onClose }: ItemDrawerProps) {
   const [language, setLanguage] = useState("");
   const [url, setUrl] = useState("");
   const [tagsInput, setTagsInput] = useState("");
+  const [collectionIds, setCollectionIds] = useState<string[]>([]);
+  const [collections, setCollections] = useState<{ id: string; name: string }[]>([]);
 
   useEffect(() => {
     if (!itemId) {
@@ -104,7 +107,13 @@ export default function ItemDrawer({ itemId, onClose }: ItemDrawerProps) {
     setLanguage(item.language ?? "");
     setUrl(item.url ?? "");
     setTagsInput(item.tags.map((t) => t.name).join(", "));
+    setCollectionIds(item.collections?.map((c) => c.id) ?? []);
     setEditing(true);
+
+    fetch("/api/collections")
+      .then((res) => res.json())
+      .then((data) => setCollections(data))
+      .catch(() => {});
   }
 
   function cancelEdit() {
@@ -127,6 +136,7 @@ export default function ItemDrawer({ itemId, onClose }: ItemDrawerProps) {
       language: language || null,
       url: url || null,
       tags,
+      collectionIds,
     });
 
     setSaving(false);
@@ -470,6 +480,21 @@ export default function ItemDrawer({ itemId, onClose }: ItemDrawerProps) {
                 </div>
               )}
 
+              {/* Collections */}
+              {editing && collections.length > 0 ? (
+                <div>
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <FolderOpen className="h-3.5 w-3.5 text-muted-foreground" />
+                    <h4 className="text-sm font-medium">Collections</h4>
+                  </div>
+                  <CollectionPicker
+                    collections={collections}
+                    selectedIds={collectionIds}
+                    onChange={setCollectionIds}
+                  />
+                </div>
+              ) : null}
+
               {/* Tags */}
               {editing ? (
                 <div>
@@ -505,16 +530,20 @@ export default function ItemDrawer({ itemId, onClose }: ItemDrawerProps) {
                 )
               )}
 
-              {/* Collection (display only) */}
-              {item.collection && (
+              {/* Collections (display only) */}
+              {item.collections && item.collections.length > 0 && (
                 <div>
                   <div className="flex items-center gap-1.5 mb-1.5">
                     <FolderOpen className="h-3.5 w-3.5 text-muted-foreground" />
-                    <h4 className="text-sm font-medium">Collection</h4>
+                    <h4 className="text-sm font-medium">Collections</h4>
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    {item.collection.name}
-                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {item.collections.map((col) => (
+                      <Badge key={col.id} variant="secondary" className="text-xs">
+                        {col.name}
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
               )}
 

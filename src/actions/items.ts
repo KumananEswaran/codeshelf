@@ -30,6 +30,7 @@ const createItemSchema = z.object({
   fileUrl: z.string().url().nullable().optional().default(null),
   fileName: z.string().nullable().optional().default(null),
   fileSize: z.number().int().positive().nullable().optional().default(null),
+  collectionIds: z.array(z.string()).default([]),
 });
 
 export async function createItem(
@@ -69,6 +70,7 @@ const updateItemSchema = z.object({
   tags: z
     .array(z.string().trim().min(1))
     .default([]),
+  collectionIds: z.array(z.string()).default([]),
 });
 
 export async function updateItem(

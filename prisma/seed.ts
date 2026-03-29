@@ -532,8 +532,10 @@ async function upsertItem(data: UpsertItemData) {
       isFavorite: data.isFavorite ?? false,
       isPinned: data.isPinned ?? false,
       typeId: data.typeId,
-      collectionId: data.collectionId,
       userId: data.userId,
+      collections: data.collectionId
+        ? { connect: { id: data.collectionId } }
+        : undefined,
     },
   });
 }

@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import CollectionPicker from "@/components/dashboard/CollectionPicker";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CodeEditor } from "@/components/ui/code-editor";
@@ -67,6 +68,8 @@ export default function NewItemDialog({ defaultType, children }: NewItemDialogPr
   const [fileUrl, setFileUrl] = useState("");
   const [fileName, setFileName] = useState("");
   const [fileSize, setFileSize] = useState(0);
+  const [collectionIds, setCollectionIds] = useState<string[]>([]);
+  const [collections, setCollections] = useState<{ id: string; name: string }[]>([]);
 
   function resetForm() {
     setTypeName(defaultType ?? "snippet");
@@ -79,6 +82,14 @@ export default function NewItemDialog({ defaultType, children }: NewItemDialogPr
     setFileUrl("");
     setFileName("");
     setFileSize(0);
+    setCollectionIds([]);
+  }
+
+  function fetchCollections() {
+    fetch("/api/collections")
+      .then((res) => res.json())
+      .then((data) => setCollections(data))
+      .catch(() => {});
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -109,6 +120,7 @@ export default function NewItemDialog({ defaultType, children }: NewItemDialogPr
       fileUrl: isFileType ? fileUrl : null,
       fileName: isFileType ? fileName : null,
       fileSize: isFileType ? fileSize : null,
+      collectionIds,
     });
 
     setLoading(false);
@@ -136,6 +148,7 @@ export default function NewItemDialog({ defaultType, children }: NewItemDialogPr
   return (
     <Dialog open={open} onOpenChange={(isOpen) => {
       setOpen(isOpen);
+      if (isOpen) fetchCollections();
       if (!isOpen) resetForm();
     }}>
       <DialogTrigger render={<Button />}>
@@ -281,6 +294,17 @@ export default function NewItemDialog({ defaultType, children }: NewItemDialogPr
               placeholder="Comma-separated tags"
             />
           </div>
+
+          {collections.length > 0 && (
+            <div className="space-y-2">
+              <Label>Collections</Label>
+              <CollectionPicker
+                collections={collections}
+                selectedIds={collectionIds}
+                onChange={setCollectionIds}
+              />
+            </div>
+          )}
 
           <div className="flex justify-end gap-2 pt-2">
             <DialogClose render={<Button type="button" variant="outline" />}>

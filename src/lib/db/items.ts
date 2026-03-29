@@ -192,7 +192,7 @@ export interface ItemDetail {
     color: string | null;
   };
   tags: { name: string }[];
-  collection: { id: string; name: string } | null;
+  collections: { id: string; name: string }[];
 }
 
 export async function getItemById(
@@ -226,7 +226,7 @@ export async function getItemById(
           },
         },
       },
-      collection: {
+      collections: {
         select: { id: true, name: true },
       },
     },
@@ -247,6 +247,7 @@ export interface UpdateItemData {
   language: string | null;
   url: string | null;
   tags: string[];
+  collectionIds?: string[];
 }
 
 export async function updateItem(
@@ -272,6 +273,9 @@ export async function updateItem(
       content: data.content,
       language: data.language,
       url: data.url,
+      collections: data.collectionIds !== undefined
+        ? { set: data.collectionIds.map((id) => ({ id })) }
+        : undefined,
       tags: {
         create: data.tags.map((tagName) => ({
           tag: {
@@ -308,7 +312,7 @@ export async function updateItem(
           },
         },
       },
-      collection: {
+      collections: {
         select: { id: true, name: true },
       },
     },
@@ -331,6 +335,7 @@ export interface CreateItemData {
   fileUrl?: string | null;
   fileName?: string | null;
   fileSize?: number | null;
+  collectionIds?: string[];
 }
 
 export async function createItem(
@@ -359,6 +364,9 @@ export async function createItem(
       fileSize: data.fileSize ?? null,
       userId,
       typeId: itemType.id,
+      collections: data.collectionIds?.length
+        ? { connect: data.collectionIds.map((id) => ({ id })) }
+        : undefined,
       tags: {
         create: data.tags.map((tagName) => ({
           tag: {
@@ -395,7 +403,7 @@ export async function createItem(
           },
         },
       },
-      collection: {
+      collections: {
         select: { id: true, name: true },
       },
     },
@@ -403,7 +411,7 @@ export async function createItem(
 
   return {
     ...item,
-    tags: item.tags.map((t) => ({ name: t.tag.name })),
+    tags: item.tags.map((t: { tag: { name: string } }) => ({ name: t.tag.name })),
   };
 }
 
