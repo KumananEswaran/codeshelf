@@ -2,23 +2,15 @@
 
 ## Goals
 
-Code decomposition to reduce duplication and improve maintainability:
-
-1. **Reuse ItemCard in PinnedItems & RecentItems** — Replace duplicated card markup with existing `<ItemCard>` component
-2. **Extract `getDownloadUrl` utility** — Centralize R2 key extraction from ItemDrawer and FileListItem into `src/lib/utils.ts`
-3. **Extract `computeDominantColor` helper** — Deduplicate identical 12-line block in `getRecentCollections` and `getSidebarCollections`
-4. **Use existing `formatFileSize` in ItemDrawer** — Replace inline reimplementation with utility from `src/lib/utils.ts`
-5. **Extract `AuthStatusCard` component** — Deduplicate status card layout across 4 auth forms
+<!-- Goals for the current feature -->
 
 ## Notes
 
-- ItemDrawer decomposition (#4 from review) is deferred — it's the largest change and should be its own feature
-- All changes should be behavior-preserving refactors with no visual differences
-- Run build + tests after each extraction to verify nothing breaks
+<!-- Additional context, constraints, or details -->
 
 ## Status
 
-In Progress
+Not Started
 
 ## History
 
@@ -62,3 +54,4 @@ In Progress
 - 2026-03-28: Image Gallery View completed — ImageCard component with 16:9 aspect-video thumbnails, object-cover fill, hover zoom effect, fileUrl added to ItemWithDetails query, ItemsListWithDrawer conditionally renders ImageCard for image type
 - 2026-03-28: File List View completed — FileListItem component with extension-based icons, single-column list layout for /dashboard/items/files, file name/description/size/date/download per row, responsive mobile stacking, formatFileSize utility added
 - 2026-03-29: Audit Quick Wins completed — sanitized Content-Disposition header filename, added take:50 cap to collection items sub-queries, stable React key in CollectionsGrid, formatDate shows year for older dates
+- 2026-03-29: Code Decomposition completed — PinnedItems/RecentItems reuse ItemCard, getDownloadUrl utility extracted, computeDominantColor helper extracted, formatFileSize reused in ItemDrawer, AuthStatusCard shared across 4 auth forms
