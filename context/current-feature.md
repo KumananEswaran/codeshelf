@@ -2,21 +2,15 @@
 
 ## Goals
 
-Apply 4 quick-win fixes from the codebase audit with minimal risk:
-
-1. **[C1] Header injection fix** — Sanitize filename in download route Content-Disposition header
-2. **[H4] Collection query over-fetch** — Add `take: 50` to items sub-queries in `getRecentCollections` and `getSidebarCollections`
-3. **[L2] React key fix** — Use stable key instead of array index in CollectionsGrid type icons
-4. **[L5] formatDate year** — Show year for dates not in the current year
+<!-- Goals for the current feature -->
 
 ## Notes
 
-- Skip mock-data deletion (M1) — still needed
-- All fixes are isolated single-file changes
+<!-- Additional context, constraints, or details -->
 
 ## Status
 
-In Progress
+Not Started
 
 ## History
 
@@ -59,3 +53,4 @@ In Progress
 - 2026-03-28: File Upload with Cloudflare R2 completed — R2 client (src/lib/r2.ts) with upload/download/delete and validation, drag-and-drop FileUpload component with progress, upload and download proxy API routes, image preview and file info with download button in ItemDrawer, R2 cleanup on item deletion, file/image types added to NewItemDialog and type pages
 - 2026-03-28: Image Gallery View completed — ImageCard component with 16:9 aspect-video thumbnails, object-cover fill, hover zoom effect, fileUrl added to ItemWithDetails query, ItemsListWithDrawer conditionally renders ImageCard for image type
 - 2026-03-28: File List View completed — FileListItem component with extension-based icons, single-column list layout for /dashboard/items/files, file name/description/size/date/download per row, responsive mobile stacking, formatFileSize utility added
+- 2026-03-29: Audit Quick Wins completed — sanitized Content-Disposition header filename, added take:50 cap to collection items sub-queries, stable React key in CollectionsGrid, formatDate shows year for older dates
