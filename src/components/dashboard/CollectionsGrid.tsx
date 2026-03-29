@@ -58,7 +58,7 @@ export default function CollectionsGrid({ collections }: CollectionsGridProps) {
                       const IconComponent = getIcon(t.icon);
                       return (
                         <IconComponent
-                          key={i}
+                          key={t.icon ?? i}
                           className="h-3.5 w-3.5"
                           style={{ color: t.color ?? undefined }}
                         />

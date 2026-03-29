@@ -6,9 +6,12 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatDate(date: Date) {
+  const now = new Date();
+  const sameYear = date.getFullYear() === now.getFullYear();
   return date.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
+    ...(sameYear ? {} : { year: "numeric" }),
   });
 }
 

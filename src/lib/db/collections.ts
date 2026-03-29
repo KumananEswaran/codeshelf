@@ -27,6 +27,7 @@ export async function getRecentCollections(
       isFavorite: true,
       _count: { select: { items: true } },
       items: {
+        take: 50,
         select: {
           type: {
             select: { id: true, icon: true, color: true },
@@ -102,6 +103,7 @@ export async function getSidebarCollections(userId: string): Promise<{
       isFavorite: true,
       _count: { select: { items: true } },
       items: {
+        take: 50,
         select: {
           type: {
             select: { id: true, color: true },

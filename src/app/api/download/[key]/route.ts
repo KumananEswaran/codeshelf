@@ -25,7 +25,7 @@ export async function GET(
 
     const fileName = decodedKey.split("/").pop() ?? "download";
     // Strip the timestamp prefix from filename (e.g., "1234567890-file.pdf" -> "file.pdf")
-    const cleanName = fileName.replace(/^\d+-/, "");
+    const cleanName = fileName.replace(/^\d+-/, "").replace(/["\r\n]/g, "_");
 
     return new Response(body, {
       headers: {

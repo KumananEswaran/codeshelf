@@ -2,15 +2,21 @@
 
 ## Goals
 
-<!-- Goals for the current feature -->
+Apply 4 quick-win fixes from the codebase audit with minimal risk:
+
+1. **[C1] Header injection fix** — Sanitize filename in download route Content-Disposition header
+2. **[H4] Collection query over-fetch** — Add `take: 50` to items sub-queries in `getRecentCollections` and `getSidebarCollections`
+3. **[L2] React key fix** — Use stable key instead of array index in CollectionsGrid type icons
+4. **[L5] formatDate year** — Show year for dates not in the current year
 
 ## Notes
 
-<!-- Additional context, constraints, or details -->
+- Skip mock-data deletion (M1) — still needed
+- All fixes are isolated single-file changes
 
 ## Status
 
-Not Started
+In Progress
 
 ## History
 
