@@ -102,7 +102,7 @@ export default function Sidebar({ itemTypes, sidebarCollections, user }: Sidebar
               {favorites.map((col) => (
                 <Link
                   key={col.id}
-                  href={`/collections/${col.id}`}
+                  href={`/dashboard/collections/${col.id}`}
                   className="flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
                 >
                   <span className="flex items-center gap-2">
@@ -127,7 +127,7 @@ export default function Sidebar({ itemTypes, sidebarCollections, user }: Sidebar
             {recents.map((col) => (
               <Link
                 key={col.id}
-                href={`/collections/${col.id}`}
+                href={`/dashboard/collections/${col.id}`}
                 className="flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
               >
                 <span className="flex items-center gap-2">
@@ -150,7 +150,7 @@ export default function Sidebar({ itemTypes, sidebarCollections, user }: Sidebar
         {/* View all collections link */}
         <div className="mt-2 px-2">
           <Link
-            href="/collections"
+            href="/dashboard/collections"
             className="text-xs text-muted-foreground hover:text-sidebar-foreground transition-colors"
           >
             View all collections →

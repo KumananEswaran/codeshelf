@@ -1,0 +1,37 @@
+import { redirect } from "next/navigation";
+import { FolderOpen } from "lucide-react";
+import { auth } from "@/auth";
+import { getAllCollections } from "@/lib/db/collections";
+import CollectionsGrid from "@/components/dashboard/CollectionsGrid";
+import NewCollectionDialog from "@/components/dashboard/NewCollectionDialog";
+
+export default async function CollectionsPage() {
+  const session = await auth();
+  if (!session?.user?.id) redirect("/sign-in");
+
+  const collections = await getAllCollections(session.user.id);
+
+  return (
+    <div className="p-6 max-w-5xl mx-auto">
+      <div className="flex items-center gap-3 mb-6">
+        <FolderOpen className="h-6 w-6 text-muted-foreground" />
+        <h1 className="text-2xl font-bold">Collections</h1>
+        <span className="text-sm text-muted-foreground">
+          {collections.length} {collections.length === 1 ? "collection" : "collections"}
+        </span>
+        <div className="ml-auto">
+          <NewCollectionDialog />
+        </div>
+      </div>
+
+      {collections.length === 0 ? (
+        <div className="text-center py-12 text-muted-foreground">
+          <FolderOpen className="h-12 w-12 mx-auto mb-4 opacity-50" />
+          <p>No collections yet</p>
+        </div>
+      ) : (
+        <CollectionsGrid collections={collections} showHeader={false} />
+      )}
+    </div>
+  );
+}

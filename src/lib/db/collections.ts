@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import type { ItemWithDetails } from "@/lib/db/items";
 
 export interface CollectionWithTypes {
   id: string;
@@ -207,8 +208,11 @@ export async function getCollectionById(collectionId: string, userId: string) {
   });
 }
 
-export async function getCollectionItems(collectionId: string, userId: string) {
-  return prisma.item.findMany({
+export async function getCollectionItems(
+  collectionId: string,
+  userId: string
+): Promise<ItemWithDetails[]> {
+  const items = await prisma.item.findMany({
     where: { collections: { some: { id: collectionId } }, userId },
     orderBy: { createdAt: "desc" },
     take: 100,
@@ -228,6 +232,11 @@ export async function getCollectionItems(collectionId: string, userId: string) {
       tags: { select: { tag: { select: { name: true } } } },
     },
   });
+
+  return items.map((item) => ({
+    ...item,
+    tags: item.tags.map((t) => ({ name: t.tag.name })),
+  }));
 }
 
 export async function updateCollection(
