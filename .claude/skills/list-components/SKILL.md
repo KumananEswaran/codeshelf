@@ -1,8 +1,8 @@
-```yaml
+---
 name: list-components
 description: List project components
-argument-hint: [subdirectory]
-```
+argument-hint: subdirectory
+---
 
 ## Task
 
