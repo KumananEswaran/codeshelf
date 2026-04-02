@@ -1,25 +1,23 @@
-# Current Feature: Collection Management Actions
+# Current Feature: Global Search / Command Palette
 
 ## Goals
 
-- Add edit, delete, and favorite buttons on `/dashboard/collections/[id]` page header
-  - Edit opens a modal to edit collection name/description
-  - Delete shows confirmation dialog, removes collection but NOT its items
-  - Favorite button/icon present but not functional yet (placeholder)
-- Add 3-dot dropdown menu on collection cards (`/dashboard/collections` and dashboard)
-  - Dropdown options: Edit, Delete, Favorite
-  - Clicking anywhere else on the card navigates to the collection page
-- Edit modal allows editing collection metadata (name, description)
-- Delete confirmation dialog warns user, then removes collection
-- Items are NOT deleted when a collection is deleted — they just lose that collection association
+- Open command palette with Cmd+K (Mac) / Ctrl+K (Windows)
+- Fuzzy search across all items and collections
+- Grouped results: Items section, Collections section
+- Keyboard navigation (arrow keys, Enter to select)
+- Show item type icon and collection item count in results
+- Navigate to item drawer or collection page on select
+- TopBar search input opens palette on click
+- Show ⌘K hint in search input placeholder
 
 ## Notes
 
-- Reuse existing `updateCollection` and `deleteCollection` DB functions if available
-- Use shadcn AlertDialog for delete confirmation
-- Use shadcn Dialog for edit modal
-- Use shadcn DropdownMenu for 3-dot menu on cards
-- Favorite action is UI-only for now (icon/button visible, no backend logic)
+- Use shadcn `cmdk` component (Command)
+- Client-side fuzzy search (no server round-trips)
+- Pre-fetch searchable data on app load
+- Search data: items (id, title, type, content preview), collections (id, name, itemCount)
+- Reuse existing data fetching functions
 
 ## Status
 
@@ -70,4 +68,5 @@ In Progress
 - 2026-03-29: Code Decomposition completed — PinnedItems/RecentItems reuse ItemCard, getDownloadUrl utility extracted, computeDominantColor helper extracted, formatFileSize reused in ItemDrawer, AuthStatusCard shared across 4 auth forms
 - 2026-03-29: Collection Create completed — NewCollectionDialog with name/description, createCollection server action with Zod validation, DB functions for CRUD/favorite/toggle, GET /api/collections route, TopBar updated with dialog
 - 2026-03-29: Add Items to Collection completed — many-to-many schema migration (Item↔Collection junction table), CollectionPicker multi-select component, collection selector in NewItemDialog and ItemDrawer edit mode, collections displayed as badges in ItemDrawer view mode
-- 2026-04-01: Collections Pages completed — /dashboard/collections page with all collections grid and New Collection button, /dashboard/collections/[id] page with grouped items (general cards, Images section, Files section), CollectionItemsList component, sidebar and collection card links updated to /dashboard/ prefix, getCollectionItems returns ItemWithDetails[]
+- 2026-04-01: Collections Pages completed
+- 2026-04-02: Collection Management Actions completed — EditCollectionDialog, CollectionActions (detail page edit/delete/favorite buttons), CollectionCardMenu (3-dot dropdown on cards), CollectionCard client component with programmatic navigation, controlled AlertDialog for delete confirmation with redirect — /dashboard/collections page with all collections grid and New Collection button, /dashboard/collections/[id] page with grouped items (general cards, Images section, Files section), CollectionItemsList component, sidebar and collection card links updated to /dashboard/ prefix, getCollectionItems returns ItemWithDetails[]
