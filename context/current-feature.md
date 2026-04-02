@@ -1,16 +1,22 @@
-# Current Feature
+# Current Feature: Favorites Page Sorting
 
 ## Goals
 
-<!-- Goals for the current feature -->
+- Add a sort dropdown to the items section on /dashboard/favorites with options: Name (A-Z), Date (newest first), and Item Type
+- Add a sort dropdown to the collections section with options: Name (A-Z) and Date (newest first)
+- Sorting is client-side only (no server round-trips) since all favorites are already loaded
+- Persist sort choice in component state (resets on page navigation)
 
 ## Notes
 
-<!-- Additional context, constraints, or details -->
+- FavoritesList is already a "use client" component — sorting fits naturally
+- Items have: title, createdAt, type.name — all needed for sorting
+- Collections have: name, updatedAt — sortable by name and date
+- Keep the compact list UI style, just add sort controls above each section
 
 ## Status
 
-Not Started
+In Progress
 
 ## History
 
