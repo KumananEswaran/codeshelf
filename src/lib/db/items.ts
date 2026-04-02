@@ -155,20 +155,39 @@ export async function getItemTypesWithCounts(userId: string): Promise<ItemTypeWi
   return mapped;
 }
 
+export interface PaginatedItems {
+  items: ItemWithDetails[];
+  totalCount: number;
+  page: number;
+  totalPages: number;
+}
+
 export async function getItemsByType(
   userId: string,
-  typeName: string
-): Promise<ItemWithDetails[]> {
-  const items = await prisma.item.findMany({
-    where: {
-      userId,
-      type: { name: typeName },
-    },
-    orderBy: { createdAt: "desc" },
-    select: itemSelect,
-  });
+  typeName: string,
+  page = 1,
+  perPage = 21
+): Promise<PaginatedItems> {
+  const where = { userId, type: { name: typeName } };
+  const skip = (page - 1) * perPage;
 
-  return items.map(formatItem);
+  const [items, totalCount] = await Promise.all([
+    prisma.item.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      skip,
+      take: perPage,
+      select: itemSelect,
+    }),
+    prisma.item.count({ where }),
+  ]);
+
+  return {
+    items: items.map(formatItem),
+    totalCount,
+    page,
+    totalPages: Math.ceil(totalCount / perPage),
+  };
 }
 
 export interface ItemDetail {

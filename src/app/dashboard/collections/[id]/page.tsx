@@ -2,21 +2,28 @@ import { redirect, notFound } from "next/navigation";
 import { FolderOpen } from "lucide-react";
 import { auth } from "@/auth";
 import { getCollectionById, getCollectionItems } from "@/lib/db/collections";
+import { COLLECTIONS_PER_PAGE } from "@/lib/constants";
 import CollectionItemsList from "@/components/dashboard/CollectionItemsList";
 import CollectionActions from "@/components/dashboard/CollectionActions";
+import Pagination from "@/components/ui/pagination";
 
 export default async function CollectionPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ page?: string }>;
 }) {
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
 
   const { id } = await params;
-  const [collection, items] = await Promise.all([
+  const { page: pageParam } = await searchParams;
+  const page = Math.max(1, parseInt(pageParam ?? "1", 10) || 1);
+
+  const [collection, { items, totalPages }] = await Promise.all([
     getCollectionById(id, session.user.id),
-    getCollectionItems(id, session.user.id),
+    getCollectionItems(id, session.user.id, page, COLLECTIONS_PER_PAGE),
   ]);
 
   if (!collection) notFound();
@@ -42,7 +49,14 @@ export default async function CollectionPage({
           <p>No items in this collection</p>
         </div>
       ) : (
-        <CollectionItemsList items={items} />
+        <>
+          <CollectionItemsList items={items} />
+          <Pagination
+            currentPage={page}
+            totalPages={totalPages}
+            basePath={`/dashboard/collections/${id}`}
+          />
+        </>
       )}
     </div>
   );

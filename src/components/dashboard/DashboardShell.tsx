@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { PanelLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -62,9 +63,9 @@ export default function DashboardShell({
         }`}
       >
         <div className="flex items-center gap-2 px-4 h-14.25 shrink-0">
-          <span className="text-lg font-bold text-sidebar-foreground whitespace-nowrap">
+          <Link href="/dashboard" className="text-lg font-bold text-sidebar-foreground whitespace-nowrap">
             CodeShelf
-          </span>
+          </Link>
         </div>
         <div className="flex-1 min-h-0 overflow-hidden">
           <Sidebar
@@ -91,9 +92,9 @@ export default function DashboardShell({
             <SheetContent side="left" className="w-64 p-0">
               <SheetTitle className="sr-only">Sidebar navigation</SheetTitle>
               <div className="flex items-center gap-2 px-4 h-14.25 shrink-0 border-b border-border">
-                <span className="text-lg font-bold text-sidebar-foreground">
+                <Link href="/dashboard" className="text-lg font-bold text-sidebar-foreground">
                   CodeShelf
-                </span>
+                </Link>
               </div>
               <Sidebar
                 itemTypes={itemTypes}

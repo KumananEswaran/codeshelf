@@ -2,14 +2,27 @@ import { redirect } from "next/navigation";
 import { FolderOpen } from "lucide-react";
 import { auth } from "@/auth";
 import { getAllCollections } from "@/lib/db/collections";
+import { COLLECTIONS_PER_PAGE } from "@/lib/constants";
 import CollectionsGrid from "@/components/dashboard/CollectionsGrid";
 import NewCollectionDialog from "@/components/dashboard/NewCollectionDialog";
+import Pagination from "@/components/ui/pagination";
 
-export default async function CollectionsPage() {
+export default async function CollectionsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
 
-  const collections = await getAllCollections(session.user.id);
+  const { page: pageParam } = await searchParams;
+  const page = Math.max(1, parseInt(pageParam ?? "1", 10) || 1);
+
+  const { collections, totalCount, totalPages } = await getAllCollections(
+    session.user.id,
+    page,
+    COLLECTIONS_PER_PAGE
+  );
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
@@ -17,7 +30,7 @@ export default async function CollectionsPage() {
         <FolderOpen className="h-6 w-6 text-muted-foreground" />
         <h1 className="text-2xl font-bold">Collections</h1>
         <span className="text-sm text-muted-foreground">
-          {collections.length} {collections.length === 1 ? "collection" : "collections"}
+          {totalCount} {totalCount === 1 ? "collection" : "collections"}
         </span>
         <div className="ml-auto">
           <NewCollectionDialog />
@@ -30,7 +43,14 @@ export default async function CollectionsPage() {
           <p>No collections yet</p>
         </div>
       ) : (
-        <CollectionsGrid collections={collections} showHeader={false} />
+        <>
+          <CollectionsGrid collections={collections} showHeader={false} />
+          <Pagination
+            currentPage={page}
+            totalPages={totalPages}
+            basePath="/dashboard/collections"
+          />
+        </>
       )}
     </div>
   );

@@ -149,48 +149,69 @@ export async function createCollection(
   });
 }
 
+export interface PaginatedCollections {
+  collections: CollectionWithTypes[];
+  totalCount: number;
+  page: number;
+  totalPages: number;
+}
+
 export async function getAllCollections(
-  userId: string
-): Promise<CollectionWithTypes[]> {
-  const collections = await prisma.collection.findMany({
-    where: { userId },
-    orderBy: { createdAt: "desc" },
-    take: 100,
-    select: {
-      id: true,
-      name: true,
-      description: true,
-      isFavorite: true,
-      _count: { select: { items: true } },
-      items: {
-        take: 50,
-        select: {
-          type: {
-            select: { id: true, icon: true, color: true },
+  userId: string,
+  page = 1,
+  perPage = 21
+): Promise<PaginatedCollections> {
+  const where = { userId };
+  const skip = (page - 1) * perPage;
+
+  const [collections, totalCount] = await Promise.all([
+    prisma.collection.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      skip,
+      take: perPage,
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        isFavorite: true,
+        _count: { select: { items: true } },
+        items: {
+          take: 50,
+          select: {
+            type: {
+              select: { id: true, icon: true, color: true },
+            },
           },
         },
       },
-    },
-  });
+    }),
+    prisma.collection.count({ where }),
+  ]);
 
-  return collections.map((col) => {
-    const seen = new Map<string, { icon: string | null; color: string | null }>();
-    for (const item of col.items) {
-      if (!seen.has(item.type.id)) {
-        seen.set(item.type.id, { icon: item.type.icon, color: item.type.color });
+  return {
+    collections: collections.map((col) => {
+      const seen = new Map<string, { icon: string | null; color: string | null }>();
+      for (const item of col.items) {
+        if (!seen.has(item.type.id)) {
+          seen.set(item.type.id, { icon: item.type.icon, color: item.type.color });
+        }
       }
-    }
 
-    return {
-      id: col.id,
-      name: col.name,
-      description: col.description,
-      isFavorite: col.isFavorite,
-      itemCount: col._count.items,
-      dominantColor: computeDominantColor(col.items),
-      typeIcons: Array.from(seen.values()),
-    };
-  });
+      return {
+        id: col.id,
+        name: col.name,
+        description: col.description,
+        isFavorite: col.isFavorite,
+        itemCount: col._count.items,
+        dominantColor: computeDominantColor(col.items),
+        typeIcons: Array.from(seen.values()),
+      };
+    }),
+    totalCount,
+    page,
+    totalPages: Math.ceil(totalCount / perPage),
+  };
 }
 
 export async function getCollectionById(collectionId: string, userId: string) {
@@ -208,35 +229,56 @@ export async function getCollectionById(collectionId: string, userId: string) {
   });
 }
 
+export interface PaginatedCollectionItems {
+  items: ItemWithDetails[];
+  totalCount: number;
+  page: number;
+  totalPages: number;
+}
+
 export async function getCollectionItems(
   collectionId: string,
-  userId: string
-): Promise<ItemWithDetails[]> {
-  const items = await prisma.item.findMany({
-    where: { collections: { some: { id: collectionId } }, userId },
-    orderBy: { createdAt: "desc" },
-    take: 100,
-    select: {
-      id: true,
-      title: true,
-      description: true,
-      content: true,
-      url: true,
-      fileUrl: true,
-      fileName: true,
-      fileSize: true,
-      isFavorite: true,
-      isPinned: true,
-      createdAt: true,
-      type: { select: { name: true, icon: true, color: true } },
-      tags: { select: { tag: { select: { name: true } } } },
-    },
-  });
+  userId: string,
+  page = 1,
+  perPage = 21
+): Promise<PaginatedCollectionItems> {
+  const where = { collections: { some: { id: collectionId } }, userId };
+  const skip = (page - 1) * perPage;
 
-  return items.map((item) => ({
-    ...item,
-    tags: item.tags.map((t) => ({ name: t.tag.name })),
-  }));
+  const [items, totalCount] = await Promise.all([
+    prisma.item.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      skip,
+      take: perPage,
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        content: true,
+        url: true,
+        fileUrl: true,
+        fileName: true,
+        fileSize: true,
+        isFavorite: true,
+        isPinned: true,
+        createdAt: true,
+        type: { select: { name: true, icon: true, color: true } },
+        tags: { select: { tag: { select: { name: true } } } },
+      },
+    }),
+    prisma.item.count({ where }),
+  ]);
+
+  return {
+    items: items.map((item) => ({
+      ...item,
+      tags: item.tags.map((t) => ({ name: t.tag.name })),
+    })),
+    totalCount,
+    page,
+    totalPages: Math.ceil(totalCount / perPage),
+  };
 }
 
 export async function updateCollection(
