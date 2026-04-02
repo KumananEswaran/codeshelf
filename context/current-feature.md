@@ -1,22 +1,16 @@
-# Current Feature: Pagination
+# Current Feature
 
 ## Goals
 
-- Add pagination to `/dashboard/items/[type]` pages
-- Add pagination to `/dashboard/collections/[id]` pages
-- Pagination controls at bottom with page numbers and prev/next links
-- Disable (grey out) prev/next when not available
-- Only fetch the amount of resources each page requires (no fetch-all)
+<!-- Goals for the current feature -->
 
 ## Notes
 
-- Constants: `ITEMS_PER_PAGE = 21`, `COLLECTIONS_PER_PAGE = 21`
-- Dashboard limits: `DASHBOARD_COLLECTIONS_LIMIT = 6`, `DASHBOARD_RECENT_ITEMS_LIMIT = 10`
-- Use URL search params for page state (e.g., `?page=2`)
+<!-- Additional context, constraints, or details -->
 
 ## Status
 
-In Progress
+Not Started
 
 ## History
 
@@ -66,3 +60,4 @@ In Progress
 - 2026-04-01: Collections Pages completed
 - 2026-04-02: Collection Management Actions completed — EditCollectionDialog, CollectionActions (detail page edit/delete/favorite buttons), CollectionCardMenu (3-dot dropdown on cards), CollectionCard client component with programmatic navigation, controlled AlertDialog for delete confirmation with redirect — /dashboard/collections page with all collections grid and New Collection button, /dashboard/collections/[id] page with grouped items (general cards, Images section, Files section), CollectionItemsList component, sidebar and collection card links updated to /dashboard/ prefix, getCollectionItems returns ItemWithDetails[]
 - 2026-04-02: Global Search / Command Palette completed — cmdk-based command palette (Ctrl+K / Cmd+K), fuzzy search across items and collections, grouped results with type icons and item counts, keyboard navigation, TopBar search button with Ctrl+K hint, /api/search route, global ItemDrawer for search-selected items
+- 2026-04-02: Pagination completed — reusable Pagination component with numbered pages and prev/next controls, server-side skip/take pagination for items/[type], collections, and collections/[id] pages, centralized constants (ITEMS_PER_PAGE, COLLECTIONS_PER_PAGE, dashboard limits), CodeShelf navbar logo links to /dashboard
