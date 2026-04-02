@@ -4,6 +4,7 @@ import { useCallback, useRef, useState } from "react";
 import Editor, { type OnMount } from "@monaco-editor/react";
 import { Check, Copy } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useEditorPreferences } from "@/contexts/EditorPreferencesContext";
 
 interface CodeEditorProps {
   value: string;
@@ -38,6 +39,60 @@ function displayLanguage(lang?: string): string {
   return lang.toLowerCase().trim();
 }
 
+function defineCustomThemes(monaco: Parameters<OnMount>[1]) {
+  monaco.editor.defineTheme("monokai", {
+    base: "vs-dark",
+    inherit: true,
+    rules: [
+      { token: "comment", foreground: "75715E", fontStyle: "italic" },
+      { token: "keyword", foreground: "F92672" },
+      { token: "string", foreground: "E6DB74" },
+      { token: "number", foreground: "AE81FF" },
+      { token: "type", foreground: "66D9EF", fontStyle: "italic" },
+      { token: "function", foreground: "A6E22E" },
+      { token: "variable", foreground: "F8F8F2" },
+    ],
+    colors: {
+      "editor.background": "#272822",
+      "editor.foreground": "#F8F8F2",
+      "editor.lineHighlightBackground": "#3E3D32",
+      "editorLineNumber.foreground": "#75715E",
+    },
+  });
+
+  monaco.editor.defineTheme("github-dark", {
+    base: "vs-dark",
+    inherit: true,
+    rules: [
+      { token: "comment", foreground: "8B949E", fontStyle: "italic" },
+      { token: "keyword", foreground: "FF7B72" },
+      { token: "string", foreground: "A5D6FF" },
+      { token: "number", foreground: "79C0FF" },
+      { token: "type", foreground: "FFA657" },
+      { token: "function", foreground: "D2A8FF" },
+      { token: "variable", foreground: "C9D1D9" },
+    ],
+    colors: {
+      "editor.background": "#0D1117",
+      "editor.foreground": "#C9D1D9",
+      "editor.lineHighlightBackground": "#161B22",
+      "editorLineNumber.foreground": "#484F58",
+    },
+  });
+}
+
+const THEME_BACKGROUNDS: Record<string, string> = {
+  "vs-dark": "#1e1e1e",
+  monokai: "#272822",
+  "github-dark": "#0D1117",
+};
+
+const THEME_HEADER_BACKGROUNDS: Record<string, string> = {
+  "vs-dark": "#2d2d2d",
+  monokai: "#1e1f1c",
+  "github-dark": "#161B22",
+};
+
 export function CodeEditor({
   value,
   onChange,
@@ -47,6 +102,7 @@ export function CodeEditor({
 }: CodeEditorProps) {
   const [copied, setCopied] = useState(false);
   const editorRef = useRef<Parameters<OnMount>[0] | null>(null);
+  const { preferences } = useEditorPreferences();
 
   const handleCopy = useCallback(async () => {
     try {
@@ -58,8 +114,10 @@ export function CodeEditor({
     }
   }, [value]);
 
-  const handleMount: OnMount = (editor) => {
+  const handleMount: OnMount = (editor, monaco) => {
     editorRef.current = editor;
+    defineCustomThemes(monaco);
+    monaco.editor.setTheme(preferences.theme);
   };
 
   const lineCount = value.split("\n").length;
@@ -67,15 +125,22 @@ export function CodeEditor({
   const padding = 16;
   const editorHeight = Math.min(lineCount * lineHeight + padding, 400);
 
+  const bg = THEME_BACKGROUNDS[preferences.theme] ?? "#1e1e1e";
+  const headerBg = THEME_HEADER_BACKGROUNDS[preferences.theme] ?? "#2d2d2d";
+
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-lg border border-border bg-[#1e1e1e]",
+        "overflow-hidden rounded-lg border border-border",
         className
       )}
+      style={{ backgroundColor: bg }}
     >
       {/* macOS-style header */}
-      <div className="flex items-center justify-between px-4 py-2.5 bg-[#2d2d2d] border-b border-[#404040]">
+      <div
+        className="flex items-center justify-between px-4 py-2.5 border-b border-[#404040]"
+        style={{ backgroundColor: headerBg }}
+      >
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5">
             <div className="size-3 rounded-full bg-[#ff5f57]" />
@@ -114,14 +179,14 @@ export function CodeEditor({
         value={value}
         onChange={(val) => onChange?.(val ?? "")}
         onMount={handleMount}
-        theme="vs-dark"
+        theme={preferences.theme}
         options={{
           readOnly,
-          minimap: { enabled: false },
+          minimap: { enabled: preferences.minimap },
           scrollBeyondLastLine: false,
           lineNumbers: readOnly ? "on" : "on",
           renderLineHighlight: readOnly ? "none" : "line",
-          fontSize: 13,
+          fontSize: preferences.fontSize,
           fontFamily: "var(--font-jetbrains-mono), 'JetBrains Mono', monospace",
           lineHeight: 20,
           padding: { top: 8, bottom: 8 },
@@ -136,10 +201,10 @@ export function CodeEditor({
           overviewRulerLanes: 0,
           hideCursorInOverviewRuler: true,
           contextmenu: false,
-          wordWrap: "on",
+          wordWrap: preferences.wordWrap ? "on" : "off",
           domReadOnly: readOnly,
           cursorStyle: readOnly ? "underline-thin" : "line",
-          tabSize: 2,
+          tabSize: preferences.tabSize,
           automaticLayout: true,
           fixedOverflowWidgets: true,
           glyphMargin: false,

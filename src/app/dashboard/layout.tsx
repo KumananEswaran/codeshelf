@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import DashboardShell from "@/components/dashboard/DashboardShell";
 import { getSidebarCollections } from "@/lib/db/collections";
 import { getItemTypesWithCounts } from "@/lib/db/items";
+import { getEditorPreferences } from "@/lib/db/editor-preferences";
+import { EditorPreferencesProvider } from "@/contexts/EditorPreferencesContext";
 import { auth } from "@/auth";
 
 export default async function DashboardLayout({
@@ -17,9 +19,10 @@ export default async function DashboardLayout({
 
   const userId = session.user.id;
 
-  const [itemTypes, sidebarCollections] = await Promise.all([
+  const [itemTypes, sidebarCollections, editorPreferences] = await Promise.all([
     getItemTypesWithCounts(userId),
     getSidebarCollections(userId),
+    getEditorPreferences(userId),
   ]);
 
   const user = {
@@ -29,12 +32,14 @@ export default async function DashboardLayout({
   };
 
   return (
-    <DashboardShell
-      itemTypes={itemTypes}
-      sidebarCollections={sidebarCollections}
-      user={user}
-    >
-      {children}
-    </DashboardShell>
+    <EditorPreferencesProvider initialPreferences={editorPreferences}>
+      <DashboardShell
+        itemTypes={itemTypes}
+        sidebarCollections={sidebarCollections}
+        user={user}
+      >
+        {children}
+      </DashboardShell>
+    </EditorPreferencesProvider>
   );
 }

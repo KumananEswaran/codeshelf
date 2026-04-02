@@ -1,8 +1,11 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getProfileData } from "@/lib/db/profile";
+import { getEditorPreferences } from "@/lib/db/editor-preferences";
 import ChangePasswordSection from "@/components/settings/ChangePasswordSection";
 import DeleteAccountSection from "@/components/settings/DeleteAccountSection";
+import EditorPreferencesSection from "@/components/settings/EditorPreferencesSection";
+import { EditorPreferencesProvider } from "@/contexts/EditorPreferencesContext";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
@@ -13,7 +16,10 @@ export default async function SettingsPage() {
     redirect("/sign-in");
   }
 
-  const profile = await getProfileData(session.user.id);
+  const [profile, editorPreferences] = await Promise.all([
+    getProfileData(session.user.id),
+    getEditorPreferences(session.user.id),
+  ]);
 
   if (!profile) {
     redirect("/sign-in");
@@ -33,6 +39,9 @@ export default async function SettingsPage() {
         <h1 className="text-2xl font-bold mb-8">Settings</h1>
 
         <div className="space-y-8">
+          <EditorPreferencesProvider initialPreferences={editorPreferences}>
+            <EditorPreferencesSection />
+          </EditorPreferencesProvider>
           {profile.hasPassword && <ChangePasswordSection />}
           <DeleteAccountSection />
         </div>
