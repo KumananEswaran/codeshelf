@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil, Trash2, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { deleteCollection } from "@/actions/collections";
+import { deleteCollection, toggleCollectionFavorite } from "@/actions/collections";
 import EditCollectionDialog from "./EditCollectionDialog";
 
 interface CollectionActionsProps {
@@ -32,6 +32,26 @@ export default function CollectionActions({ collection }: CollectionActionsProps
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(collection.isFavorite);
+  const [togglingFav, setTogglingFav] = useState(false);
+
+  useEffect(() => {
+    setIsFavorite(collection.isFavorite);
+  }, [collection.isFavorite]);
+
+  async function handleToggleFavorite() {
+    setTogglingFav(true);
+    setIsFavorite(!isFavorite);
+    const result = await toggleCollectionFavorite(collection.id);
+    setTogglingFav(false);
+
+    if (!result.success) {
+      setIsFavorite(isFavorite);
+      toast.error("Failed to toggle favorite");
+      return;
+    }
+    router.refresh();
+  }
 
   async function handleDelete() {
     setDeleting(true);
@@ -73,16 +93,13 @@ export default function CollectionActions({ collection }: CollectionActionsProps
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8"
-          title="Favorite"
-          disabled
+          className={`h-8 w-8 ${isFavorite ? "text-yellow-500" : ""}`}
+          title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+          onClick={handleToggleFavorite}
+          disabled={togglingFav}
         >
           <Star
-            className={`h-4 w-4 ${
-              collection.isFavorite
-                ? "fill-yellow-500 text-yellow-500"
-                : ""
-            }`}
+            className={`h-4 w-4 ${isFavorite ? "fill-yellow-500" : ""}`}
           />
         </Button>
       </div>

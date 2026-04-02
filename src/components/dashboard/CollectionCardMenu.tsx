@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { MoreHorizontal, Pencil, Trash2, Star } from "lucide-react";
 import {
@@ -20,7 +20,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { deleteCollection } from "@/actions/collections";
+import { deleteCollection, toggleCollectionFavorite } from "@/actions/collections";
 import EditCollectionDialog from "./EditCollectionDialog";
 
 interface CollectionCardMenuProps {
@@ -37,6 +37,23 @@ export default function CollectionCardMenu({ collection }: CollectionCardMenuPro
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(collection.isFavorite);
+
+  useEffect(() => {
+    setIsFavorite(collection.isFavorite);
+  }, [collection.isFavorite]);
+
+  async function handleToggleFavorite() {
+    setIsFavorite(!isFavorite);
+    const result = await toggleCollectionFavorite(collection.id);
+
+    if (!result.success) {
+      setIsFavorite(isFavorite);
+      toast.error("Failed to toggle favorite");
+      return;
+    }
+    router.refresh();
+  }
 
   async function handleDelete() {
     setDeleting(true);
@@ -74,9 +91,9 @@ export default function CollectionCardMenu({ collection }: CollectionCardMenuPro
             <Trash2 className="h-4 w-4 mr-2" />
             Delete
           </DropdownMenuItem>
-          <DropdownMenuItem disabled>
-            <Star className="h-4 w-4 mr-2" />
-            Favorite
+          <DropdownMenuItem onClick={handleToggleFavorite}>
+            <Star className={`h-4 w-4 mr-2 ${isFavorite ? "fill-yellow-500 text-yellow-500" : ""}`} />
+            {isFavorite ? "Unfavorite" : "Favorite"}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

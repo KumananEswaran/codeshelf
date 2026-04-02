@@ -1,16 +1,24 @@
-# Current Feature
+# Current Feature: Favorite Toggle Buttons
 
 ## Goals
 
-<!-- Goals for the current feature -->
+- Enable the disabled favorite button in CollectionActions (collection detail page) to call `toggleCollectionFavorite`
+- Enable the disabled favorite button in CollectionCardMenu (3-dot dropdown on collection cards) to call `toggleCollectionFavorite`
+- Add interactive star toggle button to ItemCard for quick favorite toggling without opening the drawer
+- Add interactive star toggle button to CollectionCard for quick favorite toggling
+- All toggle buttons should show loading state, update UI optimistically, and show error toast on failure
 
 ## Notes
 
-<!-- Additional context, constraints, or details -->
+- `toggleItemFavorite` server action and DB function already exist and work (used in ItemDrawer)
+- `toggleCollectionFavorite` server action and DB function already exist but are not wired to any UI
+- ItemCard and CollectionCard currently show a read-only star icon when favorited — convert to interactive buttons
+- ItemDrawer already has a working favorite toggle — use it as the pattern to follow
+- Favorites page already fetches and displays favorites correctly
 
 ## Status
 
-Not Started
+In Progress
 
 ## History
 

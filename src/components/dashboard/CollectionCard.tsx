@@ -1,8 +1,10 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Star } from "lucide-react";
+import { toggleCollectionFavorite } from "@/actions/collections";
+import { toast } from "sonner";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { getIcon } from "@/lib/icon-map";
 import type { CollectionWithTypes } from "@/lib/db/collections";
@@ -15,6 +17,24 @@ interface CollectionCardProps {
 export default function CollectionCard({ collection: col }: CollectionCardProps) {
   const router = useRouter();
   const menuRef = useRef<HTMLSpanElement>(null);
+  const [isFavorite, setIsFavorite] = useState(col.isFavorite);
+
+  useEffect(() => {
+    setIsFavorite(col.isFavorite);
+  }, [col.isFavorite]);
+
+  async function handleToggleFavorite(e: React.MouseEvent) {
+    e.stopPropagation();
+    setIsFavorite(!isFavorite);
+    const result = await toggleCollectionFavorite(col.id);
+
+    if (!result.success) {
+      setIsFavorite(isFavorite);
+      toast.error("Failed to toggle favorite");
+      return;
+    }
+    router.refresh();
+  }
 
   function handleCardClick(e: React.MouseEvent) {
     // Skip if click was on the menu trigger area
@@ -26,7 +46,7 @@ export default function CollectionCard({ collection: col }: CollectionCardProps)
 
   return (
     <Card
-      className="hover:ring-foreground/20 transition-all cursor-pointer h-full"
+      className="hover:ring-foreground/20 transition-all cursor-pointer h-full group"
       style={
         col.dominantColor
           ? { borderTopColor: col.dominantColor, borderTopWidth: "2px" }
@@ -37,9 +57,15 @@ export default function CollectionCard({ collection: col }: CollectionCardProps)
       <CardHeader>
         <div className="flex items-center gap-2">
           <CardTitle className="truncate">{col.name}</CardTitle>
-          {col.isFavorite && (
-            <Star className="h-3.5 w-3.5 shrink-0 fill-yellow-500 text-yellow-500" />
-          )}
+          <button
+            onClick={handleToggleFavorite}
+            className={`shrink-0 hover:scale-110 transition-transform ${
+              isFavorite ? "text-yellow-500" : "text-muted-foreground opacity-0 group-hover:opacity-100"
+            }`}
+            title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+          >
+            <Star className={`h-3.5 w-3.5 ${isFavorite ? "fill-yellow-500" : ""}`} />
+          </button>
           <span ref={menuRef} className="ml-auto shrink-0">
             <CollectionCardMenu collection={col} />
           </span>

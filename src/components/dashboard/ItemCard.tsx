@@ -1,9 +1,15 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Pin, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import CopyButton from "@/components/dashboard/CopyButton";
 import { getIcon } from "@/lib/icon-map";
 import { formatDate } from "@/lib/utils";
+import { toggleItemFavorite } from "@/actions/items";
+import { toast } from "sonner";
 import type { ItemWithDetails } from "@/lib/db/items";
 
 interface ItemCardProps {
@@ -12,6 +18,26 @@ interface ItemCardProps {
 }
 
 export default function ItemCard({ item, onClick }: ItemCardProps) {
+  const router = useRouter();
+  const [isFavorite, setIsFavorite] = useState(item.isFavorite);
+
+  useEffect(() => {
+    setIsFavorite(item.isFavorite);
+  }, [item.isFavorite]);
+
+  async function handleToggleFavorite(e: React.MouseEvent) {
+    e.stopPropagation();
+    setIsFavorite(!isFavorite);
+    const result = await toggleItemFavorite(item.id);
+
+    if (!result.success) {
+      setIsFavorite(isFavorite);
+      toast.error("Failed to toggle favorite");
+      return;
+    }
+    router.refresh();
+  }
+
   return (
     <Card
       className="hover:ring-foreground/20 transition-all cursor-pointer group relative"
@@ -35,9 +61,15 @@ export default function ItemCard({ item, onClick }: ItemCardProps) {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <p className="font-medium truncate">{item.title}</p>
-            {item.isFavorite && (
-              <Star className="h-3.5 w-3.5 shrink-0 fill-yellow-500 text-yellow-500" />
-            )}
+            <button
+              onClick={handleToggleFavorite}
+              className={`shrink-0 hover:scale-110 transition-transform ${
+                isFavorite ? "text-yellow-500" : "text-muted-foreground opacity-0 group-hover:opacity-100"
+              }`}
+              title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+            >
+              <Star className={`h-3.5 w-3.5 ${isFavorite ? "fill-yellow-500" : ""}`} />
+            </button>
             {item.isPinned && (
               <Pin className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
             )}
