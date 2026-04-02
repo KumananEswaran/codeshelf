@@ -1,23 +1,16 @@
-# Current Feature: Settings Page
+# Current Feature
 
 ## Goals
 
-- Create a `/settings` page (protected route)
-- Add a "Settings" link in the user icon dropdown at the bottom of the sidebar
-- Move "Delete Account" functionality from Profile to Settings
-- Move "Change Password" (forgot password) functionality from Profile to Settings
-- Profile page should only show user info and usage stats after the move
+<!-- Goals for the current feature -->
 
 ## Notes
 
-- URL: `/settings`
-- Route must be protected (authenticated users only)
-- Reuse existing delete account dialog and change password form
-- Settings link goes in the sidebar user dropdown menu (alongside Profile and Sign out)
+<!-- Additional context, constraints, or details -->
 
 ## Status
 
-In Progress
+Not Started
 
 ## History
 
@@ -68,3 +61,4 @@ In Progress
 - 2026-04-02: Collection Management Actions completed — EditCollectionDialog, CollectionActions (detail page edit/delete/favorite buttons), CollectionCardMenu (3-dot dropdown on cards), CollectionCard client component with programmatic navigation, controlled AlertDialog for delete confirmation with redirect — /dashboard/collections page with all collections grid and New Collection button, /dashboard/collections/[id] page with grouped items (general cards, Images section, Files section), CollectionItemsList component, sidebar and collection card links updated to /dashboard/ prefix, getCollectionItems returns ItemWithDetails[]
 - 2026-04-02: Global Search / Command Palette completed — cmdk-based command palette (Ctrl+K / Cmd+K), fuzzy search across items and collections, grouped results with type icons and item counts, keyboard navigation, TopBar search button with Ctrl+K hint, /api/search route, global ItemDrawer for search-selected items
 - 2026-04-02: Pagination completed — reusable Pagination component with numbered pages and prev/next controls, server-side skip/take pagination for items/[type], collections, and collections/[id] pages, centralized constants (ITEMS_PER_PAGE, COLLECTIONS_PER_PAGE, dashboard limits), CodeShelf navbar logo links to /dashboard
+- 2026-04-02: Settings Page completed — /settings protected route with Change Password and Delete Account moved from Profile, Settings link with gear icon in sidebar user dropdown, components moved to src/components/settings/
