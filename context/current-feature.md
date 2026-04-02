@@ -1,24 +1,16 @@
-# Current Feature: Favorite Toggle Buttons
+# Current Feature
 
 ## Goals
 
-- Enable the disabled favorite button in CollectionActions (collection detail page) to call `toggleCollectionFavorite`
-- Enable the disabled favorite button in CollectionCardMenu (3-dot dropdown on collection cards) to call `toggleCollectionFavorite`
-- Add interactive star toggle button to ItemCard for quick favorite toggling without opening the drawer
-- Add interactive star toggle button to CollectionCard for quick favorite toggling
-- All toggle buttons should show loading state, update UI optimistically, and show error toast on failure
+<!-- Goals for the current feature -->
 
 ## Notes
 
-- `toggleItemFavorite` server action and DB function already exist and work (used in ItemDrawer)
-- `toggleCollectionFavorite` server action and DB function already exist but are not wired to any UI
-- ItemCard and CollectionCard currently show a read-only star icon when favorited — convert to interactive buttons
-- ItemDrawer already has a working favorite toggle — use it as the pattern to follow
-- Favorites page already fetches and displays favorites correctly
+<!-- Additional context, constraints, or details -->
 
 ## Status
 
-In Progress
+Not Started
 
 ## History
 
@@ -72,3 +64,4 @@ In Progress
 - 2026-04-02: Settings Page completed — /settings protected route with Change Password and Delete Account moved from Profile, Settings link with gear icon in sidebar user dropdown, components moved to src/components/settings/
 - 2026-04-02: Editor Preferences Settings completed — editorPreferences JSON column on User model with migration, EditorPreferencesSection with font size/tab size/theme dropdowns and word wrap/minimap toggles, auto-save via server action with toast, EditorPreferencesContext provider in dashboard layout and settings page, Monaco CodeEditor wired to preferences with custom Monokai and GitHub Dark themes
 - 2026-04-02: Favorites Page completed — /dashboard/favorites with compact dev-focused list view, star button in TopBar, separate items/collections sections with counts, ItemDrawer on item click, collection navigation, toggleItemFavorite server action wired to ItemDrawer Star button, empty state
+- 2026-04-02: Favorite Toggle Buttons completed — interactive star buttons on ItemCard and CollectionCard (hover-reveal, always visible when favorited), enabled CollectionActions and CollectionCardMenu favorite buttons with toggleCollectionFavorite, optimistic UI with useEffect prop sync across all components
