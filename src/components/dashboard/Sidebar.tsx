@@ -6,6 +6,7 @@ import {
   ChevronDown,
   Star,
   LogOut,
+  Settings,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -176,6 +177,10 @@ export default function Sidebar({ itemTypes, sidebarCollections, user }: Sidebar
           <DropdownMenuContent side="top" align="start" className="w-56">
             <DropdownMenuItem render={<Link href="/profile" />}>
               Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem render={<Link href="/settings" />}>
+              <Settings className="h-4 w-4" />
+              Settings
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => signOut({ callbackUrl: "/sign-in" })}

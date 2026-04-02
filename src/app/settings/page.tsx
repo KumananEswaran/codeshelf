@@ -1,22 +1,19 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
-import { getProfileData, getProfileStats } from "@/lib/db/profile";
-import ProfileHeader from "@/components/profile/ProfileHeader";
-import ProfileStatsSection from "@/components/profile/ProfileStats";
+import { getProfileData } from "@/lib/db/profile";
+import ChangePasswordSection from "@/components/settings/ChangePasswordSection";
+import DeleteAccountSection from "@/components/settings/DeleteAccountSection";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-export default async function ProfilePage() {
+export default async function SettingsPage() {
   const session = await auth();
 
   if (!session?.user?.id) {
     redirect("/sign-in");
   }
 
-  const [profile, stats] = await Promise.all([
-    getProfileData(session.user.id),
-    getProfileStats(session.user.id),
-  ]);
+  const profile = await getProfileData(session.user.id);
 
   if (!profile) {
     redirect("/sign-in");
@@ -33,11 +30,11 @@ export default async function ProfilePage() {
           Back to Dashboard
         </Link>
 
-        <h1 className="text-2xl font-bold mb-8">Profile</h1>
+        <h1 className="text-2xl font-bold mb-8">Settings</h1>
 
         <div className="space-y-8">
-          <ProfileHeader profile={profile} />
-          <ProfileStatsSection stats={stats} />
+          {profile.hasPassword && <ChangePasswordSection />}
+          <DeleteAccountSection />
         </div>
       </div>
     </div>

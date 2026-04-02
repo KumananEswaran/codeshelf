@@ -1,16 +1,23 @@
-# Current Feature
+# Current Feature: Settings Page
 
 ## Goals
 
-<!-- Goals for the current feature -->
+- Create a `/settings` page (protected route)
+- Add a "Settings" link in the user icon dropdown at the bottom of the sidebar
+- Move "Delete Account" functionality from Profile to Settings
+- Move "Change Password" (forgot password) functionality from Profile to Settings
+- Profile page should only show user info and usage stats after the move
 
 ## Notes
 
-<!-- Additional context, constraints, or details -->
+- URL: `/settings`
+- Route must be protected (authenticated users only)
+- Reuse existing delete account dialog and change password form
+- Settings link goes in the sidebar user dropdown menu (alongside Profile and Sign out)
 
 ## Status
 
-Not Started
+In Progress
 
 ## History
 
