@@ -1,27 +1,16 @@
-# Current Feature: Global Search / Command Palette
+# Current Feature
 
 ## Goals
 
-- Open command palette with Cmd+K (Mac) / Ctrl+K (Windows)
-- Fuzzy search across all items and collections
-- Grouped results: Items section, Collections section
-- Keyboard navigation (arrow keys, Enter to select)
-- Show item type icon and collection item count in results
-- Navigate to item drawer or collection page on select
-- TopBar search input opens palette on click
-- Show ⌘K hint in search input placeholder
+<!-- Goals for the current feature -->
 
 ## Notes
 
-- Use shadcn `cmdk` component (Command)
-- Client-side fuzzy search (no server round-trips)
-- Pre-fetch searchable data on app load
-- Search data: items (id, title, type, content preview), collections (id, name, itemCount)
-- Reuse existing data fetching functions
+<!-- Additional context, constraints, or details -->
 
 ## Status
 
-In Progress
+Not Started
 
 ## History
 
@@ -70,3 +59,4 @@ In Progress
 - 2026-03-29: Add Items to Collection completed — many-to-many schema migration (Item↔Collection junction table), CollectionPicker multi-select component, collection selector in NewItemDialog and ItemDrawer edit mode, collections displayed as badges in ItemDrawer view mode
 - 2026-04-01: Collections Pages completed
 - 2026-04-02: Collection Management Actions completed — EditCollectionDialog, CollectionActions (detail page edit/delete/favorite buttons), CollectionCardMenu (3-dot dropdown on cards), CollectionCard client component with programmatic navigation, controlled AlertDialog for delete confirmation with redirect — /dashboard/collections page with all collections grid and New Collection button, /dashboard/collections/[id] page with grouped items (general cards, Images section, Files section), CollectionItemsList component, sidebar and collection card links updated to /dashboard/ prefix, getCollectionItems returns ItemWithDetails[]
+- 2026-04-02: Global Search / Command Palette completed — cmdk-based command palette (Ctrl+K / Cmd+K), fuzzy search across items and collections, grouped results with type icons and item counts, keyboard navigation, TopBar search button with Ctrl+K hint, /api/search route, global ItemDrawer for search-selected items
