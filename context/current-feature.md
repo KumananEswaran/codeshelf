@@ -1,22 +1,16 @@
-# Current Feature: Favorites Page Sorting
+# Current Feature
 
 ## Goals
 
-- Add a sort dropdown to the items section on /dashboard/favorites with options: Name (A-Z), Date (newest first), and Item Type
-- Add a sort dropdown to the collections section with options: Name (A-Z) and Date (newest first)
-- Sorting is client-side only (no server round-trips) since all favorites are already loaded
-- Persist sort choice in component state (resets on page navigation)
+<!-- Goals for the current feature -->
 
 ## Notes
 
-- FavoritesList is already a "use client" component — sorting fits naturally
-- Items have: title, createdAt, type.name — all needed for sorting
-- Collections have: name, updatedAt — sortable by name and date
-- Keep the compact list UI style, just add sort controls above each section
+<!-- Additional context, constraints, or details -->
 
 ## Status
 
-In Progress
+Not Started
 
 ## History
 
@@ -71,3 +65,4 @@ In Progress
 - 2026-04-02: Editor Preferences Settings completed — editorPreferences JSON column on User model with migration, EditorPreferencesSection with font size/tab size/theme dropdowns and word wrap/minimap toggles, auto-save via server action with toast, EditorPreferencesContext provider in dashboard layout and settings page, Monaco CodeEditor wired to preferences with custom Monokai and GitHub Dark themes
 - 2026-04-02: Favorites Page completed — /dashboard/favorites with compact dev-focused list view, star button in TopBar, separate items/collections sections with counts, ItemDrawer on item click, collection navigation, toggleItemFavorite server action wired to ItemDrawer Star button, empty state
 - 2026-04-02: Favorite Toggle Buttons completed — interactive star buttons on ItemCard and CollectionCard (hover-reveal, always visible when favorited), enabled CollectionActions and CollectionCardMenu favorite buttons with toggleCollectionFavorite, optimistic UI with useEffect prop sync across all components
+- 2026-04-02: Favorites Page Sorting completed — client-side sort dropdowns for items (Newest, Oldest, Name A-Z, Name Z-A, Type) and collections (Newest, Oldest, Name A-Z, Name Z-A) sections, useMemo for sorted lists, base-ui Select with value-as-label pattern for consistent casing
