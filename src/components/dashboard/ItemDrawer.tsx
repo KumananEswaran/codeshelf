@@ -33,7 +33,7 @@ import { MarkdownEditor } from "@/components/ui/markdown-editor";
 import { Separator } from "@/components/ui/separator";
 import { getIcon } from "@/lib/icon-map";
 import { formatDate, formatFileSize, getDownloadUrl } from "@/lib/utils";
-import { updateItem, deleteItem } from "@/actions/items";
+import { updateItem, deleteItem, toggleItemFavorite } from "@/actions/items";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -263,6 +263,15 @@ export default function ItemDrawer({ itemId, onClose }: ItemDrawerProps) {
                       ? "text-yellow-500"
                       : "text-muted-foreground"
                   }
+                  onClick={async () => {
+                    const result = await toggleItemFavorite(item.id);
+                    if (result.success) {
+                      setItem({ ...item, isFavorite: !item.isFavorite });
+                      router.refresh();
+                    } else {
+                      toast.error("Failed to toggle favorite");
+                    }
+                  }}
                 >
                   <Star
                     className={`h-4 w-4 ${item.isFavorite ? "fill-yellow-500" : ""}`}

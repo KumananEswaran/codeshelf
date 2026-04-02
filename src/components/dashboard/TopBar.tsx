@@ -1,6 +1,8 @@
 "use client";
 
-import { Search } from "lucide-react";
+import Link from "next/link";
+import { Search, Star } from "lucide-react";
+import { buttonVariants } from "@/components/ui/button";
 import NewItemDialog from "@/components/dashboard/NewItemDialog";
 import NewCollectionDialog from "@/components/dashboard/NewCollectionDialog";
 
@@ -23,6 +25,13 @@ export default function TopBar({ onSearchClick }: TopBarProps) {
         </kbd>
       </button>
       <div className="flex items-center gap-2">
+        <Link
+          href="/dashboard/favorites"
+          className={buttonVariants({ variant: "ghost", size: "icon", className: "text-muted-foreground hover:text-yellow-500" })}
+        >
+          <Star className="h-4 w-4" />
+          <span className="sr-only">Favorites</span>
+        </Link>
         <NewCollectionDialog />
         <NewItemDialog />
       </div>

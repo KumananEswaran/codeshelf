@@ -353,6 +353,39 @@ export async function getUserCollectionsForSelect(userId: string) {
   });
 }
 
+export interface FavoriteCollection {
+  id: string;
+  name: string;
+  description: string | null;
+  itemCount: number;
+  updatedAt: Date;
+}
+
+export async function getFavoriteCollections(
+  userId: string
+): Promise<FavoriteCollection[]> {
+  const collections = await prisma.collection.findMany({
+    where: { userId, isFavorite: true },
+    orderBy: { updatedAt: "desc" },
+    take: 50,
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      updatedAt: true,
+      _count: { select: { items: true } },
+    },
+  });
+
+  return collections.map((col) => ({
+    id: col.id,
+    name: col.name,
+    description: col.description,
+    itemCount: col._count.items,
+    updatedAt: col.updatedAt,
+  }));
+}
+
 export async function getCollectionStats(userId: string) {
   const [totalCollections, favoriteCollections] = await Promise.all([
     prisma.collection.count({ where: { userId } }),

@@ -451,6 +451,48 @@ export async function deleteItem(
   return { deleted: true, fileUrl: item.fileUrl };
 }
 
+export async function getFavoriteItems(
+  userId: string,
+  page = 1,
+  perPage = 21
+): Promise<PaginatedItems> {
+  const where = { userId, isFavorite: true };
+  const skip = (page - 1) * perPage;
+
+  const [items, totalCount] = await Promise.all([
+    prisma.item.findMany({
+      where,
+      orderBy: { updatedAt: "desc" },
+      skip,
+      take: perPage,
+      select: itemSelect,
+    }),
+    prisma.item.count({ where }),
+  ]);
+
+  return {
+    items: items.map(formatItem),
+    totalCount,
+    page,
+    totalPages: Math.ceil(totalCount / perPage),
+  };
+}
+
+export async function toggleItemFavorite(itemId: string, userId: string) {
+  const item = await prisma.item.findFirst({
+    where: { id: itemId, userId },
+    select: { id: true, isFavorite: true },
+  });
+
+  if (!item) return null;
+
+  return prisma.item.update({
+    where: { id: itemId },
+    data: { isFavorite: !item.isFavorite },
+    select: { id: true, isFavorite: true },
+  });
+}
+
 export async function getItemStats(userId: string) {
   const [totalItems, favoriteItems] = await Promise.all([
     prisma.item.count({ where: { userId } }),
