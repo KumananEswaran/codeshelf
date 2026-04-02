@@ -1,8 +1,9 @@
 import { redirect, notFound } from "next/navigation";
-import { FolderOpen, Star } from "lucide-react";
+import { FolderOpen } from "lucide-react";
 import { auth } from "@/auth";
 import { getCollectionById, getCollectionItems } from "@/lib/db/collections";
 import CollectionItemsList from "@/components/dashboard/CollectionItemsList";
+import CollectionActions from "@/components/dashboard/CollectionActions";
 
 export default async function CollectionPage({
   params,
@@ -25,12 +26,10 @@ export default async function CollectionPage({
       <div className="flex items-center gap-3 mb-6">
         <FolderOpen className="h-6 w-6 text-muted-foreground" />
         <h1 className="text-2xl font-bold">{collection.name}</h1>
-        {collection.isFavorite && (
-          <Star className="h-5 w-5 fill-yellow-500 text-yellow-500" />
-        )}
         <span className="text-sm text-muted-foreground">
           {collection._count.items} {collection._count.items === 1 ? "item" : "items"}
         </span>
+        <CollectionActions collection={collection} />
       </div>
 
       {collection.description && (
