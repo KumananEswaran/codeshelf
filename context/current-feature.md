@@ -1,26 +1,16 @@
-# Current Feature: Editor Preferences Settings
+# Current Feature
 
 ## Goals
 
-- Add editor preferences section to the settings page
-- Font size dropdown, tab size dropdown, word wrap toggle (default: on), minimap toggle (default: off)
-- Theme dropdown: vs-dark, monokai, github-dark (default: vs-dark)
-- Store preferences in JSON column `editorPreferences` on User model
-- Create and run a Prisma migration for the new column
-- Create server action to update preferences with auto-save on change
-- Show success toast on save
-- Create EditorPreferencesContext for client components
-- Apply settings to Monaco editor component
+<!-- Goals for the current feature -->
 
 ## Notes
 
-- Never use `db push` — must use `prisma migrate dev`
-- Auto-save on change, no explicit save button needed
-- Spec file: context/features/editor-settings-spec.md
+<!-- Additional context, constraints, or details -->
 
 ## Status
 
-In Progress
+Not Started
 
 ## History
 
@@ -72,3 +62,4 @@ In Progress
 - 2026-04-02: Global Search / Command Palette completed — cmdk-based command palette (Ctrl+K / Cmd+K), fuzzy search across items and collections, grouped results with type icons and item counts, keyboard navigation, TopBar search button with Ctrl+K hint, /api/search route, global ItemDrawer for search-selected items
 - 2026-04-02: Pagination completed — reusable Pagination component with numbered pages and prev/next controls, server-side skip/take pagination for items/[type], collections, and collections/[id] pages, centralized constants (ITEMS_PER_PAGE, COLLECTIONS_PER_PAGE, dashboard limits), CodeShelf navbar logo links to /dashboard
 - 2026-04-02: Settings Page completed — /settings protected route with Change Password and Delete Account moved from Profile, Settings link with gear icon in sidebar user dropdown, components moved to src/components/settings/
+- 2026-04-02: Editor Preferences Settings completed — editorPreferences JSON column on User model with migration, EditorPreferencesSection with font size/tab size/theme dropdowns and word wrap/minimap toggles, auto-save via server action with toast, EditorPreferencesContext provider in dashboard layout and settings page, Monaco CodeEditor wired to preferences with custom Monokai and GitHub Dark themes
