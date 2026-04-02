@@ -1,25 +1,16 @@
-# Current Feature: Favorites Page
+# Current Feature
 
 ## Goals
 
-- Add star icon button to TopBar linking to /favorites
-- Create protected /favorites route
-- Fetch all user favorited items and collections
-- Compact list view (VS Code/terminal style, not cards) — monospace font, minimal padding, high density
-- Each row: type icon, title, type badge, date added
-- Separate sections for items and collections with counts
-- Click item opens ItemDrawer, click collection navigates to /collections/[id]
-- Empty state when no favorites
-- Sort by most recently favorited (updatedAt)
+<!-- Goals for the current feature -->
 
 ## Notes
 
-- UI style: clean lines only, no cards or heavy borders, subtle hover states
-- Spec file: context/features/favorites-spec.md
+<!-- Additional context, constraints, or details -->
 
 ## Status
 
-In Progress
+Not Started
 
 ## History
 
@@ -72,3 +63,4 @@ In Progress
 - 2026-04-02: Pagination completed — reusable Pagination component with numbered pages and prev/next controls, server-side skip/take pagination for items/[type], collections, and collections/[id] pages, centralized constants (ITEMS_PER_PAGE, COLLECTIONS_PER_PAGE, dashboard limits), CodeShelf navbar logo links to /dashboard
 - 2026-04-02: Settings Page completed — /settings protected route with Change Password and Delete Account moved from Profile, Settings link with gear icon in sidebar user dropdown, components moved to src/components/settings/
 - 2026-04-02: Editor Preferences Settings completed — editorPreferences JSON column on User model with migration, EditorPreferencesSection with font size/tab size/theme dropdowns and word wrap/minimap toggles, auto-save via server action with toast, EditorPreferencesContext provider in dashboard layout and settings page, Monaco CodeEditor wired to preferences with custom Monokai and GitHub Dark themes
+- 2026-04-02: Favorites Page completed — /dashboard/favorites with compact dev-focused list view, star button in TopBar, separate items/collections sections with counts, ItemDrawer on item click, collection navigation, toggleItemFavorite server action wired to ItemDrawer Star button, empty state
