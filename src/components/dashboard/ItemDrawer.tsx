@@ -33,7 +33,7 @@ import { MarkdownEditor } from "@/components/ui/markdown-editor";
 import { Separator } from "@/components/ui/separator";
 import { getIcon } from "@/lib/icon-map";
 import { formatDate, formatFileSize, getDownloadUrl } from "@/lib/utils";
-import { updateItem, deleteItem, toggleItemFavorite } from "@/actions/items";
+import { updateItem, deleteItem, toggleItemFavorite, toggleItemPin } from "@/actions/items";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -281,10 +281,28 @@ export default function ItemDrawer({ itemId, onClose }: ItemDrawerProps) {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-muted-foreground"
+                  className={
+                    item.isPinned
+                      ? "text-blue-500"
+                      : "text-muted-foreground"
+                  }
+                  onClick={async () => {
+                    const prev = item.isPinned;
+                    setItem({ ...item, isPinned: !prev });
+                    const result = await toggleItemPin(item.id);
+                    if (result.success) {
+                      toast.success(prev ? "Unpinned" : "Pinned");
+                      router.refresh();
+                    } else {
+                      setItem({ ...item, isPinned: prev });
+                      toast.error("Failed to toggle pin");
+                    }
+                  }}
                 >
-                  <Pin className="h-4 w-4" />
-                  Pin
+                  <Pin
+                    className={`h-4 w-4 ${item.isPinned ? "fill-blue-500" : ""}`}
+                  />
+                  {item.isPinned ? "Unpin" : "Pin"}
                 </Button>
                 <Button
                   variant="ghost"

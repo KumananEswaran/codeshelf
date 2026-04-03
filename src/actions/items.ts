@@ -7,6 +7,7 @@ import {
   updateItem as updateItemQuery,
   deleteItem as deleteItemQuery,
   toggleItemFavorite as toggleItemFavoriteQuery,
+  toggleItemPin as toggleItemPinQuery,
 } from "@/lib/db/items";
 import { deleteFromR2, getR2KeyFromUrl } from "@/lib/r2";
 
@@ -132,6 +133,20 @@ export async function toggleItemFavorite(itemId: string) {
   }
 
   const result = await toggleItemFavoriteQuery(itemId, session.user.id);
+  if (!result) {
+    return { success: false as const, error: "Item not found" };
+  }
+
+  return { success: true as const, data: result };
+}
+
+export async function toggleItemPin(itemId: string) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false as const, error: "Unauthorized" };
+  }
+
+  const result = await toggleItemPinQuery(itemId, session.user.id);
   if (!result) {
     return { success: false as const, error: "Item not found" };
   }
