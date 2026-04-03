@@ -1,26 +1,16 @@
-# Current Feature: Stripe Integration Phase 1 — Core Infrastructure
+# Current Feature
 
 ## Goals
 
-- Install `stripe` npm package and create client singleton (`src/lib/stripe.ts`)
-- Define free-tier limit constants and helper functions (`src/lib/subscription.ts`)
-- Create DB helper functions for subscription lifecycle (`src/lib/db/subscription.ts`)
-- Add `isPro` to JWT token and session via NextAuth callbacks (`src/auth.ts`)
-- Augment NextAuth types for `isPro` (`src/types/next-auth.d.ts`)
-- Unit tests for the usage-limits module (`src/lib/subscription.test.ts`)
-- Update `.env.example` with Stripe price ID placeholders
+<!-- Goals for the current feature -->
 
 ## Notes
 
-- Pure backend phase — no UI, no webhooks, no Stripe Dashboard setup
-- `isPro` query piggybacks on existing `passwordChangedAt` DB call — no extra query
-- `PRO_TYPES` centralizes the set currently hardcoded in Sidebar.tsx
-- All DB helpers must be idempotent (safe to call multiple times)
-- See full spec: context/features/stripe-phase-1-spec.md
+<!-- Additional context, constraints, or details -->
 
 ## Status
 
-In Progress
+Not Started
 
 ## History
 
@@ -81,3 +71,4 @@ In Progress
 - 2026-04-03: Homepage completed — converted static prototype into Next.js homepage at root route, 8 components in src/components/homepage/ (Navbar, HeroSection, FeaturesSection, AiSection, PricingSection, CtaSection, Footer, ScrollFadeIn), chaos animation with rAF physics and mouse repulsion, pricing toggle, IntersectionObserver fade-ins, responsive layout, correct routing
 - 2026-04-03: Mobile TopBar Cleanup completed — search bar collapses to icon-only below sm breakpoint, New Collection and New Item buttons hide labels and show only + icons on mobile, all actions remain one tap away, labels reappear at 640px+
 - 2026-04-03: Auth Pages Nav + Dashboard Logo completed — homepage Navbar added to sign-in and register pages, FolderOpen icon replaces BookOpenText across homepage and dashboard sidebar, navbar links use absolute paths for cross-page navigation, logo smooth-scrolls on homepage, pricing toggle replaced with pill-style radio buttons
+- 2026-04-03: Stripe Integration Phase 1 completed — Stripe client singleton, free-tier limit constants and helpers (canCreateItem, canCreateCollection, requiresPro), subscription DB helpers (activate/deactivate/lookup), isPro wired into NextAuth JWT/session, type augmentations, 13 unit tests
