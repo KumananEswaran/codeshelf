@@ -1,24 +1,16 @@
-# Current Feature: Pinned Items
+# Current Feature
 
 ## Goals
 
-- Create toggleItemPin server action
-- Make Pin button in ItemDrawer clickable (exists but no onClick)
-- Optimistic UI updates for instant feedback
-- Toast notification on success/error
-- Pinned items sort to top of listings
-- Follow Favorite Button pattern
-- Items only (not collections)
-- Pin icon on ItemCard remains static indicator
+<!-- Goals for the current feature -->
 
 ## Notes
 
-- Make the existing Pin button in ItemDrawer functional with pinned items appearing at top of listings and on the dashboard in the pinned items section
-- Follow the same pattern used for Favorite Toggle Buttons
+<!-- Additional context, constraints, or details -->
 
 ## Status
 
-In Progress
+Not Started
 
 ## History
 
@@ -74,3 +66,4 @@ In Progress
 - 2026-04-02: Favorites Page completed — /dashboard/favorites with compact dev-focused list view, star button in TopBar, separate items/collections sections with counts, ItemDrawer on item click, collection navigation, toggleItemFavorite server action wired to ItemDrawer Star button, empty state
 - 2026-04-02: Favorite Toggle Buttons completed — interactive star buttons on ItemCard and CollectionCard (hover-reveal, always visible when favorited), enabled CollectionActions and CollectionCardMenu favorite buttons with toggleCollectionFavorite, optimistic UI with useEffect prop sync across all components
 - 2026-04-02: Favorites Page Sorting completed — client-side sort dropdowns for items (Newest, Oldest, Name A-Z, Name Z-A, Type) and collections (Newest, Oldest, Name A-Z, Name Z-A) sections, useMemo for sorted lists, base-ui Select with value-as-label pattern for consistent casing
+- 2026-04-03: Pinned Items completed — toggleItemPin DB function and server action, functional Pin button in ItemDrawer with optimistic UI and toast, blue color scheme for pinned state, pinned items sort to top of type listings
