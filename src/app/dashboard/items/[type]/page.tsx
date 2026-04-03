@@ -58,8 +58,10 @@ export default async function ItemsListPage({
         {DIALOG_TYPES.has(typeName) && (
           <div className="ml-auto">
             <NewItemDialog defaultType={typeName as ItemType}>
-              <Plus className="h-4 w-4 mr-2" />
-              New {typeName.charAt(0).toUpperCase() + typeName.slice(1)}
+              <Plus className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">
+                New {typeName.charAt(0).toUpperCase() + typeName.slice(1)}
+              </span>
             </NewItemDialog>
           </div>
         )}
