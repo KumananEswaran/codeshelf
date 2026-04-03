@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { PanelLeft } from "lucide-react";
+import { FolderOpen, PanelLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -63,7 +63,8 @@ export default function DashboardShell({
         }`}
       >
         <div className="flex items-center gap-2 px-4 h-14.25 shrink-0">
-          <Link href="/dashboard" className="text-lg font-bold text-sidebar-foreground whitespace-nowrap">
+          <Link href="/dashboard" className="flex items-center gap-2 text-lg font-bold text-sidebar-foreground whitespace-nowrap">
+            <FolderOpen className="size-5" />
             CodeShelf
           </Link>
         </div>
@@ -92,7 +93,8 @@ export default function DashboardShell({
             <SheetContent side="left" className="w-64 p-0">
               <SheetTitle className="sr-only">Sidebar navigation</SheetTitle>
               <div className="flex items-center gap-2 px-4 h-14.25 shrink-0 border-b border-border">
-                <Link href="/dashboard" className="text-lg font-bold text-sidebar-foreground">
+                <Link href="/dashboard" className="flex items-center gap-2 text-lg font-bold text-sidebar-foreground">
+                  <FolderOpen className="size-5" />
                   CodeShelf
                 </Link>
               </div>

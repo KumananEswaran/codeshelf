@@ -44,25 +44,32 @@ export function PricingSection() {
         </ScrollFadeIn>
 
         {/* Toggle */}
-        <ScrollFadeIn className="flex items-center justify-center gap-3 mb-12">
-          <span className={`text-[0.9375rem] transition-colors ${!isYearly ? "text-[#e4e4e7]" : "text-[#71717a]"}`}>
-            Monthly
-          </span>
-          <button
-            onClick={() => setIsYearly(!isYearly)}
-            className={`relative w-12 h-[26px] rounded-[13px] border-none cursor-pointer transition-colors ${
-              isYearly ? "bg-[#3b82f6]" : "bg-[#2a2a3a]"
-            }`}
-            aria-label="Toggle annual pricing"
-          >
-            <span className="toggle-knob" style={isYearly ? { transform: "translateX(22px)" } : undefined} />
-          </button>
-          <span className={`text-[0.9375rem] flex items-center gap-2 transition-colors ${isYearly ? "text-[#e4e4e7]" : "text-[#71717a]"}`}>
-            Yearly{" "}
-            <span className="px-2 py-0.5 bg-[#22c55e]/15 text-[#22c55e] text-xs font-semibold rounded-full">
-              Save 25%
-            </span>
-          </span>
+        <ScrollFadeIn className="flex items-center justify-center mb-12">
+          <div className="inline-flex items-center bg-[#1e1e2e] rounded-full p-1 gap-1">
+            <button
+              onClick={() => setIsYearly(false)}
+              className={`px-5 py-1.5 rounded-full text-[0.875rem] font-medium transition-all ${
+                !isYearly
+                  ? "bg-[#e4e4e7] text-[#0a0a0f]"
+                  : "text-[#71717a] hover:text-[#e4e4e7]"
+              }`}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setIsYearly(true)}
+              className={`px-5 py-1.5 rounded-full text-[0.875rem] font-medium transition-all flex items-center gap-2 ${
+                isYearly
+                  ? "bg-[#e4e4e7] text-[#0a0a0f]"
+                  : "text-[#71717a] hover:text-[#e4e4e7]"
+              }`}
+            >
+              Yearly
+              <span className="px-2 py-0.5 bg-[#22c55e]/15 text-[#22c55e] text-xs font-semibold rounded-full">
+                Save 25%
+              </span>
+            </button>
+          </div>
         </ScrollFadeIn>
 
         {/* Cards */}
