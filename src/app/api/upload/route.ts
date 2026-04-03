@@ -11,7 +11,7 @@ export async function POST(request: Request) {
 
     if (!session.user.isPro) {
       return NextResponse.json(
-        { error: "Pro required" },
+        { error: "File uploads require a Pro subscription. Upgrade to Pro to upload files and images." },
         { status: 403 }
       );
     }

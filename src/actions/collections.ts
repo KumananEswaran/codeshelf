@@ -29,7 +29,7 @@ export async function createCollection(
     if (count >= FREE_LIMITS.MAX_COLLECTIONS) {
       return {
         success: false as const,
-        error: `Free plan limit reached (${FREE_LIMITS.MAX_COLLECTIONS} collections). Upgrade to Pro for unlimited.`,
+        error: `Free plan limit reached (${FREE_LIMITS.MAX_COLLECTIONS} collections). Upgrade to Pro for unlimited collections.`,
       };
     }
   }
