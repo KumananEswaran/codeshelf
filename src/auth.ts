@@ -23,7 +23,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       if (token.sub && token.issuedAt) {
         const dbUser = await prisma.user.findUnique({
           where: { id: token.sub },
-          select: { passwordChangedAt: true },
+          select: { passwordChangedAt: true, isPro: true },
         });
         if (
           dbUser?.passwordChangedAt &&
@@ -31,6 +31,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         ) {
           return null as unknown as typeof token;
         }
+        token.isPro = dbUser?.isPro ?? false;
       }
       return token;
     },
@@ -38,6 +39,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       if (token.sub) {
         session.user.id = token.sub;
       }
+      session.user.isPro = (token.isPro as boolean) ?? false;
       return session;
     },
   },

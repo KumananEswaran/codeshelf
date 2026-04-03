@@ -1,16 +1,26 @@
-# Current Feature
+# Current Feature: Stripe Integration Phase 1 — Core Infrastructure
 
 ## Goals
 
-<!-- Goals for the current feature -->
+- Install `stripe` npm package and create client singleton (`src/lib/stripe.ts`)
+- Define free-tier limit constants and helper functions (`src/lib/subscription.ts`)
+- Create DB helper functions for subscription lifecycle (`src/lib/db/subscription.ts`)
+- Add `isPro` to JWT token and session via NextAuth callbacks (`src/auth.ts`)
+- Augment NextAuth types for `isPro` (`src/types/next-auth.d.ts`)
+- Unit tests for the usage-limits module (`src/lib/subscription.test.ts`)
+- Update `.env.example` with Stripe price ID placeholders
 
 ## Notes
 
-<!-- Additional context, constraints, or details -->
+- Pure backend phase — no UI, no webhooks, no Stripe Dashboard setup
+- `isPro` query piggybacks on existing `passwordChangedAt` DB call — no extra query
+- `PRO_TYPES` centralizes the set currently hardcoded in Sidebar.tsx
+- All DB helpers must be idempotent (safe to call multiple times)
+- See full spec: context/features/stripe-phase-1-spec.md
 
 ## Status
 
-Not Started
+In Progress
 
 ## History
 
