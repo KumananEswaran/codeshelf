@@ -1,30 +1,16 @@
-# Current Feature: Stripe Integration Phase 2 — Webhooks, Feature Gating & UI
+# Current Feature
 
 ## Goals
 
-- Create Stripe Checkout session API route (POST, auth required, monthly/yearly price validation)
-- Create Stripe Customer Portal API route (POST, auth required)
-- Create Stripe webhook handler (signature verification, checkout.session.completed, subscription.updated/deleted)
-- Add BillingSection component to Settings page (upgrade buttons for free users, manage subscription for Pro)
-- Add reusable UpgradePrompt component for limit gates
-- Enforce free-tier limits: 50 items, 3 collections, no file uploads
-- Wire `isPro` through dashboard layout and sidebar
-- Cancel Stripe subscription on account deletion
-- Update homepage pricing CTA for logged-in users
+<!-- Goals for the current feature -->
 
 ## Notes
 
-- Requires Stripe Dashboard products/prices already created (RM29/mo, RM252/yr)
-- Stripe Customer Portal must be configured in Stripe Dashboard
-- Stripe CLI needed for local webhook testing (`stripe listen --forward-to localhost:3000/api/webhooks/stripe`)
-- Uses `NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY` and `NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY` env vars for client
-- Webhook uses raw body via `request.text()` for signature verification
-- `invoice.payment_failed` is a no-op for now (Stripe handles dunning)
-- See full spec: context/features/stripe-phase-2-spec.md
+<!-- Additional context, constraints, or details -->
 
 ## Status
 
-In Progress
+Not Started
 
 ## History
 
@@ -86,3 +72,4 @@ In Progress
 - 2026-04-03: Mobile TopBar Cleanup completed — search bar collapses to icon-only below sm breakpoint, New Collection and New Item buttons hide labels and show only + icons on mobile, all actions remain one tap away, labels reappear at 640px+
 - 2026-04-03: Auth Pages Nav + Dashboard Logo completed — homepage Navbar added to sign-in and register pages, FolderOpen icon replaces BookOpenText across homepage and dashboard sidebar, navbar links use absolute paths for cross-page navigation, logo smooth-scrolls on homepage, pricing toggle replaced with pill-style radio buttons
 - 2026-04-03: Stripe Integration Phase 1 completed — Stripe client singleton, free-tier limit constants and helpers (canCreateItem, canCreateCollection, requiresPro), subscription DB helpers (activate/deactivate/lookup), isPro wired into NextAuth JWT/session, type augmentations, 13 unit tests
+- 2026-04-03: Stripe Integration Phase 2 completed — Checkout/portal API routes, webhook handler (checkout.session.completed, subscription.updated/deleted, invoice.payment_failed), BillingSection with usage stats in settings, free-tier limits enforced on items (50), collections (3) and file uploads, isPro wired through dashboard layout/sidebar, UpgradePrompt component, Stripe sub cancelled on account deletion, homepage pricing CTA for logged-in users
