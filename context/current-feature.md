@@ -1,16 +1,30 @@
-# Current Feature
+# Current Feature: Homepage Mockup
 
 ## Goals
 
-<!-- Goals for the current feature -->
+- Create a static marketing homepage in `prototypes/homepage/` with `index.html`, `styles.css`, `script.js`
+- Hero section with "chaos to order" concept: floating icons (left), pulsing arrow (center), dashboard preview (right)
+- Chaos icons animate with requestAnimationFrame — drift, bounce, repel from mouse cursor
+- Fixed navbar with logo, Features/Pricing links, Sign In/Get Started buttons
+- Hero text with gradient headline, subheadline, CTA buttons
+- Features grid: 6 cards (Code Snippets, AI Prompts, Instant Search, Commands, Files & Docs, Collections) with item type accent colors
+- AI section: two-column layout with Pro badge, capability checklist, and code editor mockup with AI-generated tags demo
+- Pricing section: Free vs Pro cards with monthly/yearly toggle ($8/mo or $72/yr), Pro highlighted with "Most Popular" badge
+- CTA section and footer with logo, link columns, copyright
+- Scroll-triggered fade-in animations, navbar opacity on scroll
+- Responsive: mobile stacks vertically, arrow rotates 90°, single-column grids
 
 ## Notes
 
-<!-- Additional context, constraints, or details -->
+- Brand name in spec is "DevStash" but project is "CodeShelf" — use **CodeShelf** branding
+- Dark theme with item type accent colors: Snippet #3b82f6, Prompt #f59e0b, Command #06b6d4, Note #22c55e, File #64748b, Image #ec4899, URL #6366f1
+- Chaos container icons: Notion, GitHub, Slack, VS Code, Browser tabs, Terminal, Text file, Bookmark
+- Pure HTML/CSS/JS — no frameworks, this is a standalone prototype
+- Full spec at context/features/homepage-mockup-spec.md
 
 ## Status
 
-Not Started
+In Progress
 
 ## History
 
