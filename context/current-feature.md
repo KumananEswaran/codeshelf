@@ -1,16 +1,28 @@
-# Current Feature
+# Current Feature: Homepage
 
 ## Goals
 
-<!-- Goals for the current feature -->
+- Convert the static prototype in `prototypes/homepage/` into the actual Next.js app homepage at `/` (root route)
+- Match the mockup's layout, content, and dark theme using Tailwind CSS and ShadCN components
+- Sections: Navbar, Hero (chaos-to-order animation), Features grid, AI Section, Pricing (monthly/yearly toggle), CTA, Footer
+- Server components by default; client components only for HeroSection (animation), PricingSection (toggle), MobileNav (menu state)
+- Use ShadCN Button, Lucide icons, smooth scroll anchors, IntersectionObserver fade-ins
+- All links route correctly (Sign In → /sign-in, Get Started → /register, anchors → #features/#pricing)
+- Responsive: match prototype breakpoints (1024px, 768px, 480px)
 
 ## Notes
 
-<!-- Additional context, constraints, or details -->
+- Components go in `src/components/homepage/`
+- Root page: `src/app/page.tsx`
+- Port chaos animation from `prototypes/homepage/script.js` into React useEffect with requestAnimationFrame
+- Navbar scroll effect: backdrop blur + border on scroll > 20px
+- Pricing toggle: swap RM29/mo ↔ RM21/mo billed yearly
+- Refer to prototype files: `prototypes/homepage/index.html`, `styles.css`, `script.js`
+- Full spec: `context/features/homepage-spec.md`
 
 ## Status
 
-Not Started
+In Progress
 
 ## History
 

@@ -279,3 +279,88 @@
     margin-right: 0.5rem;
   }
 }
+
+/* ========================================
+   Homepage Styles
+   ======================================== */
+
+.gradient-text {
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Chaos Animation */
+.chaos-icon {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #71717a;
+  background: #16161f;
+  border: 1px solid #1e1e2e;
+  border-radius: 10px;
+  cursor: default;
+  will-change: transform;
+  transition: color 0.2s;
+}
+.chaos-icon:hover {
+  color: #e4e4e7;
+}
+
+/* Transform Arrow Pulse */
+@keyframes pulse-arrow {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+/* Dashboard Preview */
+.preview-card {
+  border-top: 3px solid var(--card-color, #2a2a3a);
+}
+
+/* Code Mockup Syntax */
+.code-mockup .kw { color: #c678dd; }
+.code-mockup .fn { color: #61afef; }
+.code-mockup .str { color: #98c379; }
+.code-mockup .type { color: #e5c07b; }
+
+/* Pricing Toggle */
+.toggle-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+.toggle-active .toggle-knob {
+  transform: translateX(22px);
+}
+
+/* Scroll Fade-In */
+.fade-in-section {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.fade-in-section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Mobile arrow rotation */
+@media (max-width: 768px) {
+  .hero-arrow-mobile {
+    transform: rotate(90deg);
+  }
+  @keyframes pulse-arrow {
+    0%, 100% { opacity: 0.5; transform: rotate(90deg) scale(1); }
+    50% { opacity: 1; transform: rotate(90deg) scale(1.15); }
+  }
+}
