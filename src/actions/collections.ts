@@ -8,6 +8,8 @@ import {
   deleteCollection as deleteCollectionQuery,
   toggleCollectionFavorite as toggleFavoriteQuery,
 } from "@/lib/db/collections";
+import { getUserCollectionCount } from "@/lib/db/subscription";
+import { FREE_LIMITS } from "@/lib/subscription";
 
 const collectionSchema = z.object({
   name: z.string().trim().min(1, "Name is required"),
@@ -20,6 +22,16 @@ export async function createCollection(
   const session = await auth();
   if (!session?.user?.id) {
     return { success: false as const, error: "Unauthorized" };
+  }
+
+  if (!session.user.isPro) {
+    const count = await getUserCollectionCount(session.user.id);
+    if (count >= FREE_LIMITS.MAX_COLLECTIONS) {
+      return {
+        success: false as const,
+        error: `Free plan limit reached (${FREE_LIMITS.MAX_COLLECTIONS} collections). Upgrade to Pro for unlimited.`,
+      };
+    }
   }
 
   const parsed = collectionSchema.safeParse(data);

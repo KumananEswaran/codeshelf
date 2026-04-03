@@ -31,12 +31,15 @@ export default async function DashboardLayout({
     image: session.user.image ?? null,
   };
 
+  const isPro = session.user.isPro ?? false;
+
   return (
     <EditorPreferencesProvider initialPreferences={editorPreferences}>
       <DashboardShell
         itemTypes={itemTypes}
         sidebarCollections={sidebarCollections}
         user={user}
+        isPro={isPro}
       >
         {children}
       </DashboardShell>

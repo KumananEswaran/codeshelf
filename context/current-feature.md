@@ -1,16 +1,30 @@
-# Current Feature
+# Current Feature: Stripe Integration Phase 2 — Webhooks, Feature Gating & UI
 
 ## Goals
 
-<!-- Goals for the current feature -->
+- Create Stripe Checkout session API route (POST, auth required, monthly/yearly price validation)
+- Create Stripe Customer Portal API route (POST, auth required)
+- Create Stripe webhook handler (signature verification, checkout.session.completed, subscription.updated/deleted)
+- Add BillingSection component to Settings page (upgrade buttons for free users, manage subscription for Pro)
+- Add reusable UpgradePrompt component for limit gates
+- Enforce free-tier limits: 50 items, 3 collections, no file uploads
+- Wire `isPro` through dashboard layout and sidebar
+- Cancel Stripe subscription on account deletion
+- Update homepage pricing CTA for logged-in users
 
 ## Notes
 
-<!-- Additional context, constraints, or details -->
+- Requires Stripe Dashboard products/prices already created (RM29/mo, RM252/yr)
+- Stripe Customer Portal must be configured in Stripe Dashboard
+- Stripe CLI needed for local webhook testing (`stripe listen --forward-to localhost:3000/api/webhooks/stripe`)
+- Uses `NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY` and `NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY` env vars for client
+- Webhook uses raw body via `request.text()` for signature verification
+- `invoice.payment_failed` is a no-op for now (Stripe handles dunning)
+- See full spec: context/features/stripe-phase-2-spec.md
 
 ## Status
 
-Not Started
+In Progress
 
 ## History
 

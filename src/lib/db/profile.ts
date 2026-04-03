@@ -7,6 +7,8 @@ export interface ProfileData {
   image: string | null;
   createdAt: Date;
   hasPassword: boolean;
+  isPro: boolean;
+  hasStripeCustomer: boolean;
 }
 
 export interface ProfileStats {
@@ -25,6 +27,8 @@ export async function getProfileData(userId: string): Promise<ProfileData | null
       image: true,
       password: true,
       createdAt: true,
+      isPro: true,
+      stripeCustomerId: true,
     },
   });
 
@@ -37,6 +41,8 @@ export async function getProfileData(userId: string): Promise<ProfileData | null
     image: user.image,
     createdAt: user.createdAt,
     hasPassword: !!user.password,
+    isPro: user.isPro,
+    hasStripeCustomer: !!user.stripeCustomerId,
   };
 }
 

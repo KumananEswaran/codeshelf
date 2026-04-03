@@ -31,6 +31,7 @@ interface DashboardShellProps {
     recents: SidebarCollection[];
   };
   user: SessionUser | null;
+  isPro: boolean;
 }
 
 export default function DashboardShell({
@@ -38,6 +39,7 @@ export default function DashboardShell({
   itemTypes,
   sidebarCollections,
   user,
+  isPro,
 }: DashboardShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [commandOpen, setCommandOpen] = useState(false);
@@ -73,6 +75,7 @@ export default function DashboardShell({
             itemTypes={itemTypes}
             sidebarCollections={sidebarCollections}
             user={user}
+            isPro={isPro}
           />
         </div>
       </aside>
@@ -102,6 +105,7 @@ export default function DashboardShell({
                 itemTypes={itemTypes}
                 sidebarCollections={sidebarCollections}
                 user={user}
+                isPro={isPro}
               />
             </SheetContent>
           </Sheet>

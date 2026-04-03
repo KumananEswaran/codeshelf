@@ -18,10 +18,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import UserAvatar from "@/components/UserAvatar";
 import { getIcon } from "@/lib/icon-map";
+import { PRO_TYPES } from "@/lib/subscription";
 import type { ItemTypeWithCount } from "@/lib/db/items";
 import type { SidebarCollection } from "@/lib/db/collections";
-
-const PRO_TYPES = new Set(["file", "image"]);
 
 interface SessionUser {
   name: string | null;
@@ -36,9 +35,10 @@ interface SidebarProps {
     recents: SidebarCollection[];
   };
   user: SessionUser | null;
+  isPro: boolean;
 }
 
-export default function Sidebar({ itemTypes, sidebarCollections, user }: SidebarProps) {
+export default function Sidebar({ itemTypes, sidebarCollections, user, isPro }: SidebarProps) {
   const { favorites, recents } = sidebarCollections;
 
   return (
@@ -69,7 +69,7 @@ export default function Sidebar({ itemTypes, sidebarCollections, user }: Sidebar
                     })()}
                   </span>
                   <span>{type.name[0].toUpperCase() + type.name.slice(1)}s</span>
-                  {PRO_TYPES.has(type.name) && (
+                  {!isPro && PRO_TYPES.has(type.name) && (
                     <Badge variant="secondary" className="h-4 px-1.5 text-[10px] font-semibold tracking-wide">
                       PRO
                     </Badge>

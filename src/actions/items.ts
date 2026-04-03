@@ -9,6 +9,8 @@ import {
   toggleItemFavorite as toggleItemFavoriteQuery,
   toggleItemPin as toggleItemPinQuery,
 } from "@/lib/db/items";
+import { getUserItemCount } from "@/lib/db/subscription";
+import { FREE_LIMITS } from "@/lib/subscription";
 import { deleteFromR2, getR2KeyFromUrl } from "@/lib/r2";
 
 const ALLOWED_TYPES = ["snippet", "prompt", "command", "note", "link", "file", "image"] as const;
@@ -41,6 +43,16 @@ export async function createItem(
   const session = await auth();
   if (!session?.user?.id) {
     return { success: false as const, error: "Unauthorized" };
+  }
+
+  if (!session.user.isPro) {
+    const count = await getUserItemCount(session.user.id);
+    if (count >= FREE_LIMITS.MAX_ITEMS) {
+      return {
+        success: false as const,
+        error: `Free plan limit reached (${FREE_LIMITS.MAX_ITEMS} items). Upgrade to Pro for unlimited items.`,
+      };
+    }
   }
 
   const parsed = createItemSchema.safeParse(data);

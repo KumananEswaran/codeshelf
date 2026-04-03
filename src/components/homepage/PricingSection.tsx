@@ -27,7 +27,11 @@ const PRO_FEATURES = [
   "Export (JSON / ZIP)",
 ];
 
-export function PricingSection() {
+interface PricingSectionProps {
+  isLoggedIn?: boolean;
+}
+
+export function PricingSection({ isLoggedIn = false }: PricingSectionProps) {
   const [isYearly, setIsYearly] = useState(false);
 
   return (
@@ -95,13 +99,13 @@ export function PricingSection() {
                 ))}
               </ul>
               <Link
-                href="/register"
+                href={isLoggedIn ? "/dashboard" : "/register"}
                 className={cn(
                   buttonVariants({ variant: "outline" }),
                   "w-full border-[#2a2a3a] bg-transparent text-[#e4e4e7] hover:bg-[#16161f] hover:border-[#52525b]"
                 )}
               >
-                Get Started
+                {isLoggedIn ? "Go to Dashboard" : "Get Started"}
               </Link>
             </div>
           </ScrollFadeIn>
@@ -130,13 +134,13 @@ export function PricingSection() {
                 ))}
               </ul>
               <Link
-                href="/register"
+                href={isLoggedIn ? "/settings" : "/register"}
                 className={cn(
                   buttonVariants(),
                   "w-full bg-[#3b82f6] hover:bg-[#2563eb] text-white"
                 )}
               >
-                Upgrade to Pro
+                {isLoggedIn ? "Upgrade to Pro" : "Get Started"}
               </Link>
             </div>
           </ScrollFadeIn>

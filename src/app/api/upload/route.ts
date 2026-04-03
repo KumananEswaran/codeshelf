@@ -9,6 +9,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    if (!session.user.isPro) {
+      return NextResponse.json(
+        { error: "Pro required" },
+        { status: 403 }
+      );
+    }
+
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
     const itemType = formData.get("itemType") as "file" | "image" | null;
