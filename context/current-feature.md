@@ -1,28 +1,16 @@
-# Current Feature: Homepage
+# Current Feature
 
 ## Goals
 
-- Convert the static prototype in `prototypes/homepage/` into the actual Next.js app homepage at `/` (root route)
-- Match the mockup's layout, content, and dark theme using Tailwind CSS and ShadCN components
-- Sections: Navbar, Hero (chaos-to-order animation), Features grid, AI Section, Pricing (monthly/yearly toggle), CTA, Footer
-- Server components by default; client components only for HeroSection (animation), PricingSection (toggle), MobileNav (menu state)
-- Use ShadCN Button, Lucide icons, smooth scroll anchors, IntersectionObserver fade-ins
-- All links route correctly (Sign In → /sign-in, Get Started → /register, anchors → #features/#pricing)
-- Responsive: match prototype breakpoints (1024px, 768px, 480px)
+<!-- Goals for the current feature -->
 
 ## Notes
 
-- Components go in `src/components/homepage/`
-- Root page: `src/app/page.tsx`
-- Port chaos animation from `prototypes/homepage/script.js` into React useEffect with requestAnimationFrame
-- Navbar scroll effect: backdrop blur + border on scroll > 20px
-- Pricing toggle: swap RM29/mo ↔ RM21/mo billed yearly
-- Refer to prototype files: `prototypes/homepage/index.html`, `styles.css`, `script.js`
-- Full spec: `context/features/homepage-spec.md`
+<!-- Additional context, constraints, or details -->
 
 ## Status
 
-In Progress
+Not Started
 
 ## History
 
@@ -80,3 +68,4 @@ In Progress
 - 2026-04-02: Favorites Page Sorting completed — client-side sort dropdowns for items (Newest, Oldest, Name A-Z, Name Z-A, Type) and collections (Newest, Oldest, Name A-Z, Name Z-A) sections, useMemo for sorted lists, base-ui Select with value-as-label pattern for consistent casing
 - 2026-04-03: Pinned Items completed — toggleItemPin DB function and server action, functional Pin button in ItemDrawer with optimistic UI and toast, blue color scheme for pinned state, pinned items sort to top of type listings
 - 2026-04-03: Homepage Mockup completed — static marketing page in prototypes/homepage/ with dark theme, hero chaos-to-order animation (requestAnimationFrame floating icons with mouse repulsion), dashboard preview mockup, features grid, AI showcase section, MYR pricing with monthly/yearly toggle, CTA, footer, scroll fade-in animations, responsive layout
+- 2026-04-03: Homepage completed — converted static prototype into Next.js homepage at root route, 8 components in src/components/homepage/ (Navbar, HeroSection, FeaturesSection, AiSection, PricingSection, CtaSection, Footer, ScrollFadeIn), chaos animation with rAF physics and mouse repulsion, pricing toggle, IntersectionObserver fade-ins, responsive layout, correct routing
