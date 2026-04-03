@@ -1,22 +1,16 @@
-# Current Feature: Mobile TopBar Cleanup
+# Current Feature
 
 ## Goals
 
-- Collapse search bar to icon-only on small screens (< sm), clicking opens the command palette
-- Hide "New Collection" and "New Item" button labels on small screens, show only the + icons
-- All actions remain one tap away — no functionality removed, just labels hidden
-- Top bar should fit comfortably at 320px width
+<!-- Goals for the current feature -->
 
 ## Notes
 
-- Files to modify: `src/components/dashboard/TopBar.tsx`, `src/components/dashboard/NewItemDialog.tsx`, `src/components/dashboard/NewCollectionDialog.tsx`
-- Search bar already triggers `onSearchClick` (command palette) — on mobile just render an icon button instead
-- NewCollectionDialog and NewItemDialog trigger buttons have `<Plus icon> + text` — hide text on mobile via `hidden sm:inline`
-- No new components needed, purely responsive class changes
+<!-- Additional context, constraints, or details -->
 
 ## Status
 
-In Progress
+Not Started
 
 ## History
 
@@ -75,3 +69,4 @@ In Progress
 - 2026-04-03: Pinned Items completed — toggleItemPin DB function and server action, functional Pin button in ItemDrawer with optimistic UI and toast, blue color scheme for pinned state, pinned items sort to top of type listings
 - 2026-04-03: Homepage Mockup completed — static marketing page in prototypes/homepage/ with dark theme, hero chaos-to-order animation (requestAnimationFrame floating icons with mouse repulsion), dashboard preview mockup, features grid, AI showcase section, MYR pricing with monthly/yearly toggle, CTA, footer, scroll fade-in animations, responsive layout
 - 2026-04-03: Homepage completed — converted static prototype into Next.js homepage at root route, 8 components in src/components/homepage/ (Navbar, HeroSection, FeaturesSection, AiSection, PricingSection, CtaSection, Footer, ScrollFadeIn), chaos animation with rAF physics and mouse repulsion, pricing toggle, IntersectionObserver fade-ins, responsive layout, correct routing
+- 2026-04-03: Mobile TopBar Cleanup completed — search bar collapses to icon-only below sm breakpoint, New Collection and New Item buttons hide labels and show only + icons on mobile, all actions remain one tap away, labels reappear at 640px+
