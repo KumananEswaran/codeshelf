@@ -31,8 +31,8 @@ interface Particle {
   scaleDir: number;
 }
 
-const REPEL_RADIUS = 100;
-const REPEL_STRENGTH = 3;
+const REPEL_RADIUS = 80;
+const REPEL_STRENGTH = 1.2;
 const ICON_SIZE = 60;
 
 export function HeroSection() {
@@ -55,14 +55,14 @@ export function HeroSection() {
     particlesRef.current = CHAOS_ICONS.map(() => {
       const x = padding + Math.random() * (w - ICON_SIZE - padding * 2);
       const y = padding + Math.random() * (h - ICON_SIZE - padding * 2);
-      const speed = 0.05 + Math.random() * 0.1;
+      const speed = 0.04 + Math.random() * 0.06;
       const angle = Math.random() * Math.PI * 2;
       return {
         x, y,
         vx: Math.cos(angle) * speed,
         vy: Math.sin(angle) * speed,
         rotation: Math.random() * 360,
-        rotSpeed: (Math.random() - 0.5) * 0.5,
+        rotSpeed: (Math.random() - 0.5) * 0.2,
         scale: 0.9 + Math.random() * 0.2,
         scaleDir: Math.random() > 0.5 ? 1 : -1,
       };
@@ -87,11 +87,16 @@ export function HeroSection() {
         p.vy += (dy / dist) * force;
       }
 
-      p.vx *= 0.98;
-      p.vy *= 0.98;
+      p.vx *= 0.96;
+      p.vy *= 0.96;
 
       const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-      const minSpeed = 0.04;
+      const maxSpeed = 0.8;
+      if (speed > maxSpeed) {
+        p.vx = (p.vx / speed) * maxSpeed;
+        p.vy = (p.vy / speed) * maxSpeed;
+      }
+      const minSpeed = 0.03;
       if (speed < minSpeed && speed > 0) {
         p.vx = (p.vx / speed) * minSpeed;
         p.vy = (p.vy / speed) * minSpeed;
@@ -100,19 +105,15 @@ export function HeroSection() {
       p.x += p.vx;
       p.y += p.vy;
 
-      if (p.x < 0) { p.x = 0; p.vx *= -1; }
-      if (p.x > w - ICON_SIZE) { p.x = w - ICON_SIZE; p.vx *= -1; }
-      if (p.y < 0) { p.y = 0; p.vy *= -1; }
-      if (p.y > h - ICON_SIZE) { p.y = h - ICON_SIZE; p.vy *= -1; }
-
-      p.rotation += p.rotSpeed;
-      p.scale += p.scaleDir * 0.001;
-      if (p.scale > 1.1) p.scaleDir = -1;
-      if (p.scale < 0.85) p.scaleDir = 1;
+      const inset = 8;
+      if (p.x < inset) { p.x = inset; p.vx *= -1; }
+      if (p.x > w - ICON_SIZE - inset) { p.x = w - ICON_SIZE - inset; p.vx *= -1; }
+      if (p.y < inset) { p.y = inset; p.vy *= -1; }
+      if (p.y > h - ICON_SIZE - inset) { p.y = h - ICON_SIZE - inset; p.vy *= -1; }
 
       const el = iconRefs.current[i];
       if (el) {
-        el.style.transform = `translate(${p.x}px, ${p.y}px) rotate(${p.rotation}deg) scale(${p.scale})`;
+        el.style.transform = `translate(${p.x}px, ${p.y}px)`;
       }
     });
 
@@ -187,15 +188,15 @@ export function HeroSection() {
         </div>
       </ScrollFadeIn>
 
-      <ScrollFadeIn className="flex items-center gap-8 w-full max-w-[960px] max-md:flex-col max-md:gap-6">
+      <ScrollFadeIn className="flex items-center gap-8 w-full max-w-[960px] max-lg:flex-col max-lg:gap-6 max-lg:max-w-[500px]">
         {/* Chaos Container */}
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 max-lg:w-full">
           <div className="text-[0.8125rem] font-semibold text-[#71717a] uppercase tracking-wider mb-3 text-center">
             Your knowledge today...
           </div>
           <div
             ref={containerRef}
-            className="relative w-full h-80 bg-[#12121a] border border-[#1e1e2e] rounded-xl overflow-hidden max-md:h-60"
+            className="relative w-full h-80 bg-[#12121a] border border-[#1e1e2e] rounded-xl overflow-hidden max-sm:h-64"
           >
             {CHAOS_ICONS.map((icon, i) => (
               <div
@@ -210,7 +211,7 @@ export function HeroSection() {
         </div>
 
         {/* Arrow */}
-        <div className="shrink-0 flex items-center justify-center text-[#3b82f6] animate-[pulse-arrow_2s_ease-in-out_infinite] max-md:rotate-90">
+        <div className="shrink-0 flex items-center justify-center text-[#3b82f6] animate-[pulse-arrow_2s_ease-in-out_infinite] max-lg:rotate-90">
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="5" y1="12" x2="19" y2="12" />
             <polyline points="12 5 19 12 12 19" />
@@ -218,11 +219,11 @@ export function HeroSection() {
         </div>
 
         {/* Dashboard Preview */}
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 max-lg:w-full">
           <div className="text-[0.8125rem] font-semibold text-[#71717a] uppercase tracking-wider mb-3 text-center">
             ...with CodeShelf
           </div>
-          <div className="h-80 bg-[#12121a] border border-[#1e1e2e] rounded-xl overflow-hidden flex flex-col max-md:h-60">
+          <div className="h-80 bg-[#12121a] border border-[#1e1e2e] rounded-xl overflow-hidden flex flex-col max-sm:h-64">
             <div className="flex gap-1.5 px-3.5 py-2.5 bg-[#16161f] border-b border-[#1e1e2e]">
               <span className="w-2.5 h-2.5 rounded-full bg-[#ef4444]" />
               <span className="w-2.5 h-2.5 rounded-full bg-[#f59e0b]" />
