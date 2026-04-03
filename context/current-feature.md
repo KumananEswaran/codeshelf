@@ -1,16 +1,22 @@
-# Current Feature
+# Current Feature: Mobile TopBar Cleanup
 
 ## Goals
 
-<!-- Goals for the current feature -->
+- Collapse search bar to icon-only on small screens (< sm), clicking opens the command palette
+- Hide "New Collection" and "New Item" button labels on small screens, show only the + icons
+- All actions remain one tap away — no functionality removed, just labels hidden
+- Top bar should fit comfortably at 320px width
 
 ## Notes
 
-<!-- Additional context, constraints, or details -->
+- Files to modify: `src/components/dashboard/TopBar.tsx`, `src/components/dashboard/NewItemDialog.tsx`, `src/components/dashboard/NewCollectionDialog.tsx`
+- Search bar already triggers `onSearchClick` (command palette) — on mobile just render an icon button instead
+- NewCollectionDialog and NewItemDialog trigger buttons have `<Plus icon> + text` — hide text on mobile via `hidden sm:inline`
+- No new components needed, purely responsive class changes
 
 ## Status
 
-Not Started
+In Progress
 
 ## History
 

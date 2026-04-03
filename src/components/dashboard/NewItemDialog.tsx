@@ -154,8 +154,8 @@ export default function NewItemDialog({ defaultType, children }: NewItemDialogPr
       <DialogTrigger render={<Button />}>
         {children ?? (
           <>
-            <Plus className="h-4 w-4 mr-2" />
-            New Item
+            <Plus className="h-4 w-4 sm:mr-2" />
+            <span className="hidden sm:inline">New Item</span>
           </>
         )}
       </DialogTrigger>

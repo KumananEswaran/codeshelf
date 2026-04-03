@@ -65,8 +65,8 @@ export default function NewCollectionDialog() {
       }}
     >
       <DialogTrigger render={<Button variant="outline" />}>
-        <Plus className="h-4 w-4 mr-2" />
-        New Collection
+        <Plus className="h-4 w-4 sm:mr-2" />
+        <span className="hidden sm:inline">New Collection</span>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
