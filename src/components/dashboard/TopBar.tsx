@@ -1,16 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { Search, Star } from "lucide-react";
+import { Search, Star, Zap } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import NewItemDialog from "@/components/dashboard/NewItemDialog";
 import NewCollectionDialog from "@/components/dashboard/NewCollectionDialog";
 
 interface TopBarProps {
   onSearchClick?: () => void;
+  isPro?: boolean;
 }
 
-export default function TopBar({ onSearchClick }: TopBarProps) {
+export default function TopBar({ onSearchClick, isPro = false }: TopBarProps) {
   return (
     <div className="flex items-center justify-between flex-1 min-w-0">
       {/* Full search bar on sm+, icon-only on mobile */}
@@ -34,6 +35,15 @@ export default function TopBar({ onSearchClick }: TopBarProps) {
         <Search className="h-4 w-4" />
       </button>
       <div className="flex items-center gap-2">
+        {!isPro && (
+          <Link
+            href="/upgrade"
+            className={buttonVariants({ variant: "ghost", className: "text-muted-foreground hover:text-blue-400 gap-1.5 text-sm" })}
+          >
+            <Zap className="size-3.5" />
+            <span className="hidden sm:inline">Upgrade</span>
+          </Link>
+        )}
         <Link
           href="/dashboard/favorites"
           className={buttonVariants({ variant: "ghost", size: "icon", className: "text-muted-foreground hover:text-yellow-500" })}

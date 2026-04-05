@@ -121,7 +121,7 @@ export default function DashboardShell({
             <span className="sr-only">Toggle sidebar</span>
           </Button>
 
-          <TopBar onSearchClick={() => setCommandOpen(true)} />
+          <TopBar onSearchClick={() => setCommandOpen(true)} isPro={isPro} />
         </header>
 
         <main className="flex-1 overflow-auto p-6">{children}</main>

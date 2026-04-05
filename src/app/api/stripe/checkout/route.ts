@@ -50,7 +50,7 @@ export async function POST(request: Request) {
       mode: "subscription",
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?upgraded=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings`,
+      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/upgrade`,
       metadata: { userId: session.user.id },
     });
 

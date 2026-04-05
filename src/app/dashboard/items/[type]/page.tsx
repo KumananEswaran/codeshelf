@@ -7,7 +7,7 @@ import { ITEMS_PER_PAGE } from "@/lib/constants";
 import ItemsListWithDrawer from "@/components/dashboard/ItemsListWithDrawer";
 import NewItemDialog, { type ItemType } from "@/components/dashboard/NewItemDialog";
 import Pagination from "@/components/ui/pagination";
-import UpgradePrompt from "@/components/shared/UpgradePrompt";
+
 
 const DIALOG_TYPES = new Set<string>(["snippet", "prompt", "command", "note", "file", "image", "link"]);
 
@@ -38,17 +38,7 @@ export default async function ItemsListPage({
 
   const PRO_ONLY_SLUGS = new Set(["files", "images"]);
   if (PRO_ONLY_SLUGS.has(slug) && !session.user.isPro) {
-    const displayName = config.typeName[0].toUpperCase() + config.typeName.slice(1) + "s";
-    const Icon = config.icon;
-    return (
-      <div className="p-6 max-w-5xl mx-auto">
-        <div className="flex items-center gap-3 mb-6">
-          <Icon className="h-6 w-6 text-muted-foreground" />
-          <h1 className="text-2xl font-bold">{displayName}</h1>
-        </div>
-        <UpgradePrompt feature={`upload and manage ${config.typeName}s`} />
-      </div>
-    );
+    redirect("/upgrade");
   }
 
   const { page: pageParam } = await searchParams;
