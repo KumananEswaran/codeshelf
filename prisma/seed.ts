@@ -54,7 +54,32 @@ async function main() {
   });
   console.log(`  ✓ Demo user (${user.email})\n`);
 
-  // 3. Collections & Items
+  // 3. Clean up removed collections & items from previous seeds
+  console.log("Cleaning up old seed data...");
+  const removedCollectionIds = ["col-terminal-commands", "col-design-resources"];
+  const removedItemIds = ["item-package-commands", "item-radix-ui", "item-lucide-icons"];
+
+  // Disconnect items from removed collections before deleting
+  for (const colId of removedCollectionIds) {
+    const col = await prisma.collection.findUnique({ where: { id: colId }, select: { id: true } });
+    if (col) {
+      await prisma.collection.update({
+        where: { id: colId },
+        data: { items: { set: [] } },
+      });
+      await prisma.collection.delete({ where: { id: colId } });
+      console.log(`  ✓ Removed collection ${colId}`);
+    }
+  }
+
+  // Delete removed items
+  for (const itemId of removedItemIds) {
+    await prisma.itemTag.deleteMany({ where: { itemId } });
+    await prisma.item.deleteMany({ where: { id: itemId } });
+  }
+  console.log(`  ✓ Cleaned up removed items\n`);
+
+  // 4. Collections & Items
   console.log("Seeding collections & items...");
 
   // ── React Patterns ──────────────────────────────────────────
@@ -341,25 +366,12 @@ echo "Deploy complete!"`,
     content: "Docker Compose documentation covering service definitions, networking, volumes, and multi-container orchestration.",
   });
 
-  // ── Terminal Commands ───────────────────────────────────────
-  const terminalCommands = await prisma.collection.upsert({
-    where: { id: "col-terminal-commands" },
-    update: {},
-    create: {
-      id: "col-terminal-commands",
-      name: "Terminal Commands",
-      description: "Useful shell commands for everyday development",
-      userId: user.id,
-      isFavorite: true,
-    },
-  });
-
+  // ── Standalone Commands (no collection) ─────────────────────
   await upsertItem({
     id: "item-git-commands",
     title: "Git — Interactive Rebase & Cleanup",
     contentType: "text",
     typeId: "command",
-    collectionId: terminalCommands.id,
     userId: user.id,
     isPinned: true,
     content: `# Squash last N commits
@@ -380,7 +392,6 @@ git commit --amend -m "new message"`,
     title: "Docker — Container Management",
     contentType: "text",
     typeId: "command",
-    collectionId: terminalCommands.id,
     userId: user.id,
     content: `# Stop all running containers
 docker stop $(docker ps -q)
@@ -400,7 +411,6 @@ docker exec -it <container_name> /bin/sh`,
     title: "Process Management",
     contentType: "text",
     typeId: "command",
-    collectionId: terminalCommands.id,
     userId: user.id,
     content: `# Find process using a port
 lsof -i :3000
@@ -415,44 +425,12 @@ htop
 watch -n 2 "docker ps"`,
   });
 
-  await upsertItem({
-    id: "item-package-commands",
-    title: "Package Manager Utilities",
-    contentType: "text",
-    typeId: "command",
-    collectionId: terminalCommands.id,
-    userId: user.id,
-    content: `# Check for outdated packages
-npm outdated
-
-# List all globally installed packages
-npm ls -g --depth=0
-
-# Why is a package installed? (dependency chain)
-npm why <package>
-
-# Clean npm cache
-npm cache clean --force`,
-  });
-
-  // ── Design Resources ────────────────────────────────────────
-  const designResources = await prisma.collection.upsert({
-    where: { id: "col-design-resources" },
-    update: {},
-    create: {
-      id: "col-design-resources",
-      name: "Design Resources",
-      description: "UI/UX resources and references",
-      userId: user.id,
-    },
-  });
-
+  // ── Standalone Links (no collection) ───────────────────────
   await upsertItem({
     id: "item-tailwind-docs",
     title: "Tailwind CSS Documentation",
     contentType: "text",
     typeId: "link",
-    collectionId: designResources.id,
     userId: user.id,
     isFavorite: true,
     url: "https://tailwindcss.com/docs",
@@ -465,38 +443,42 @@ npm cache clean --force`,
     title: "shadcn/ui Component Library",
     contentType: "text",
     typeId: "link",
-    collectionId: designResources.id,
     userId: user.id,
     url: "https://ui.shadcn.com",
     description: "Beautifully designed, accessible components built with Radix UI and Tailwind CSS",
     content: "Copy-paste component library for React — includes buttons, dialogs, forms, tables, and more. Built on Radix UI primitives.",
   });
 
+  // ── Standalone Note ────────────────────────────────────────
   await upsertItem({
-    id: "item-radix-ui",
-    title: "Radix UI — Design System Primitives",
+    id: "item-project-setup-notes",
+    title: "New Project Setup Checklist",
     contentType: "text",
-    typeId: "link",
-    collectionId: designResources.id,
+    typeId: "note",
     userId: user.id,
-    url: "https://www.radix-ui.com",
-    description: "Unstyled, accessible UI primitives for building design systems",
-    content: "Low-level UI component library focused on accessibility, customization, and developer experience.",
+    content: `# New Project Setup
+
+## Initial Setup
+- [ ] Create repo and clone locally
+- [ ] Initialize Next.js with TypeScript
+- [ ] Configure Tailwind CSS v4
+- [ ] Set up Prisma with Neon PostgreSQL
+- [ ] Add NextAuth for authentication
+
+## Dev Environment
+- [ ] Configure ESLint and Prettier
+- [ ] Set up Vitest for testing
+- [ ] Add pre-commit hooks (lint-staged + husky)
+- [ ] Create .env.example with required variables
+
+## Deployment
+- [ ] Connect to Vercel
+- [ ] Set environment variables
+- [ ] Run initial database migration
+- [ ] Verify production build`,
   });
 
-  await upsertItem({
-    id: "item-lucide-icons",
-    title: "Lucide Icons",
-    contentType: "text",
-    typeId: "link",
-    collectionId: designResources.id,
-    userId: user.id,
-    url: "https://lucide.dev/icons",
-    description: "Beautiful & consistent open-source icon library",
-    content: "Community-maintained fork of Feather Icons with 1500+ icons. Used in this project for all UI icons.",
-  });
-
-  console.log("  ✓ 5 collections with 18 items\n");
+  console.log("  ✓ 3 collections with 18 items\n");
   console.log("Seeding complete!");
 }
 
@@ -507,7 +489,7 @@ interface UpsertItemData {
   title: string;
   contentType: string;
   typeId: string;
-  collectionId: string;
+  collectionId?: string;
   userId: string;
   content?: string;
   language?: string;
