@@ -38,6 +38,7 @@ import {
 import { toast } from "sonner";
 import { createItem } from "@/actions/items";
 import SuggestTagsButton from "@/components/dashboard/SuggestTagsButton";
+import SuggestDescriptionButton from "@/components/dashboard/SuggestDescriptionButton";
 
 const ITEM_TYPES = [
   { value: "snippet" as const, label: "Snippet", color: "#3b82f6", icon: Code },
@@ -219,7 +220,19 @@ export default function NewItemDialog({ defaultType, children, isPro = false }: 
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="description">Description</Label>
+              {isPro && (
+                <SuggestDescriptionButton
+                  title={title}
+                  content={content}
+                  url={url}
+                  fileName={fileName}
+                  typeName={typeName}
+                  onAccept={setDescription}
+                />
+              )}
+            </div>
             <Input
               id="description"
               value={description}
