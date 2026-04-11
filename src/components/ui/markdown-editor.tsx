@@ -3,14 +3,19 @@
 import { useCallback, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, Sparkles, Loader2, Crown, X } from "lucide-react";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { optimizePrompt } from "@/actions/ai";
 
 interface MarkdownEditorProps {
   value: string;
   onChange?: (value: string) => void;
   readOnly?: boolean;
   className?: string;
+  showOptimize?: boolean;
+  isPro?: boolean;
+  onAcceptOptimized?: (optimized: string) => void | Promise<void>;
 }
 
 export function MarkdownEditor({
@@ -18,10 +23,19 @@ export function MarkdownEditor({
   onChange,
   readOnly = false,
   className,
+  showOptimize = false,
+  isPro = false,
+  onAcceptOptimized,
 }: MarkdownEditorProps) {
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState<"write" | "preview">(
     readOnly ? "preview" : "write"
+  );
+  const [optimized, setOptimized] = useState<string | null>(null);
+  const [optimizing, setOptimizing] = useState(false);
+  const [accepting, setAccepting] = useState(false);
+  const [compareTab, setCompareTab] = useState<"original" | "optimized">(
+    "optimized"
   );
 
   const handleCopy = useCallback(async () => {
@@ -33,6 +47,48 @@ export function MarkdownEditor({
       // Fallback silently
     }
   }, [value]);
+
+  const handleOptimize = useCallback(async () => {
+    if (!value.trim()) {
+      toast.error("Nothing to optimize");
+      return;
+    }
+    setOptimizing(true);
+    const result = await optimizePrompt({ content: value });
+    setOptimizing(false);
+
+    if (!result.success) {
+      toast.error(
+        typeof result.error === "string"
+          ? result.error
+          : "Failed to optimize prompt"
+      );
+      return;
+    }
+
+    setOptimized(result.data);
+    setCompareTab("optimized");
+  }, [value]);
+
+  const handleAccept = useCallback(async () => {
+    if (!optimized || !onAcceptOptimized) return;
+    setAccepting(true);
+    try {
+      await onAcceptOptimized(optimized);
+      setOptimized(null);
+      toast.success("Prompt updated");
+    } catch {
+      toast.error("Failed to save optimized prompt");
+    } finally {
+      setAccepting(false);
+    }
+  }, [optimized, onAcceptOptimized]);
+
+  const handleReject = useCallback(() => {
+    setOptimized(null);
+  }, []);
+
+  const hasOptimized = optimized !== null;
 
   return (
     <div
@@ -51,7 +107,34 @@ export function MarkdownEditor({
           </div>
 
           {/* Tabs */}
-          {readOnly ? (
+          {hasOptimized ? (
+            <div className="ml-2 flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => setCompareTab("original")}
+                className={cn(
+                  "px-2 py-0.5 text-xs font-mono rounded transition-colors cursor-pointer",
+                  compareTab === "original"
+                    ? "text-[#cccccc] bg-[#1e1e1e]"
+                    : "text-[#808080] hover:text-[#cccccc]"
+                )}
+              >
+                Original
+              </button>
+              <button
+                type="button"
+                onClick={() => setCompareTab("optimized")}
+                className={cn(
+                  "px-2 py-0.5 text-xs font-mono rounded transition-colors cursor-pointer",
+                  compareTab === "optimized"
+                    ? "text-[#cccccc] bg-[#1e1e1e]"
+                    : "text-[#808080] hover:text-[#cccccc]"
+                )}
+              >
+                Optimized
+              </button>
+            </div>
+          ) : readOnly ? (
             <span className="ml-2 text-xs text-[#808080] font-mono select-none">
               preview
             </span>
@@ -85,29 +168,101 @@ export function MarkdownEditor({
           )}
         </div>
 
-        <button
-          type="button"
-          onClick={handleCopy}
-          className="flex items-center gap-1.5 text-xs text-[#808080] hover:text-[#cccccc] transition-colors cursor-pointer"
-          aria-label="Copy content"
-        >
-          {copied ? (
+        <div className="flex items-center gap-3">
+          {showOptimize && !hasOptimized &&
+            (isPro ? (
+              <button
+                type="button"
+                onClick={handleOptimize}
+                disabled={optimizing}
+                className="flex items-center gap-1.5 text-xs text-[#808080] hover:text-[#cccccc] transition-colors cursor-pointer disabled:opacity-60"
+                aria-label="Optimize prompt with AI"
+                title="Optimize prompt with AI"
+              >
+                {optimizing ? (
+                  <>
+                    <Loader2 className="size-3.5 animate-spin" />
+                    <span>Optimizing...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="size-3.5" />
+                    <span>Optimize</span>
+                  </>
+                )}
+              </button>
+            ) : (
+              <span
+                className="flex items-center gap-1.5 text-xs text-[#808080] cursor-not-allowed opacity-70"
+                title="AI features require Pro subscription"
+                aria-label="AI features require Pro subscription"
+              >
+                <Crown className="size-3.5" />
+                <span>Optimize</span>
+              </span>
+            ))}
+
+          {hasOptimized && (
             <>
-              <Check className="size-3.5" />
-              <span>Copied</span>
-            </>
-          ) : (
-            <>
-              <Copy className="size-3.5" />
-              <span>Copy</span>
+              <button
+                type="button"
+                onClick={handleAccept}
+                disabled={accepting}
+                className="flex items-center justify-center size-6 rounded text-emerald-400 hover:text-emerald-300 hover:bg-[#1e1e1e] transition-colors cursor-pointer disabled:opacity-60"
+                aria-label="Use optimized prompt"
+                title="Use optimized prompt"
+              >
+                {accepting ? (
+                  <Loader2 className="size-3.5 animate-spin" />
+                ) : (
+                  <Check className="size-3.5" />
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={handleReject}
+                disabled={accepting}
+                className="flex items-center justify-center size-6 rounded text-[#808080] hover:text-[#cccccc] hover:bg-[#1e1e1e] transition-colors cursor-pointer disabled:opacity-60"
+                aria-label="Discard optimized prompt"
+                title="Discard optimized prompt"
+              >
+                <X className="size-3.5" />
+              </button>
             </>
           )}
-        </button>
+
+          {!hasOptimized && (
+            <button
+              type="button"
+              onClick={handleCopy}
+              className="flex items-center gap-1.5 text-xs text-[#808080] hover:text-[#cccccc] transition-colors cursor-pointer"
+              aria-label="Copy content"
+            >
+              {copied ? (
+                <>
+                  <Check className="size-3.5" />
+                  <span>Copied</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="size-3.5" />
+                  <span>Copy</span>
+                </>
+              )}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Content */}
       <div className="max-h-[400px] overflow-y-auto">
-        {activeTab === "write" && !readOnly ? (
+        {hasOptimized ? (
+          <div className="markdown-preview p-4 text-sm">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {compareTab === "optimized" ? (optimized ?? "") : value}
+            </ReactMarkdown>
+          </div>
+        ) : activeTab === "write" && !readOnly ? (
           <textarea
             value={value}
             onChange={(e) => onChange?.(e.target.value)}

@@ -6,10 +6,12 @@ import { AI_MODEL, getOpenAIClient } from "@/lib/openai";
 import { parseTagsResponse } from "@/lib/ai-tags";
 import { parseSummaryResponse } from "@/lib/ai-summary";
 import { parseExplanationResponse } from "@/lib/ai-explain";
+import { parseOptimizedPromptResponse } from "@/lib/ai-optimize";
 import { checkUserRateLimit } from "@/lib/rate-limit";
 
 const MAX_CONTENT_CHARS = 2000;
 const MAX_EXPLAIN_CONTENT_CHARS = 4000;
+const MAX_OPTIMIZE_CONTENT_CHARS = 4000;
 
 const autoTagSchema = z.object({
   title: z.string().trim().min(1, "Title is required"),
@@ -28,6 +30,10 @@ const explainSchema = z.object({
   content: z.string().trim().min(1, "Content is required"),
   language: z.string().optional().default(""),
   typeName: z.enum(["snippet", "command"]),
+});
+
+const optimizeSchema = z.object({
+  content: z.string().trim().min(1, "Content is required"),
 });
 
 const SYSTEM_INSTRUCTIONS = `You are a developer tool assistant that suggests concise, lowercase tags for code snippets, prompts, notes, commands, and developer content. Return 3-5 short tags using common developer terminology. Reply with a JSON object of the form {"tags": ["tag1", "tag2"]}.`;
@@ -146,6 +152,70 @@ export async function explainCode(
     return { success: true as const, data: explanation };
   } catch (error) {
     console.error("[explainCode] OpenAI request failed:", error);
+    const message = error instanceof Error ? error.message : "";
+    if (message.includes("rate_limit")) {
+      return {
+        success: false as const,
+        error: "AI service is busy. Please try again in a moment.",
+      };
+    }
+    return {
+      success: false as const,
+      error: "AI feature temporarily unavailable.",
+    };
+  }
+}
+
+const OPTIMIZE_INSTRUCTIONS = `You are a prompt engineering expert that refines AI prompts to be clearer, more specific, and more effective. Rewrite the given prompt to improve structure, clarity, and actionability while preserving the original intent. Use markdown when helpful (headings, lists). Keep the same language the user wrote in. If the prompt is already well-written, you may return it essentially unchanged. Do not add meta-commentary, explanations, or preambles like "Here is the optimized prompt" — return ONLY the refined prompt text itself. Reply with a JSON object of the form {"optimized": "..."}.`;
+
+export async function optimizePrompt(
+  data: z.input<typeof optimizeSchema>
+) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false as const, error: "Unauthorized" };
+  }
+
+  if (!session.user.isPro) {
+    return { success: false as const, error: "Pro subscription required" };
+  }
+
+  const parsed = optimizeSchema.safeParse(data);
+  if (!parsed.success) {
+    return { success: false as const, error: "Content is required" };
+  }
+
+  const rate = await checkUserRateLimit("ai", session.user.id);
+  if (!rate.success) {
+    return {
+      success: false as const,
+      error: "AI rate limit reached. Please try again later.",
+    };
+  }
+
+  const { content } = parsed.data;
+  const truncated = content.slice(0, MAX_OPTIMIZE_CONTENT_CHARS);
+  const input = `Refine the following prompt to be clearer and more effective. Respond as JSON in the form {"optimized": "..."}.\n\nPrompt:\n${truncated}`;
+
+  try {
+    const client = getOpenAIClient();
+    const response = await client.responses.create({
+      model: AI_MODEL,
+      instructions: OPTIMIZE_INSTRUCTIONS,
+      input,
+      text: { format: { type: "json_object" } },
+    });
+
+    const optimized = parseOptimizedPromptResponse(response.output_text ?? "");
+    if (!optimized) {
+      return {
+        success: false as const,
+        error: "AI could not optimize the prompt. Try again.",
+      };
+    }
+    return { success: true as const, data: optimized };
+  } catch (error) {
+    console.error("[optimizePrompt] OpenAI request failed:", error);
     const message = error instanceof Error ? error.message : "";
     if (message.includes("rate_limit")) {
       return {

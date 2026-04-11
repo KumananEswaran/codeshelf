@@ -1,16 +1,23 @@
-# Current Feature
+# Current Feature: Prompt Optimization
 
 ## Goals
 
-<!-- Bullet points of what success looks like -->
+- Add AI-powered "Optimize" button for prompt item types
+- Button lives in the ItemDrawer header, mirroring the "Explain" button pattern used for snippets/commands
+- Refine the current prompt content via OpenAI, then show the optimized version to the user
+- Ask the user to accept (replace current prompt) or reject the optimized version
+- Pro-gated with shared AI rate limit, matching existing AI features
 
 ## Notes
 
-<!-- Additional context, constraints, or details from spec -->
+- Follow the AI Explain Code pattern: server action (`optimizePrompt`), Zod validation, shared AI rate limit bucket, Pro gating with Crown fallback for free users
+- Only applies to items with type `prompt` — wire through MarkdownEditor (or ItemDrawer directly) since prompts use the markdown editor
+- Provide a diff/preview UX so user can compare before accepting
+- Add unit tests for the server action and response parser
 
 ## Status
 
-Not Started
+In Progress
 
 ## History
 

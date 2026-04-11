@@ -19,9 +19,10 @@ vi.mock("@/lib/openai", () => ({
   }),
 }));
 
-import { generateAutoTags, generateSummary, explainCode } from "./ai";
+import { generateAutoTags, generateSummary, explainCode, optimizePrompt } from "./ai";
 import { parseTagsResponse } from "@/lib/ai-tags";
 import { parseExplanationResponse } from "@/lib/ai-explain";
+import { parseOptimizedPromptResponse } from "@/lib/ai-optimize";
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -338,6 +339,113 @@ describe("explainCode", () => {
       content: "console.log(1)",
       typeName: "snippet",
     });
+    expect(result).toEqual({
+      success: false,
+      error: "AI feature temporarily unavailable.",
+    });
+  });
+});
+
+describe("parseOptimizedPromptResponse", () => {
+  it("parses {optimized: ...} shape", () => {
+    expect(parseOptimizedPromptResponse('{"optimized":"refined prompt"}')).toBe(
+      "refined prompt"
+    );
+  });
+
+  it("accepts alternative keys like prompt, text, content", () => {
+    expect(parseOptimizedPromptResponse('{"prompt":"via prompt"}')).toBe("via prompt");
+    expect(parseOptimizedPromptResponse('{"text":"via text"}')).toBe("via text");
+    expect(parseOptimizedPromptResponse('{"content":"via content"}')).toBe("via content");
+  });
+
+  it("parses bare JSON string", () => {
+    expect(parseOptimizedPromptResponse('"just a string"')).toBe("just a string");
+  });
+
+  it("falls back to raw plain text", () => {
+    expect(parseOptimizedPromptResponse("not json at all")).toBe("not json at all");
+  });
+
+  it("strips wrapping quotes and trims", () => {
+    expect(parseOptimizedPromptResponse('"  quoted  "')).toBe("quoted");
+  });
+
+  it("returns empty for empty input", () => {
+    expect(parseOptimizedPromptResponse("")).toBe("");
+  });
+
+  it("caps very long prompts", () => {
+    const longText = "a".repeat(5000);
+    const result = parseOptimizedPromptResponse(
+      JSON.stringify({ optimized: longText })
+    );
+    expect(result.length).toBeLessThanOrEqual(4000);
+    expect(result.endsWith("...")).toBe(true);
+  });
+});
+
+describe("optimizePrompt", () => {
+  it("returns Unauthorized when no session", async () => {
+    authMock.mockResolvedValue(null);
+    const result = await optimizePrompt({ content: "Write a blog post" });
+    expect(result).toEqual({ success: false, error: "Unauthorized" });
+  });
+
+  it("requires Pro subscription", async () => {
+    authMock.mockResolvedValue({ user: { id: "u1", isPro: false } });
+    const result = await optimizePrompt({ content: "Write a blog post" });
+    expect(result).toEqual({ success: false, error: "Pro subscription required" });
+  });
+
+  it("validates content is required", async () => {
+    authMock.mockResolvedValue({ user: { id: "u1", isPro: true } });
+    const result = await optimizePrompt({ content: "   " });
+    expect(result.success).toBe(false);
+  });
+
+  it("returns rate limit error when limit hit", async () => {
+    authMock.mockResolvedValue({ user: { id: "u1", isPro: true } });
+    checkUserRateLimitMock.mockResolvedValue({ success: false, remaining: 0, reset: 0 });
+    const result = await optimizePrompt({ content: "write a blog post" });
+    expect(result.success).toBe(false);
+    if (!result.success) expect(result.error).toMatch(/rate limit/i);
+  });
+
+  it("returns parsed prompt on success and truncates long content", async () => {
+    authMock.mockResolvedValue({ user: { id: "u1", isPro: true } });
+    responsesCreateMock.mockResolvedValue({
+      output_text: '{"optimized":"You are a senior writer. Write a 500-word blog post about X."}',
+    });
+
+    const longContent = "x".repeat(10000);
+    const result = await optimizePrompt({ content: longContent });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data).toBe(
+        "You are a senior writer. Write a 500-word blog post about X."
+      );
+    }
+
+    const callArg = responsesCreateMock.mock.calls[0][0];
+    expect(callArg.model).toBe("gpt-5-nano");
+    expect(callArg.text.format.type).toBe("json_object");
+    expect(callArg.input.length).toBeLessThan(longContent.length);
+    expect(callArg.input).toContain("Prompt:");
+  });
+
+  it("returns error when AI returns empty prompt", async () => {
+    authMock.mockResolvedValue({ user: { id: "u1", isPro: true } });
+    responsesCreateMock.mockResolvedValue({ output_text: "{}" });
+    const result = await optimizePrompt({ content: "write a blog post" });
+    expect(result.success).toBe(false);
+  });
+
+  it("handles AI service errors gracefully", async () => {
+    authMock.mockResolvedValue({ user: { id: "u1", isPro: true } });
+    responsesCreateMock.mockRejectedValue(new Error("network down"));
+    const result = await optimizePrompt({ content: "write a blog post" });
     expect(result).toEqual({
       success: false,
       error: "AI feature temporarily unavailable.",
