@@ -1,16 +1,27 @@
-# Current Feature
+# Current Feature: AI Summary (Description Generator)
 
 ## Goals
 
-<!-- Bullet points of what success looks like -->
+- Add an icon button next to the description field that generates a concise AI summary
+- Works on unsaved input — reads current title + content directly from form state
+- Produces a 1–2 sentence summary written into the description field
+- Available for all item types, using whatever fields are populated (title, content, url, fileName, etc.)
+- Pro-gated and rate-limited, following the AI Auto-Tagging pattern
 
 ## Notes
 
-<!-- Additional context, constraints, or details from spec -->
+- Follow the existing AI Auto-Tagging architecture: OpenAI Responses API via `src/lib/openai.ts`, server action with auth + Pro gating + Zod + rate limiting, shared `AI_MODEL` constant
+- Add a new server action `generateSummary` (parallel to `generateAutoTags`) with its own rate limit bucket
+- Add a `SuggestDescriptionButton` (Sparkles icon, ghost) rendered next to the Description input in both `NewItemDialog` and `ItemDrawer` edit mode
+- Do NOT require the item to be saved first — the button sends the current in-memory title/content/url/fileName/type
+- Overwrite the description field on accept (match auto-tag UX — no save step required)
+- Truncate long content (~2000 chars) before sending to the model, same as auto-tags
+- Thread `isPro` through the same wrappers already used for the tag button
+- Add unit tests for the new server action and any parsing helpers
 
 ## Status
 
-Not Started
+In Progress
 
 ## History
 

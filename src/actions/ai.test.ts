@@ -19,7 +19,7 @@ vi.mock("@/lib/openai", () => ({
   }),
 }));
 
-import { generateAutoTags } from "./ai";
+import { generateAutoTags, generateSummary } from "./ai";
 import { parseTagsResponse } from "@/lib/ai-tags";
 
 beforeEach(() => {
@@ -115,6 +115,90 @@ describe("generateAutoTags", () => {
     authMock.mockResolvedValue({ user: { id: "u1", isPro: true } });
     responsesCreateMock.mockRejectedValue(new Error("network down"));
     const result = await generateAutoTags({ title: "Test", content: "x" });
+    expect(result).toEqual({
+      success: false,
+      error: "AI feature temporarily unavailable.",
+    });
+  });
+});
+
+describe("generateSummary", () => {
+  it("returns Unauthorized when no session", async () => {
+    authMock.mockResolvedValue(null);
+    const result = await generateSummary({ title: "Test" });
+    expect(result).toEqual({ success: false, error: "Unauthorized" });
+  });
+
+  it("requires Pro subscription", async () => {
+    authMock.mockResolvedValue({ user: { id: "u1", isPro: false } });
+    const result = await generateSummary({ title: "Test" });
+    expect(result).toEqual({ success: false, error: "Pro subscription required" });
+  });
+
+  it("validates title", async () => {
+    authMock.mockResolvedValue({ user: { id: "u1", isPro: true } });
+    const result = await generateSummary({ title: "  " });
+    expect(result.success).toBe(false);
+  });
+
+  it("returns rate limit error when limit hit", async () => {
+    authMock.mockResolvedValue({ user: { id: "u1", isPro: true } });
+    checkUserRateLimitMock.mockResolvedValue({ success: false, remaining: 0, reset: 0 });
+    const result = await generateSummary({ title: "Test", content: "x" });
+    expect(result.success).toBe(false);
+    if (!result.success) expect(result.error).toMatch(/rate limit/i);
+  });
+
+  it("returns parsed summary on success and truncates content", async () => {
+    authMock.mockResolvedValue({ user: { id: "u1", isPro: true } });
+    responsesCreateMock.mockResolvedValue({
+      output_text: '{"summary":"A concise description."}',
+    });
+
+    const longContent = "x".repeat(5000);
+    const result = await generateSummary({
+      title: "useDebounce",
+      content: longContent,
+      typeName: "snippet",
+    });
+
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.data).toBe("A concise description.");
+
+    const callArg = responsesCreateMock.mock.calls[0][0];
+    expect(callArg.model).toBe("gpt-5-nano");
+    expect(callArg.text.format.type).toBe("json_object");
+    expect(callArg.input.length).toBeLessThan(longContent.length);
+    expect(callArg.input).toContain("Title: useDebounce");
+    expect(callArg.input).toContain("Type: snippet");
+  });
+
+  it("includes url and file name in prompt when provided", async () => {
+    authMock.mockResolvedValue({ user: { id: "u1", isPro: true } });
+    responsesCreateMock.mockResolvedValue({ output_text: '{"summary":"ok"}' });
+
+    await generateSummary({
+      title: "Docs",
+      url: "https://example.com",
+      fileName: "readme.md",
+    });
+
+    const callArg = responsesCreateMock.mock.calls[0][0];
+    expect(callArg.input).toContain("URL: https://example.com");
+    expect(callArg.input).toContain("File name: readme.md");
+  });
+
+  it("returns error when AI returns an empty summary", async () => {
+    authMock.mockResolvedValue({ user: { id: "u1", isPro: true } });
+    responsesCreateMock.mockResolvedValue({ output_text: "{}" });
+    const result = await generateSummary({ title: "Test", content: "x" });
+    expect(result.success).toBe(false);
+  });
+
+  it("handles AI service errors gracefully", async () => {
+    authMock.mockResolvedValue({ user: { id: "u1", isPro: true } });
+    responsesCreateMock.mockRejectedValue(new Error("network down"));
+    const result = await generateSummary({ title: "Test", content: "x" });
     expect(result).toEqual({
       success: false,
       error: "AI feature temporarily unavailable.",

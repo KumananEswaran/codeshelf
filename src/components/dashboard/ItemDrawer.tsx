@@ -56,6 +56,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import CollectionPicker from "@/components/dashboard/CollectionPicker";
 import SuggestTagsButton from "@/components/dashboard/SuggestTagsButton";
+import SuggestDescriptionButton from "@/components/dashboard/SuggestDescriptionButton";
 import type { ItemDetail } from "@/lib/db/items";
 
 interface ItemDrawerProps {
@@ -378,7 +379,19 @@ export default function ItemDrawer({ itemId, onClose, isPro = false }: ItemDrawe
               {/* Description */}
               {editing ? (
                 <div>
-                  <h4 className="text-sm font-medium mb-1">Description</h4>
+                  <div className="flex items-center justify-between mb-1">
+                    <h4 className="text-sm font-medium">Description</h4>
+                    {isPro && (
+                      <SuggestDescriptionButton
+                        title={title}
+                        content={content}
+                        url={url}
+                        fileName={item.fileName ?? ""}
+                        typeName={typeName}
+                        onAccept={setDescription}
+                      />
+                    )}
+                  </div>
                   <Textarea
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
