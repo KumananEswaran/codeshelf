@@ -27,7 +27,15 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { CODE_LANGUAGES } from "@/lib/languages";
 import { CodeEditor } from "@/components/ui/code-editor";
 import { MarkdownEditor } from "@/components/ui/markdown-editor";
 import { Separator } from "@/components/ui/separator";
@@ -104,7 +112,7 @@ export default function ItemDrawer({ itemId, onClose }: ItemDrawerProps) {
     setTitle(item.title);
     setDescription(item.description ?? "");
     setContent(item.content ?? "");
-    setLanguage(item.language ?? "");
+    setLanguage(item.language ?? "plaintext");
     setUrl(item.url ?? "");
     setTagsInput(item.tags.map((t) => t.name).join(", "));
     setCollectionIds(item.collections?.map((c) => c.id) ?? []);
@@ -387,6 +395,25 @@ export default function ItemDrawer({ itemId, onClose }: ItemDrawerProps) {
                 )
               )}
 
+              {/* Language (type-specific, edit mode — shown above content) */}
+              {editing && LANGUAGE_TYPES.includes(typeName) ? (
+                <div>
+                  <h4 className="text-sm font-medium mb-1">Language</h4>
+                  <Select value={language} onValueChange={(val) => setLanguage(val ?? "plaintext")}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {CODE_LANGUAGES.map((lang) => (
+                        <SelectItem key={lang.value} value={lang.value}>
+                          {lang.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              ) : null}
+
               {/* Content (type-specific) */}
               {editing && CONTENT_TYPES.includes(typeName) ? (
                 <div>
@@ -423,18 +450,6 @@ export default function ItemDrawer({ itemId, onClose }: ItemDrawerProps) {
                   </div>
                 )
               )}
-
-              {/* Language (type-specific) */}
-              {editing && LANGUAGE_TYPES.includes(typeName) ? (
-                <div>
-                  <h4 className="text-sm font-medium mb-1">Language</h4>
-                  <Input
-                    value={language}
-                    onChange={(e) => setLanguage(e.target.value)}
-                    placeholder="e.g. javascript, python"
-                  />
-                </div>
-              ) : null}
 
               {/* URL (type-specific) */}
               {editing && typeName === "link" ? (

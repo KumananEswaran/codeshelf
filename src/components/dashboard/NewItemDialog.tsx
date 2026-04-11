@@ -24,6 +24,7 @@ import { Label } from "@/components/ui/label";
 import { CodeEditor } from "@/components/ui/code-editor";
 import { MarkdownEditor } from "@/components/ui/markdown-editor";
 import { FileUpload } from "@/components/ui/file-upload";
+import { CODE_LANGUAGES } from "@/lib/languages";
 import {
   Plus,
   Code,
@@ -62,7 +63,7 @@ export default function NewItemDialog({ defaultType, children }: NewItemDialogPr
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [content, setContent] = useState("");
-  const [language, setLanguage] = useState("");
+  const [language, setLanguage] = useState("plaintext");
   const [url, setUrl] = useState("");
   const [tagsInput, setTagsInput] = useState("");
   const [fileUrl, setFileUrl] = useState("");
@@ -76,7 +77,7 @@ export default function NewItemDialog({ defaultType, children }: NewItemDialogPr
     setTitle("");
     setDescription("");
     setContent("");
-    setLanguage("");
+    setLanguage("plaintext");
     setUrl("");
     setTagsInput("");
     setFileUrl("");
@@ -225,6 +226,24 @@ export default function NewItemDialog({ defaultType, children }: NewItemDialogPr
             />
           </div>
 
+          {showLanguage && (
+            <div className="space-y-2">
+              <Label htmlFor="language">Language</Label>
+              <Select value={language} onValueChange={(val) => setLanguage(val ?? "plaintext")}>
+                <SelectTrigger id="language">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {CODE_LANGUAGES.map((lang) => (
+                    <SelectItem key={lang.value} value={lang.value}>
+                      {lang.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
           {showContent && (
             <div className="space-y-2">
               <Label htmlFor="content">Content</Label>
@@ -240,18 +259,6 @@ export default function NewItemDialog({ defaultType, children }: NewItemDialogPr
                   onChange={setContent}
                 />
               )}
-            </div>
-          )}
-
-          {showLanguage && (
-            <div className="space-y-2">
-              <Label htmlFor="language">Language</Label>
-              <Input
-                id="language"
-                value={language}
-                onChange={(e) => setLanguage(e.target.value)}
-                placeholder="e.g. javascript, python, bash"
-              />
             </div>
           )}
 
