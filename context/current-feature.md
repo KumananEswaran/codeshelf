@@ -1,34 +1,16 @@
 # Current Feature
 
-UI Review Fixes — address issues found during Playwright UI review on 2026-04-11.
-
 ## Goals
 
-- Fix homepage ScrollFadeIn bug — Features / AI / Pricing sections are invisible to real users (`.fade-in-section` wrappers stuck at `opacity: 0`, IntersectionObserver never fires)
-- Fix dashboard hydration mismatch — base-ui generates unstable `id` attributes server vs client on DropdownMenuTrigger, SheetTrigger, DialogTriggers (React warning + red "1 issue" dev overlay)
-- Add sidebar active-state highlighting — current page link has no visual indicator; use `usePathname()` + `bg-sidebar-accent` in [Sidebar.tsx](src/components/dashboard/Sidebar.tsx)
-- Add GitHub OAuth button to [/register](src/components/auth/RegisterForm.tsx) — currently only on /sign-in, forcing users to bounce between pages
-- Unify /settings and /upgrade under the dashboard shell — both pages currently render standalone with only a "← Back to Dashboard" link, breaking the spatial model
-- Fix items page empty-state centering — content constrained far left while ~60% of canvas is blank
-- Add dashboard Collections empty state — currently shows just the "Collections / View all" header and nothing below when empty
+<!-- Bullet points of what success looks like -->
 
 ## Notes
 
-Review performed with Playwright against live dev server. Confirmed findings (priority order):
-
-1. **Homepage fade-in bug (critical)** — verified via `getComputedStyle`: `#features` section has `offsetHeight: 972` but its `.fade-in-section` children all have `opacity: 0`. Same for `#ai` and `#pricing`. Root cause likely in [ScrollFadeIn.tsx](src/components/homepage/ScrollFadeIn.tsx) IntersectionObserver setup — may not handle elements already in viewport on mount, or threshold never triggers.
-2. **Dashboard hydration mismatch (critical)** — React logs id mismatches like `base-ui-_R_7ccndlb_` (server) vs `base-ui-_R_thkndlb_` (client) on base-ui Menu/Dialog/Sheet triggers. Needs SSR-stable IDs.
-3. **Sidebar active state** — [Sidebar.tsx](src/components/dashboard/Sidebar.tsx) uses static class strings; no `usePathname` import.
-4. **/register missing GitHub button** — [SignInForm.tsx](src/components/auth/SignInForm.tsx) has the OR divider + GitHub button; [RegisterForm.tsx](src/components/auth/RegisterForm.tsx) has neither.
-5. **/settings + /upgrade frame break** — routes live outside `/dashboard/` so don't use the dashboard layout. Either move them under it or apply a shared shell.
-6. **Items page empty-state** — [items/[type]/page.tsx](src/app/dashboard/items/[type]/page.tsx) empty state alignment is off.
-7. **Dashboard Collections empty state** — [dashboard/page.tsx](src/app/dashboard/page.tsx) Collections section renders header with no fallback.
-
-Minor (lower priority): TopBar icon-only `+` buttons on mobile lack aria-labels; homepage Navbar hardcodes `#0a0a0f` instead of `bg-background` token.
+<!-- Additional context, constraints, or details from spec -->
 
 ## Status
 
-In Progress
+Not Started
 
 ## History
 
@@ -96,4 +78,5 @@ In Progress
 - 2026-04-11: AI Summary (Description Generator) completed — generateSummary server action sharing the ai rate limit bucket, parseSummaryResponse helper handling {summary}/{description}/bare string/plain text with 300-char cap, SuggestDescriptionButton (Sparkles ghost) wired next to Description field in NewItemDialog and ItemDrawer edit mode, Pro-gated, prompt skips empty fields and forbids meta-commentary, 16 new unit tests
 - 2026-04-11: AI Explain Code completed — explainCode server action (Pro-gated, shared AI rate limit, Zod-validated) with parseExplanationResponse helper, CodeEditor extended with Sparkles Explain button (Crown fallback for free users), Code/Explain tabs appear post-generation rendering markdown in the same container, button hides once tabs take over, wired through ItemDrawer read view for snippet and command types only, 15 new unit tests
 - 2026-04-11: Current feature updated to UI Review Fixes with status set to In Progress — Playwright UI review found 7 issues (homepage fade-in bug, dashboard hydration mismatch, sidebar active state, /register missing GitHub button, /settings+/upgrade frame break, items empty-state, dashboard Collections empty state)
-- 2026-04-11: AI Prompt Optimization completed — optimizePrompt server action (Pro-gated, shared AI rate limit, Zod-validated) with parseOptimizedPromptResponse helper, MarkdownEditor extended with Sparkles Optimize button (Crown fallback), Original/Optimized tabs with icon-only Use this / Discard controls, wired through ItemDrawer read view for prompt type only, accept persists via updateItem. NewItemDialog switched to scrollable body with sticky footer so Create button stays in view. 15 new unit tests
+- 2026-04-11: AI Prompt Optimization completed
+- 2026-04-11: UI Review Fixes completed — ScrollFadeIn rewritten with state + on-mount viewport check (Features/AI/Pricing sections now animate in correctly), Sidebar active state via usePathname + aria-current on types/favorites/recents, GitHub OAuth button added to RegisterForm, /settings and /upgrade moved under /dashboard so they render inside DashboardShell (updated Sidebar, TopBar, items redirect, PricingSection CTA, Stripe checkout/portal URLs), items and collections pages drop duplicate p-6 with redesigned empty states, dashboard Collections section shows dashed-border empty card. Dashboard hydration mismatch deferred — root cause is inside @base-ui/react internal ID counter (dev-only warning). — optimizePrompt server action (Pro-gated, shared AI rate limit, Zod-validated) with parseOptimizedPromptResponse helper, MarkdownEditor extended with Sparkles Optimize button (Crown fallback), Original/Optimized tabs with icon-only Use this / Discard controls, wired through ItemDrawer read view for prompt type only, accept persists via updateItem. NewItemDialog switched to scrollable body with sticky footer so Create button stays in view. 15 new unit tests
