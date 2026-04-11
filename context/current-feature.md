@@ -1,23 +1,16 @@
-# Current Feature: Prompt Optimization
+# Current Feature
 
 ## Goals
 
-- Add AI-powered "Optimize" button for prompt item types
-- Button lives in the ItemDrawer header, mirroring the "Explain" button pattern used for snippets/commands
-- Refine the current prompt content via OpenAI, then show the optimized version to the user
-- Ask the user to accept (replace current prompt) or reject the optimized version
-- Pro-gated with shared AI rate limit, matching existing AI features
+<!-- Bullet points of what success looks like -->
 
 ## Notes
 
-- Follow the AI Explain Code pattern: server action (`optimizePrompt`), Zod validation, shared AI rate limit bucket, Pro gating with Crown fallback for free users
-- Only applies to items with type `prompt` — wire through MarkdownEditor (or ItemDrawer directly) since prompts use the markdown editor
-- Provide a diff/preview UX so user can compare before accepting
-- Add unit tests for the server action and response parser
+<!-- Additional context, constraints, or details from spec -->
 
 ## Status
 
-In Progress
+Not Started
 
 ## History
 
@@ -84,3 +77,4 @@ In Progress
 - 2026-04-11: AI Auto-Tagging completed — OpenAI client utility (Responses API + AI_MODEL constant), generateAutoTags server action with auth/Pro gating/Zod/rate limiting (20/hr per user) and 2000-char truncation, parseTagsResponse handling both {tags:[]} and bare array shapes, SuggestTagsButton with Sparkles ghost button and per-tag accept/reject (red X) controls, isPro threaded through NewItemDialog and ItemDrawer wrappers for UI gating, 13 unit tests
 - 2026-04-11: AI Summary (Description Generator) completed — generateSummary server action sharing the ai rate limit bucket, parseSummaryResponse helper handling {summary}/{description}/bare string/plain text with 300-char cap, SuggestDescriptionButton (Sparkles ghost) wired next to Description field in NewItemDialog and ItemDrawer edit mode, Pro-gated, prompt skips empty fields and forbids meta-commentary, 16 new unit tests
 - 2026-04-11: AI Explain Code completed — explainCode server action (Pro-gated, shared AI rate limit, Zod-validated) with parseExplanationResponse helper, CodeEditor extended with Sparkles Explain button (Crown fallback for free users), Code/Explain tabs appear post-generation rendering markdown in the same container, button hides once tabs take over, wired through ItemDrawer read view for snippet and command types only, 15 new unit tests
+- 2026-04-11: AI Prompt Optimization completed — optimizePrompt server action (Pro-gated, shared AI rate limit, Zod-validated) with parseOptimizedPromptResponse helper, MarkdownEditor extended with Sparkles Optimize button (Crown fallback), Original/Optimized tabs with icon-only Use this / Discard controls, wired through ItemDrawer read view for prompt type only, accept persists via updateItem. NewItemDialog switched to scrollable body with sticky footer so Create button stays in view. 15 new unit tests
