@@ -25,7 +25,7 @@ export default async function CollectionsPage({
   );
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div className="max-w-5xl mx-auto">
       <div className="flex items-center gap-3 mb-6">
         <FolderOpen className="h-6 w-6 text-muted-foreground" />
         <h1 className="text-2xl font-bold">Collections</h1>
@@ -38,9 +38,10 @@ export default async function CollectionsPage({
       </div>
 
       {collections.length === 0 ? (
-        <div className="text-center py-12 text-muted-foreground">
-          <FolderOpen className="h-12 w-12 mx-auto mb-4 opacity-50" />
-          <p>No collections yet</p>
+        <div className="flex flex-col items-center justify-center text-center py-20 text-muted-foreground">
+          <FolderOpen className="h-16 w-16 mb-4 opacity-30" />
+          <p className="text-lg font-medium mb-1">No collections yet</p>
+          <p className="text-sm">Click &ldquo;New Collection&rdquo; to group related items together.</p>
         </div>
       ) : (
         <>

@@ -38,7 +38,7 @@ export default async function ItemsListPage({
 
   const PRO_ONLY_SLUGS = new Set(["files", "images"]);
   if (PRO_ONLY_SLUGS.has(slug) && !session.user.isPro) {
-    redirect("/upgrade");
+    redirect("/dashboard/upgrade");
   }
 
   const { page: pageParam } = await searchParams;
@@ -54,7 +54,7 @@ export default async function ItemsListPage({
   const displayName = typeName[0].toUpperCase() + typeName.slice(1) + "s";
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div className="max-w-5xl mx-auto">
       <div className="flex items-center gap-3 mb-6">
         <Icon className="h-6 w-6 text-muted-foreground" />
         <h1 className="text-2xl font-bold">{displayName}</h1>
@@ -74,9 +74,14 @@ export default async function ItemsListPage({
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-12 text-muted-foreground">
-          <Icon className="h-12 w-12 mx-auto mb-4 opacity-50" />
-          <p>No {displayName.toLowerCase()} yet</p>
+        <div className="flex flex-col items-center justify-center text-center py-20 text-muted-foreground">
+          <Icon className="h-16 w-16 mb-4 opacity-30" />
+          <p className="text-lg font-medium mb-1">No {displayName.toLowerCase()} yet</p>
+          <p className="text-sm">
+            {DIALOG_TYPES.has(typeName)
+              ? `Click "New ${typeName.charAt(0).toUpperCase() + typeName.slice(1)}" to create your first one.`
+              : "Nothing to show here yet."}
+          </p>
         </div>
       ) : (
         <>

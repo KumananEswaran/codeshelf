@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import {
   ChevronDown,
@@ -40,6 +41,9 @@ interface SidebarProps {
 
 export default function Sidebar({ itemTypes, sidebarCollections, user, isPro }: SidebarProps) {
   const { favorites, recents } = sidebarCollections;
+  const pathname = usePathname();
+
+  const isActive = (href: string) => pathname === href;
 
   return (
     <div className="flex flex-col h-full">
@@ -52,11 +56,18 @@ export default function Sidebar({ itemTypes, sidebarCollections, user, isPro }: 
         <nav className="flex flex-col gap-0.5">
           {itemTypes.map((type) => {
             const slug = type.name.toLowerCase() + "s";
+            const href = `/dashboard/items/${slug}`;
+            const active = isActive(href);
             return (
               <Link
                 key={type.id}
-                href={`/dashboard/items/${slug}`}
-                className="flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
+                href={href}
+                aria-current={active ? "page" : undefined}
+                className={`flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
+                  active
+                    ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                    : "text-sidebar-foreground hover:bg-sidebar-accent"
+                }`}
               >
                 <span className="flex items-center gap-2">
                   <span
@@ -100,21 +111,30 @@ export default function Sidebar({ itemTypes, sidebarCollections, user, isPro }: 
               Favorites
             </div>
             <nav className="flex flex-col gap-0.5">
-              {favorites.map((col) => (
-                <Link
-                  key={col.id}
-                  href={`/dashboard/collections/${col.id}`}
-                  className="flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
-                >
-                  <span className="flex items-center gap-2">
-                    <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
-                    <span className="truncate">{col.name}</span>
-                  </span>
-                  <span className="text-xs text-muted-foreground">
-                    {col.itemCount}
-                  </span>
-                </Link>
-              ))}
+              {favorites.map((col) => {
+                const href = `/dashboard/collections/${col.id}`;
+                const active = isActive(href);
+                return (
+                  <Link
+                    key={col.id}
+                    href={href}
+                    aria-current={active ? "page" : undefined}
+                    className={`flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
+                      active
+                        ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                        : "text-sidebar-foreground hover:bg-sidebar-accent"
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
+                      <span className="truncate">{col.name}</span>
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {col.itemCount}
+                    </span>
+                  </Link>
+                );
+              })}
             </nav>
           </div>
         )}
@@ -125,26 +145,35 @@ export default function Sidebar({ itemTypes, sidebarCollections, user, isPro }: 
             Recent
           </div>
           <nav className="flex flex-col gap-0.5">
-            {recents.map((col) => (
-              <Link
-                key={col.id}
-                href={`/dashboard/collections/${col.id}`}
-                className="flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
-              >
-                <span className="flex items-center gap-2">
-                  <span
-                    className="h-3 w-3 rounded-full shrink-0"
-                    style={{
-                      backgroundColor: col.dominantColor ?? "#6b7280",
-                    }}
-                  />
-                  <span className="truncate">{col.name}</span>
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  {col.itemCount}
-                </span>
-              </Link>
-            ))}
+            {recents.map((col) => {
+              const href = `/dashboard/collections/${col.id}`;
+              const active = isActive(href);
+              return (
+                <Link
+                  key={col.id}
+                  href={href}
+                  aria-current={active ? "page" : undefined}
+                  className={`flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
+                    active
+                      ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                      : "text-sidebar-foreground hover:bg-sidebar-accent"
+                  }`}
+                >
+                  <span className="flex items-center gap-2">
+                    <span
+                      className="h-3 w-3 rounded-full shrink-0"
+                      style={{
+                        backgroundColor: col.dominantColor ?? "#6b7280",
+                      }}
+                    />
+                    <span className="truncate">{col.name}</span>
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {col.itemCount}
+                  </span>
+                </Link>
+              );
+            })}
           </nav>
         </div>
 
@@ -178,7 +207,7 @@ export default function Sidebar({ itemTypes, sidebarCollections, user, isPro }: 
             <DropdownMenuItem render={<Link href="/profile" />}>
               Profile
             </DropdownMenuItem>
-            <DropdownMenuItem render={<Link href="/settings" />}>
+            <DropdownMenuItem render={<Link href="/dashboard/settings" />}>
               <Settings className="h-4 w-4" />
               Settings
             </DropdownMenuItem>
