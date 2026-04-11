@@ -2,9 +2,13 @@
 
 import { useCallback, useRef, useState } from "react";
 import Editor, { type OnMount } from "@monaco-editor/react";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, Sparkles, Loader2, Crown } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useEditorPreferences } from "@/contexts/EditorPreferencesContext";
+import { explainCode } from "@/actions/ai";
 
 interface CodeEditorProps {
   value: string;
@@ -12,6 +16,9 @@ interface CodeEditorProps {
   language?: string;
   readOnly?: boolean;
   className?: string;
+  showExplain?: boolean;
+  isPro?: boolean;
+  typeName?: "snippet" | "command";
 }
 
 const LANGUAGE_MAP: Record<string, string> = {
@@ -99,8 +106,14 @@ export function CodeEditor({
   language,
   readOnly = false,
   className,
+  showExplain = false,
+  isPro = false,
+  typeName = "snippet",
 }: CodeEditorProps) {
   const [copied, setCopied] = useState(false);
+  const [explanation, setExplanation] = useState<string | null>(null);
+  const [explaining, setExplaining] = useState(false);
+  const [activeTab, setActiveTab] = useState<"code" | "explain">("code");
   const editorRef = useRef<Parameters<OnMount>[0] | null>(null);
   const { preferences } = useEditorPreferences();
 
@@ -113,6 +126,32 @@ export function CodeEditor({
       // Fallback silently
     }
   }, [value]);
+
+  const handleExplain = useCallback(async () => {
+    if (!value.trim()) {
+      toast.error("Nothing to explain");
+      return;
+    }
+    setExplaining(true);
+    const result = await explainCode({
+      content: value,
+      language: language ?? "",
+      typeName,
+    });
+    setExplaining(false);
+
+    if (!result.success) {
+      toast.error(
+        typeof result.error === "string"
+          ? result.error
+          : "Failed to generate explanation"
+      );
+      return;
+    }
+
+    setExplanation(result.data);
+    setActiveTab("explain");
+  }, [value, language, typeName]);
 
   const handleMount: OnMount = (editor, monaco) => {
     editorRef.current = editor;
@@ -127,6 +166,8 @@ export function CodeEditor({
 
   const bg = THEME_BACKGROUNDS[preferences.theme] ?? "#1e1e1e";
   const headerBg = THEME_HEADER_BACKGROUNDS[preferences.theme] ?? "#2d2d2d";
+
+  const hasExplanation = explanation !== null;
 
   return (
     <div
@@ -147,72 +188,145 @@ export function CodeEditor({
             <div className="size-3 rounded-full bg-[#febc2e]" />
             <div className="size-3 rounded-full bg-[#28c840]" />
           </div>
-          <span className="ml-2 text-xs text-[#808080] font-mono select-none">
-            {displayLanguage(language)}
-          </span>
+
+          {hasExplanation ? (
+            <div className="ml-2 flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => setActiveTab("code")}
+                className={cn(
+                  "px-2 py-0.5 text-xs font-mono rounded transition-colors cursor-pointer",
+                  activeTab === "code"
+                    ? "text-[#cccccc] bg-[#1e1e1e]"
+                    : "text-[#808080] hover:text-[#cccccc]"
+                )}
+              >
+                Code
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("explain")}
+                className={cn(
+                  "px-2 py-0.5 text-xs font-mono rounded transition-colors cursor-pointer",
+                  activeTab === "explain"
+                    ? "text-[#cccccc] bg-[#1e1e1e]"
+                    : "text-[#808080] hover:text-[#cccccc]"
+                )}
+              >
+                Explain
+              </button>
+            </div>
+          ) : (
+            <span className="ml-2 text-xs text-[#808080] font-mono select-none">
+              {displayLanguage(language)}
+            </span>
+          )}
         </div>
 
-        <button
-          type="button"
-          onClick={handleCopy}
-          className="flex items-center gap-1.5 text-xs text-[#808080] hover:text-[#cccccc] transition-colors cursor-pointer"
-          aria-label="Copy code"
-        >
-          {copied ? (
-            <>
-              <Check className="size-3.5" />
-              <span>Copied</span>
-            </>
-          ) : (
-            <>
-              <Copy className="size-3.5" />
-              <span>Copy</span>
-            </>
-          )}
-        </button>
+        <div className="flex items-center gap-3">
+          {showExplain && !hasExplanation &&
+            (isPro ? (
+              <button
+                type="button"
+                onClick={handleExplain}
+                disabled={explaining}
+                className="flex items-center gap-1.5 text-xs text-[#808080] hover:text-[#cccccc] transition-colors cursor-pointer disabled:opacity-60"
+                aria-label="Explain code with AI"
+                title="Explain code with AI"
+              >
+                {explaining ? (
+                  <>
+                    <Loader2 className="size-3.5 animate-spin" />
+                    <span>Explaining...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="size-3.5" />
+                    <span>Explain</span>
+                  </>
+                )}
+              </button>
+            ) : (
+              <span
+                className="flex items-center gap-1.5 text-xs text-[#808080] cursor-not-allowed opacity-70"
+                title="AI features require Pro subscription"
+                aria-label="AI features require Pro subscription"
+              >
+                <Crown className="size-3.5" />
+                <span>Explain</span>
+              </span>
+            ))}
+
+          <button
+            type="button"
+            onClick={handleCopy}
+            className="flex items-center gap-1.5 text-xs text-[#808080] hover:text-[#cccccc] transition-colors cursor-pointer"
+            aria-label="Copy code"
+          >
+            {copied ? (
+              <>
+                <Check className="size-3.5" />
+                <span>Copied</span>
+              </>
+            ) : (
+              <>
+                <Copy className="size-3.5" />
+                <span>Copy</span>
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
-      {/* Editor */}
-      <Editor
-        height={editorHeight}
-        language={normalizeLanguage(language)}
-        value={value}
-        onChange={(val) => onChange?.(val ?? "")}
-        onMount={handleMount}
-        theme={preferences.theme}
-        options={{
-          readOnly,
-          minimap: { enabled: preferences.minimap },
-          scrollBeyondLastLine: false,
-          lineNumbers: readOnly ? "on" : "on",
-          renderLineHighlight: readOnly ? "none" : "line",
-          fontSize: preferences.fontSize,
-          fontFamily: "var(--font-jetbrains-mono), 'JetBrains Mono', monospace",
-          lineHeight: 20,
-          padding: { top: 8, bottom: 8 },
-          scrollbar: {
-            vertical: "auto",
-            horizontal: "auto",
-            verticalScrollbarSize: 8,
-            horizontalScrollbarSize: 8,
-            useShadows: false,
-          },
-          overviewRulerBorder: false,
-          overviewRulerLanes: 0,
-          hideCursorInOverviewRuler: true,
-          contextmenu: false,
-          wordWrap: preferences.wordWrap ? "on" : "off",
-          domReadOnly: readOnly,
-          cursorStyle: readOnly ? "underline-thin" : "line",
-          tabSize: preferences.tabSize,
-          automaticLayout: true,
-          fixedOverflowWidgets: true,
-          glyphMargin: false,
-          folding: false,
-          lineDecorationsWidth: 8,
-          lineNumbersMinChars: 3,
-        }}
-      />
+      {/* Body */}
+      {hasExplanation && activeTab === "explain" ? (
+        <div className="markdown-preview p-4 text-sm max-h-[400px] overflow-y-auto">
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            {explanation ?? ""}
+          </ReactMarkdown>
+        </div>
+      ) : (
+        <Editor
+          height={editorHeight}
+          language={normalizeLanguage(language)}
+          value={value}
+          onChange={(val) => onChange?.(val ?? "")}
+          onMount={handleMount}
+          theme={preferences.theme}
+          options={{
+            readOnly,
+            minimap: { enabled: preferences.minimap },
+            scrollBeyondLastLine: false,
+            lineNumbers: readOnly ? "on" : "on",
+            renderLineHighlight: readOnly ? "none" : "line",
+            fontSize: preferences.fontSize,
+            fontFamily: "var(--font-jetbrains-mono), 'JetBrains Mono', monospace",
+            lineHeight: 20,
+            padding: { top: 8, bottom: 8 },
+            scrollbar: {
+              vertical: "auto",
+              horizontal: "auto",
+              verticalScrollbarSize: 8,
+              horizontalScrollbarSize: 8,
+              useShadows: false,
+            },
+            overviewRulerBorder: false,
+            overviewRulerLanes: 0,
+            hideCursorInOverviewRuler: true,
+            contextmenu: false,
+            wordWrap: preferences.wordWrap ? "on" : "off",
+            domReadOnly: readOnly,
+            cursorStyle: readOnly ? "underline-thin" : "line",
+            tabSize: preferences.tabSize,
+            automaticLayout: true,
+            fixedOverflowWidgets: true,
+            glyphMargin: false,
+            folding: false,
+            lineDecorationsWidth: 8,
+            lineNumbersMinChars: 3,
+          }}
+        />
+      )}
     </div>
   );
 }
