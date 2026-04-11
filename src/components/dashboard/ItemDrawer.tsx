@@ -455,6 +455,9 @@ export default function ItemDrawer({ itemId, onClose, isPro = false }: ItemDrawe
                         value={item.content}
                         language={item.language ?? undefined}
                         readOnly
+                        showExplain
+                        isPro={isPro}
+                        typeName={typeName as "snippet" | "command"}
                       />
                     ) : (
                       <MarkdownEditor

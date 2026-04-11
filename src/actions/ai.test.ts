@@ -19,8 +19,9 @@ vi.mock("@/lib/openai", () => ({
   }),
 }));
 
-import { generateAutoTags, generateSummary } from "./ai";
+import { generateAutoTags, generateSummary, explainCode } from "./ai";
 import { parseTagsResponse } from "@/lib/ai-tags";
+import { parseExplanationResponse } from "@/lib/ai-explain";
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -199,6 +200,144 @@ describe("generateSummary", () => {
     authMock.mockResolvedValue({ user: { id: "u1", isPro: true } });
     responsesCreateMock.mockRejectedValue(new Error("network down"));
     const result = await generateSummary({ title: "Test", content: "x" });
+    expect(result).toEqual({
+      success: false,
+      error: "AI feature temporarily unavailable.",
+    });
+  });
+});
+
+describe("parseExplanationResponse", () => {
+  it("parses {explanation: ...} shape", () => {
+    expect(parseExplanationResponse('{"explanation":"hello world"}')).toBe(
+      "hello world"
+    );
+  });
+
+  it("parses bare JSON string", () => {
+    expect(parseExplanationResponse('"just a string"')).toBe("just a string");
+  });
+
+  it("falls back to raw plain text", () => {
+    expect(parseExplanationResponse("not json at all")).toBe("not json at all");
+  });
+
+  it("strips wrapping quotes and trims", () => {
+    expect(parseExplanationResponse('"  quoted  "')).toBe("quoted");
+  });
+
+  it("returns empty for empty input", () => {
+    expect(parseExplanationResponse("")).toBe("");
+  });
+
+  it("caps very long explanations", () => {
+    const longText = "a".repeat(5000);
+    const result = parseExplanationResponse(JSON.stringify({ explanation: longText }));
+    expect(result.length).toBeLessThanOrEqual(4000);
+    expect(result.endsWith("...")).toBe(true);
+  });
+
+  it("accepts alternative keys like text and content", () => {
+    expect(parseExplanationResponse('{"text":"via text"}')).toBe("via text");
+    expect(parseExplanationResponse('{"content":"via content"}')).toBe("via content");
+  });
+});
+
+describe("explainCode", () => {
+  it("returns Unauthorized when no session", async () => {
+    authMock.mockResolvedValue(null);
+    const result = await explainCode({
+      content: "console.log(1)",
+      language: "ts",
+      typeName: "snippet",
+    });
+    expect(result).toEqual({ success: false, error: "Unauthorized" });
+  });
+
+  it("requires Pro subscription", async () => {
+    authMock.mockResolvedValue({ user: { id: "u1", isPro: false } });
+    const result = await explainCode({
+      content: "console.log(1)",
+      language: "ts",
+      typeName: "snippet",
+    });
+    expect(result).toEqual({ success: false, error: "Pro subscription required" });
+  });
+
+  it("validates content is required", async () => {
+    authMock.mockResolvedValue({ user: { id: "u1", isPro: true } });
+    const result = await explainCode({
+      content: "   ",
+      language: "ts",
+      typeName: "snippet",
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("returns rate limit error when limit hit", async () => {
+    authMock.mockResolvedValue({ user: { id: "u1", isPro: true } });
+    checkUserRateLimitMock.mockResolvedValue({ success: false, remaining: 0, reset: 0 });
+    const result = await explainCode({
+      content: "ls -la",
+      typeName: "command",
+    });
+    expect(result.success).toBe(false);
+    if (!result.success) expect(result.error).toMatch(/rate limit/i);
+  });
+
+  it("returns parsed explanation on success and truncates long content", async () => {
+    authMock.mockResolvedValue({ user: { id: "u1", isPro: true } });
+    responsesCreateMock.mockResolvedValue({
+      output_text: '{"explanation":"This snippet logs a value."}',
+    });
+
+    const longContent = "x".repeat(10000);
+    const result = await explainCode({
+      content: longContent,
+      language: "ts",
+      typeName: "snippet",
+    });
+
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.data).toBe("This snippet logs a value.");
+
+    const callArg = responsesCreateMock.mock.calls[0][0];
+    expect(callArg.model).toBe("gpt-5-nano");
+    expect(callArg.text.format.type).toBe("json_object");
+    expect(callArg.input.length).toBeLessThan(longContent.length);
+    expect(callArg.input).toContain("Code snippet");
+    expect(callArg.input).toContain("Language: ts");
+  });
+
+  it("uses Terminal command label for command type", async () => {
+    authMock.mockResolvedValue({ user: { id: "u1", isPro: true } });
+    responsesCreateMock.mockResolvedValue({
+      output_text: '{"explanation":"Lists files in long format."}',
+    });
+
+    await explainCode({ content: "ls -la", typeName: "command" });
+
+    const callArg = responsesCreateMock.mock.calls[0][0];
+    expect(callArg.input).toContain("Terminal command");
+  });
+
+  it("returns error when AI returns empty explanation", async () => {
+    authMock.mockResolvedValue({ user: { id: "u1", isPro: true } });
+    responsesCreateMock.mockResolvedValue({ output_text: "{}" });
+    const result = await explainCode({
+      content: "console.log(1)",
+      typeName: "snippet",
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("handles AI service errors gracefully", async () => {
+    authMock.mockResolvedValue({ user: { id: "u1", isPro: true } });
+    responsesCreateMock.mockRejectedValue(new Error("network down"));
+    const result = await explainCode({
+      content: "console.log(1)",
+      typeName: "snippet",
+    });
     expect(result).toEqual({
       success: false,
       error: "AI feature temporarily unavailable.",
