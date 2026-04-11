@@ -1,27 +1,16 @@
-# Current Feature: AI Summary (Description Generator)
+# Current Feature
 
 ## Goals
 
-- Add an icon button next to the description field that generates a concise AI summary
-- Works on unsaved input — reads current title + content directly from form state
-- Produces a 1–2 sentence summary written into the description field
-- Available for all item types, using whatever fields are populated (title, content, url, fileName, etc.)
-- Pro-gated and rate-limited, following the AI Auto-Tagging pattern
+<!-- Bullet points of what success looks like -->
 
 ## Notes
 
-- Follow the existing AI Auto-Tagging architecture: OpenAI Responses API via `src/lib/openai.ts`, server action with auth + Pro gating + Zod + rate limiting, shared `AI_MODEL` constant
-- Add a new server action `generateSummary` (parallel to `generateAutoTags`) with its own rate limit bucket
-- Add a `SuggestDescriptionButton` (Sparkles icon, ghost) rendered next to the Description input in both `NewItemDialog` and `ItemDrawer` edit mode
-- Do NOT require the item to be saved first — the button sends the current in-memory title/content/url/fileName/type
-- Overwrite the description field on accept (match auto-tag UX — no save step required)
-- Truncate long content (~2000 chars) before sending to the model, same as auto-tags
-- Thread `isPro` through the same wrappers already used for the tag button
-- Add unit tests for the new server action and any parsing helpers
+<!-- Additional context, constraints, or details from spec -->
 
 ## Status
 
-In Progress
+Not Started
 
 ## History
 
@@ -86,3 +75,4 @@ In Progress
 - 2026-04-03: Stripe Integration Phase 2 completed — Checkout/portal API routes, webhook handler (checkout.session.completed, subscription.updated/deleted, invoice.payment_failed), BillingSection with usage stats in settings, free-tier limits enforced on items (50), collections (3) and file uploads, isPro wired through dashboard layout/sidebar, UpgradePrompt component, Stripe sub cancelled on account deletion, homepage pricing CTA for logged-in users
 - 2026-04-05: Upgrade Page completed — /upgrade route with server component page and UpgradePricing client component, monthly/yearly toggle (RM29/RM252), Stripe checkout integration, ghost Upgrade button in TopBar for free users, free-user file/image pages redirect to /upgrade, UpgradePrompt component removed, homepage pricing CTA updated to /upgrade
 - 2026-04-11: AI Auto-Tagging completed — OpenAI client utility (Responses API + AI_MODEL constant), generateAutoTags server action with auth/Pro gating/Zod/rate limiting (20/hr per user) and 2000-char truncation, parseTagsResponse handling both {tags:[]} and bare array shapes, SuggestTagsButton with Sparkles ghost button and per-tag accept/reject (red X) controls, isPro threaded through NewItemDialog and ItemDrawer wrappers for UI gating, 13 unit tests
+- 2026-04-11: AI Summary (Description Generator) completed — generateSummary server action sharing the ai rate limit bucket, parseSummaryResponse helper handling {summary}/{description}/bare string/plain text with 300-char cap, SuggestDescriptionButton (Sparkles ghost) wired next to Description field in NewItemDialog and ItemDrawer edit mode, Pro-gated, prompt skips empty fields and forbids meta-commentary, 16 new unit tests
