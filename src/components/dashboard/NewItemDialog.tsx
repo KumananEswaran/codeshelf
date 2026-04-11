@@ -163,8 +163,8 @@ export default function NewItemDialog({ defaultType, children, isPro = false }: 
           </>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-lg">
-        <DialogHeader>
+      <DialogContent className="sm:max-w-lg max-h-[90vh] flex flex-col gap-0 p-0">
+        <DialogHeader className="p-4 pb-2">
           <DialogTitle className="flex items-center gap-2">
             {(() => {
               const selected = ITEM_TYPES.find((t) => t.value === typeName);
@@ -175,7 +175,8 @@ export default function NewItemDialog({ defaultType, children, isPro = false }: 
             New Item
           </DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="flex flex-col min-h-0 flex-1">
+          <div className="flex-1 overflow-y-auto px-4 py-2 space-y-4">
           <div className="space-y-2">
             <Label htmlFor="type">Type</Label>
             <Select
@@ -348,7 +349,9 @@ export default function NewItemDialog({ defaultType, children, isPro = false }: 
             </div>
           )}
 
-          <div className="flex justify-end gap-2 pt-2">
+          </div>
+
+          <div className="flex justify-end gap-2 border-t bg-muted/50 p-4 rounded-b-xl">
             <DialogClose render={<Button type="button" variant="outline" />}>
               Cancel
             </DialogClose>

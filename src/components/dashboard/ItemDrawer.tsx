@@ -463,6 +463,29 @@ export default function ItemDrawer({ itemId, onClose, isPro = false }: ItemDrawe
                       <MarkdownEditor
                         value={item.content}
                         readOnly
+                        showOptimize={typeName === "prompt"}
+                        isPro={isPro}
+                        onAcceptOptimized={async (optimized) => {
+                          const result = await updateItem(item.id, {
+                            title: item.title,
+                            description: item.description,
+                            content: optimized,
+                            language: item.language,
+                            url: item.url,
+                            tags: item.tags.map((t) => t.name),
+                            collectionIds:
+                              item.collections?.map((c) => c.id) ?? [],
+                          });
+                          if (!result.success) {
+                            throw new Error("Update failed");
+                          }
+                          setItem({
+                            ...result.data,
+                            createdAt: new Date(result.data.createdAt),
+                            updatedAt: new Date(result.data.updatedAt),
+                          });
+                          router.refresh();
+                        }}
                       />
                     )}
                   </div>
