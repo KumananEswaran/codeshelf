@@ -1,29 +1,16 @@
-# Current Feature: AI Auto-Tagging
+# Current Feature
 
 ## Goals
 
-- Add "Suggest Tags" button (Sparkles icon, ghost variant) near tags input in NewItemDialog and ItemDrawer edit mode
-- Create OpenAI client utility with `AI_MODEL` constant using the Responses API (NOT Chat Completions — gpt-5-nano returns empty with Chat Completions)
-- Create `generateAutoTags` server action: auth, Pro gating, Zod validation, rate limiting, content truncated to 2000 chars
-- Add AI rate limit config (20 req/hour per user) to existing rate-limit utility
-- Return 3-5 freeform lowercase tags; handle both `{"tags":[...]}` and `[...]` response shapes
-- Display suggestions as badges with per-tag accept (check) / reject (X) controls; accepted tags append to item tag list
-- Pro-only: hide button for free users (UI gating) AND enforce server-side
-- Error handling via toast (Pro gating, rate limit, AI errors)
-- Unit tests for the server action
+<!-- Bullet points of what success looks like -->
 
 ## Notes
 
-- Use `client.responses.create({ model: 'gpt-5-nano', instructions, input, text: { format: { type: 'json_object' } } })` and read `response.output_text`
-- Do NOT use `zodResponseFormat` (token blowout) — parse JSON manually
-- `OPENAI_API_KEY` already in `.env`
-- `isPro` available server-side via session; pass as prop to NewItemDialog / ItemDrawer for UI gating
-- Full spec: context/features/ai-auto-tag-spec.md
-- Architectural context: docs/ai-integration-plan.md
+<!-- Additional context, constraints, or details from spec -->
 
 ## Status
 
-In Progress
+Not Started
 
 ## History
 
@@ -87,3 +74,4 @@ In Progress
 - 2026-04-03: Stripe Integration Phase 1 completed — Stripe client singleton, free-tier limit constants and helpers (canCreateItem, canCreateCollection, requiresPro), subscription DB helpers (activate/deactivate/lookup), isPro wired into NextAuth JWT/session, type augmentations, 13 unit tests
 - 2026-04-03: Stripe Integration Phase 2 completed — Checkout/portal API routes, webhook handler (checkout.session.completed, subscription.updated/deleted, invoice.payment_failed), BillingSection with usage stats in settings, free-tier limits enforced on items (50), collections (3) and file uploads, isPro wired through dashboard layout/sidebar, UpgradePrompt component, Stripe sub cancelled on account deletion, homepage pricing CTA for logged-in users
 - 2026-04-05: Upgrade Page completed — /upgrade route with server component page and UpgradePricing client component, monthly/yearly toggle (RM29/RM252), Stripe checkout integration, ghost Upgrade button in TopBar for free users, free-user file/image pages redirect to /upgrade, UpgradePrompt component removed, homepage pricing CTA updated to /upgrade
+- 2026-04-11: AI Auto-Tagging completed — OpenAI client utility (Responses API + AI_MODEL constant), generateAutoTags server action with auth/Pro gating/Zod/rate limiting (20/hr per user) and 2000-char truncation, parseTagsResponse handling both {tags:[]} and bare array shapes, SuggestTagsButton with Sparkles ghost button and per-tag accept/reject (red X) controls, isPro threaded through NewItemDialog and ItemDrawer wrappers for UI gating, 13 unit tests
