@@ -32,7 +32,11 @@ export default async function FavoritesPage() {
           </p>
         </div>
       ) : (
-        <FavoritesList items={items} collections={collections} />
+        <FavoritesList
+          items={items}
+          collections={collections}
+          isPro={session.user.isPro ?? false}
+        />
       )}
     </div>
   );

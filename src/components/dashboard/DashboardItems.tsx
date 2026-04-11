@@ -9,11 +9,13 @@ import type { ItemWithDetails } from "@/lib/db/items";
 interface DashboardItemsProps {
   pinnedItems: ItemWithDetails[];
   recentItems: ItemWithDetails[];
+  isPro?: boolean;
 }
 
 export default function DashboardItems({
   pinnedItems,
   recentItems,
+  isPro = false,
 }: DashboardItemsProps) {
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
 
@@ -30,6 +32,7 @@ export default function DashboardItems({
       <ItemDrawer
         itemId={selectedItemId}
         onClose={() => setSelectedItemId(null)}
+        isPro={isPro}
       />
     </>
   );

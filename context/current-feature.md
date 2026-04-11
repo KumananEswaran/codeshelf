@@ -1,16 +1,29 @@
-# Current Feature
+# Current Feature: AI Auto-Tagging
 
 ## Goals
 
-<!-- Goals for the current feature -->
+- Add "Suggest Tags" button (Sparkles icon, ghost variant) near tags input in NewItemDialog and ItemDrawer edit mode
+- Create OpenAI client utility with `AI_MODEL` constant using the Responses API (NOT Chat Completions — gpt-5-nano returns empty with Chat Completions)
+- Create `generateAutoTags` server action: auth, Pro gating, Zod validation, rate limiting, content truncated to 2000 chars
+- Add AI rate limit config (20 req/hour per user) to existing rate-limit utility
+- Return 3-5 freeform lowercase tags; handle both `{"tags":[...]}` and `[...]` response shapes
+- Display suggestions as badges with per-tag accept (check) / reject (X) controls; accepted tags append to item tag list
+- Pro-only: hide button for free users (UI gating) AND enforce server-side
+- Error handling via toast (Pro gating, rate limit, AI errors)
+- Unit tests for the server action
 
 ## Notes
 
-<!-- Additional context, constraints, or details -->
+- Use `client.responses.create({ model: 'gpt-5-nano', instructions, input, text: { format: { type: 'json_object' } } })` and read `response.output_text`
+- Do NOT use `zodResponseFormat` (token blowout) — parse JSON manually
+- `OPENAI_API_KEY` already in `.env`
+- `isPro` available server-side via session; pass as prop to NewItemDialog / ItemDrawer for UI gating
+- Full spec: context/features/ai-auto-tag-spec.md
+- Architectural context: docs/ai-integration-plan.md
 
 ## Status
 
-Not Started
+In Progress
 
 ## History
 

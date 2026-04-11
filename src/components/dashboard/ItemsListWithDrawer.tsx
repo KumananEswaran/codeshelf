@@ -9,10 +9,12 @@ import type { ItemWithDetails } from "@/lib/db/items";
 
 interface ItemsListWithDrawerProps {
   items: ItemWithDetails[];
+  isPro?: boolean;
 }
 
 export default function ItemsListWithDrawer({
   items,
+  isPro = false,
 }: ItemsListWithDrawerProps) {
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
 
@@ -54,6 +56,7 @@ export default function ItemsListWithDrawer({
       <ItemDrawer
         itemId={selectedItemId}
         onClose={() => setSelectedItemId(null)}
+        isPro={isPro}
       />
     </>
   );

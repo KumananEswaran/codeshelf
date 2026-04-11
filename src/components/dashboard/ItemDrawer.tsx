@@ -55,17 +55,19 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import CollectionPicker from "@/components/dashboard/CollectionPicker";
+import SuggestTagsButton from "@/components/dashboard/SuggestTagsButton";
 import type { ItemDetail } from "@/lib/db/items";
 
 interface ItemDrawerProps {
   itemId: string | null;
   onClose: () => void;
+  isPro?: boolean;
 }
 
 const CONTENT_TYPES = ["snippet", "prompt", "command", "note"];
 const LANGUAGE_TYPES = ["snippet", "command"];
 
-export default function ItemDrawer({ itemId, onClose }: ItemDrawerProps) {
+export default function ItemDrawer({ itemId, onClose, isPro = false }: ItemDrawerProps) {
   const router = useRouter();
   const [item, setItem] = useState<ItemDetail | null>(null);
   const [loading, setLoading] = useState(false);
@@ -540,9 +542,29 @@ export default function ItemDrawer({ itemId, onClose }: ItemDrawerProps) {
               {/* Tags */}
               {editing ? (
                 <div>
-                  <div className="flex items-center gap-1.5 mb-1">
-                    <Tag className="h-3.5 w-3.5 text-muted-foreground" />
-                    <h4 className="text-sm font-medium">Tags</h4>
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-1.5">
+                      <Tag className="h-3.5 w-3.5 text-muted-foreground" />
+                      <h4 className="text-sm font-medium">Tags</h4>
+                    </div>
+                    {isPro && (
+                      <SuggestTagsButton
+                        title={title}
+                        content={content}
+                        existingTags={tagsInput
+                          .split(",")
+                          .map((t) => t.trim())
+                          .filter(Boolean)}
+                        onAccept={(tag) => {
+                          const current = tagsInput
+                            .split(",")
+                            .map((t) => t.trim())
+                            .filter(Boolean);
+                          if (current.some((t) => t.toLowerCase() === tag.toLowerCase())) return;
+                          setTagsInput([...current, tag].join(", "));
+                        }}
+                      />
+                    )}
                   </div>
                   <Input
                     value={tagsInput}

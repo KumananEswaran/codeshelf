@@ -51,7 +51,11 @@ export default async function DashboardPage() {
 
       <CollectionsGrid collections={recentCollections} />
 
-      <DashboardItems pinnedItems={pinnedItems} recentItems={recentItems} />
+      <DashboardItems
+        pinnedItems={pinnedItems}
+        recentItems={recentItems}
+        isPro={session.user.isPro ?? false}
+      />
     </div>
   );
 }

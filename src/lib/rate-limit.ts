@@ -28,6 +28,8 @@ const limiters = {
   resetPassword: { requests: 5, window: "15 m" as const },
   /** Resend verification: 3 attempts per 15 minutes */
   resendVerification: { requests: 3, window: "15 m" as const },
+  /** AI features: 20 requests per hour per user */
+  ai: { requests: 20, window: "1 h" as const },
 } as const;
 
 export type RateLimitType = keyof typeof limiters;
@@ -87,6 +89,38 @@ export async function checkRateLimit(
     };
   } catch {
     // Fail open: if Upstash is down, allow the request
+    return { success: true, remaining: -1, reset: 0 };
+  }
+}
+
+/**
+ * Check rate limit for a server action (no Request object) using a user identifier.
+ * Fails open — if Upstash is not configured or unavailable, allows the request.
+ */
+export async function checkUserRateLimit(
+  type: RateLimitType,
+  userId: string
+): Promise<RateLimitResult> {
+  try {
+    const redis = getRedis();
+    if (!redis) {
+      return { success: true, remaining: -1, reset: 0 };
+    }
+
+    const config = limiters[type];
+    const ratelimit = new Ratelimit({
+      redis,
+      limiter: Ratelimit.slidingWindow(config.requests, config.window),
+      prefix: "codeshelf",
+    });
+
+    const result = await ratelimit.limit(`ratelimit:${type}:user:${userId}`);
+    return {
+      success: result.success,
+      remaining: result.remaining,
+      reset: result.reset,
+    };
+  } catch {
     return { success: true, remaining: -1, reset: 0 };
   }
 }

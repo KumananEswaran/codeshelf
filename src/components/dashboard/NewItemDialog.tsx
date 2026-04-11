@@ -37,6 +37,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { createItem } from "@/actions/items";
+import SuggestTagsButton from "@/components/dashboard/SuggestTagsButton";
 
 const ITEM_TYPES = [
   { value: "snippet" as const, label: "Snippet", color: "#3b82f6", icon: Code },
@@ -53,9 +54,10 @@ export type ItemType = (typeof ITEM_TYPES)[number]["value"];
 interface NewItemDialogProps {
   defaultType?: ItemType;
   children?: React.ReactNode;
+  isPro?: boolean;
 }
 
-export default function NewItemDialog({ defaultType, children }: NewItemDialogProps) {
+export default function NewItemDialog({ defaultType, children, isPro = false }: NewItemDialogProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -293,7 +295,27 @@ export default function NewItemDialog({ defaultType, children }: NewItemDialogPr
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="tags">Tags</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="tags">Tags</Label>
+              {isPro && (
+                <SuggestTagsButton
+                  title={title}
+                  content={content}
+                  existingTags={tagsInput
+                    .split(",")
+                    .map((t) => t.trim())
+                    .filter(Boolean)}
+                  onAccept={(tag) => {
+                    const current = tagsInput
+                      .split(",")
+                      .map((t) => t.trim())
+                      .filter(Boolean);
+                    if (current.some((t) => t.toLowerCase() === tag.toLowerCase())) return;
+                    setTagsInput([...current, tag].join(", "));
+                  }}
+                />
+              )}
+            </div>
             <Input
               id="tags"
               value={tagsInput}
