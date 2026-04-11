@@ -63,7 +63,7 @@ export default async function ItemsListPage({
         </span>
         {DIALOG_TYPES.has(typeName) && (
           <div className="ml-auto">
-            <NewItemDialog defaultType={typeName as ItemType}>
+            <NewItemDialog defaultType={typeName as ItemType} isPro={session.user.isPro ?? false}>
               <Plus className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">
                 New {typeName.charAt(0).toUpperCase() + typeName.slice(1)}
@@ -80,7 +80,7 @@ export default async function ItemsListPage({
         </div>
       ) : (
         <>
-          <ItemsListWithDrawer items={items} />
+          <ItemsListWithDrawer items={items} isPro={session.user.isPro ?? false} />
           <Pagination
             currentPage={page}
             totalPages={totalPages}

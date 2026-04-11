@@ -10,10 +10,12 @@ import type { ItemWithDetails } from "@/lib/db/items";
 
 interface CollectionItemsListProps {
   items: ItemWithDetails[];
+  isPro?: boolean;
 }
 
 export default function CollectionItemsList({
   items,
+  isPro = false,
 }: CollectionItemsListProps) {
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
 
@@ -90,6 +92,7 @@ export default function CollectionItemsList({
       <ItemDrawer
         itemId={selectedItemId}
         onClose={() => setSelectedItemId(null)}
+        isPro={isPro}
       />
     </>
   );

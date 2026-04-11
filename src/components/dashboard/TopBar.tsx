@@ -52,7 +52,7 @@ export default function TopBar({ onSearchClick, isPro = false }: TopBarProps) {
           <span className="sr-only">Favorites</span>
         </Link>
         <NewCollectionDialog />
-        <NewItemDialog />
+        <NewItemDialog isPro={isPro} />
       </div>
     </div>
   );

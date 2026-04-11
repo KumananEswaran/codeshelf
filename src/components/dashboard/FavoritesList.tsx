@@ -23,6 +23,7 @@ type CollectionSort = "Newest" | "Oldest" | "Name A-Z" | "Name Z-A";
 interface FavoritesListProps {
   items: ItemWithDetails[];
   collections: FavoriteCollection[];
+  isPro?: boolean;
 }
 
 function sortItems(items: ItemWithDetails[], sort: ItemSort) {
@@ -60,6 +61,7 @@ function sortCollections(collections: FavoriteCollection[], sort: CollectionSort
 export default function FavoritesList({
   items,
   collections,
+  isPro = false,
 }: FavoritesListProps) {
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [itemSort, setItemSort] = useState<ItemSort>("Newest");
@@ -165,6 +167,7 @@ export default function FavoritesList({
       <ItemDrawer
         itemId={selectedItemId}
         onClose={() => setSelectedItemId(null)}
+        isPro={isPro}
       />
     </div>
   );

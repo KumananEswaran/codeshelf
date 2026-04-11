@@ -135,6 +135,7 @@ export default function DashboardShell({
       <ItemDrawer
         itemId={searchItemId}
         onClose={() => setSearchItemId(null)}
+        isPro={isPro}
       />
     </div>
   );

@@ -50,7 +50,10 @@ export default async function CollectionPage({
         </div>
       ) : (
         <>
-          <CollectionItemsList items={items} />
+          <CollectionItemsList
+            items={items}
+            isPro={session.user.isPro ?? false}
+          />
           <Pagination
             currentPage={page}
             totalPages={totalPages}
