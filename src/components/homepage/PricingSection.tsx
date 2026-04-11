@@ -134,7 +134,7 @@ export function PricingSection({ isLoggedIn = false }: PricingSectionProps) {
                 ))}
               </ul>
               <Link
-                href={isLoggedIn ? "/upgrade" : "/register"}
+                href={isLoggedIn ? "/dashboard/upgrade" : "/register"}
                 className={cn(
                   buttonVariants(),
                   "w-full bg-[#3b82f6] hover:bg-[#2563eb] text-white"

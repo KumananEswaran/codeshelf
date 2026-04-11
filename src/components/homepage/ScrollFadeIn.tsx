@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export function ScrollFadeIn({
   children,
@@ -10,21 +10,34 @@ export function ScrollFadeIn({
   className?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
 
+    if (typeof IntersectionObserver === "undefined") {
+      setVisible(true);
+      return;
+    }
+
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      setVisible(true);
+      return;
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
+        for (const entry of entries) {
           if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-            observer.unobserve(entry.target);
+            setVisible(true);
+            observer.disconnect();
+            break;
           }
-        });
+        }
       },
-      { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
+      { threshold: 0, rootMargin: "0px 0px -40px 0px" }
     );
 
     observer.observe(el);
@@ -32,7 +45,7 @@ export function ScrollFadeIn({
   }, []);
 
   return (
-    <div ref={ref} className={`fade-in-section ${className}`}>
+    <div ref={ref} className={`fade-in-section ${visible ? "visible" : ""} ${className}`}>
       {children}
     </div>
   );

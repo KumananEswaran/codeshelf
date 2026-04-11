@@ -37,7 +37,7 @@ export default function TopBar({ onSearchClick, isPro = false }: TopBarProps) {
       <div className="flex items-center gap-2">
         {!isPro && (
           <Link
-            href="/upgrade"
+            href="/dashboard/upgrade"
             className={buttonVariants({ variant: "ghost", className: "text-muted-foreground hover:text-blue-400 gap-1.5 text-sm" })}
           >
             <Zap className="size-3.5" />
