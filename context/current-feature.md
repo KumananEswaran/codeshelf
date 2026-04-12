@@ -1,42 +1,16 @@
 # Current Feature
 
-Components Folder Refactor — extract duplicated patterns and decompose large components in `src/components` identified by refactor-scanner.
-
 ## Goals
 
-- Eliminate duplicated hook/handler logic across collection and item card components
-- Extract small shared utilities and sub-components to close behavioral drift
-- Decompose `ItemDrawer.tsx` (677 lines) into focused sub-components after shared state is reduced
-- No behavior change — existing tests + build must pass
+<!-- Bullet points of what success looks like -->
 
 ## Notes
 
-### High priority
-
-- **[H1] Extract `useCollectionActions` hook** — `CollectionActions.tsx:35-68` and `CollectionCardMenu.tsx:36-72` duplicate favorite-toggle + delete logic. Real drift: `CollectionCardMenu` has `router.refresh()` after delete, `CollectionActions` doesn't. New hook at `src/hooks/useCollectionActions.ts` returning `{ isFavorite, togglingFav, deleting, editOpen, setEditOpen, deleteOpen, setDeleteOpen, handleToggleFavorite, handleDelete }`. Both components keep only their button/menu JSX surface.
-- **[H2] Extract `useToggleFavorite` hook** — `ItemCard.tsx:22-38` and `CollectionCard.tsx:20-36` share a 15-line optimistic toggle + rollback + `router.refresh()` pattern. Drift: `CollectionActions` has a `togglingFav` guard the others lack. New hook at `src/hooks/useToggleFavorite.ts` with signature `(initialValue, toggleAction) => { isFavorite, handleToggleFavorite }`. Consumed by `ItemCard`, `CollectionCard`, and (via H1) `CollectionActions`.
-- **[H3] Extract `AuthDivider`** — Exact OR divider block duplicated in `SignInForm.tsx:154-161` and `RegisterForm.tsx:150-157`. New component at `src/components/auth/AuthDivider.tsx`.
-- **[H4] Extract `parseTagsInput` util** — `.split(",").map(t => t.trim()).filter(Boolean)` inlined 6x across `ItemDrawer.tsx` (lines 139-141, 594-596, 599-601) and `NewItemDialog.tsx` (lines 104-106, 319-321, 324-326). Add `parseTagsInput` to `src/lib/utils.ts` alongside existing helpers.
-
-### Medium priority
-
-- **[M1] Decompose `ItemDrawer.tsx` (677 lines)** — Extract at minimum `ItemDrawerDetails` (lines 654-665, pure display of Created/Updated) and `ItemDrawerDescriptionField` (lines 380-414, self-contained edit/view toggle). Optional: `ItemDrawerHeader` (206-373), `ItemDrawerMetaSection` (566-651). Tackle after H1/H2 reduce shared state surface.
-- **[M2] Shared AI suggest button trigger** — `SuggestTagsButton.tsx:61-75` and `SuggestDescriptionButton.tsx:47-65` share the same ghost button + loader/sparkles pattern. Not worth extracting today (the two components diverge in output below the button); revisit if a third AI button is added.
-
-### Low / Consider later
-
-- **[L1] `AuthFormCard` wrapper** — `SignInForm`, `RegisterForm`, `ForgotPasswordForm` all render the same Card shell. Only worth extracting if a fourth auth form appears.
-
-### Rejected (not duplication)
-
-- `CollectionsGrid` — already shared between dashboard page and collections index
-- `ItemsListWithDrawer` vs `CollectionItemsList` — structurally different (grouped sections, different pagination)
-- `NewItemDialog` / `ItemDrawer` field rendering — same conditionals but JSX shape (Label+Input vs h4 sections) differs per field
-- `FavoritesList` sort helpers — type-specific, no other consumers
+<!-- Additional context, constraints, or details from spec -->
 
 ## Status
 
-In Progress
+Not Started
 
 ## History
 
@@ -107,3 +81,4 @@ In Progress
 - 2026-04-11: AI Prompt Optimization completed
 - 2026-04-11: UI Review Fixes completed — ScrollFadeIn rewritten with state + on-mount viewport check (Features/AI/Pricing sections now animate in correctly), Sidebar active state via usePathname + aria-current on types/favorites/recents, GitHub OAuth button added to RegisterForm, /settings and /upgrade moved under /dashboard so they render inside DashboardShell (updated Sidebar, TopBar, items redirect, PricingSection CTA, Stripe checkout/portal URLs), items and collections pages drop duplicate p-6 with redesigned empty states, dashboard Collections section shows dashed-border empty card. Dashboard hydration mismatch deferred — root cause is inside @base-ui/react internal ID counter (dev-only warning). — optimizePrompt server action (Pro-gated, shared AI rate limit, Zod-validated) with parseOptimizedPromptResponse helper, MarkdownEditor extended with Sparkles Optimize button (Crown fallback), Original/Optimized tabs with icon-only Use this / Discard controls, wired through ItemDrawer read view for prompt type only, accept persists via updateItem. NewItemDialog switched to scrollable body with sticky footer so Create button stays in view. 15 new unit tests
 - 2026-04-12: Actions Folder Refactor completed — new src/lib/action-guard.ts with requireSession/requireProSession/checkAiRateLimit, callOpenAI helper in ai.ts eliminating 4 duplicated try/catch blocks and centralizing rate_limit detection + error strings, all 4 AI actions use requireProSession + checkAiRateLimit, 13 auth guards collapsed across items.ts/collections.ts/ai.ts, itemBaseSchema + nullableUrl extracted so updateItemSchema reuses the base, editor-preferences.ts switched to requireSession with missing as const added. All 76 unit tests + build pass unchanged.
+- 2026-04-12: Components Folder Refactor completed — new parseTagsInput util in src/lib/utils.ts replaces 6 inline split/map/filter blocks in ItemDrawer and NewItemDialog, AuthDivider shared by SignInForm + RegisterForm, useToggleFavorite hook consumed by ItemCard + CollectionCard, useCollectionActions hook + shared CollectionDeleteDialog consumed by CollectionActions + CollectionCardMenu (fixes missing router.refresh() after delete drift in CollectionActions), ItemDrawerDetails sub-component extracted from ItemDrawer. All 76 unit tests + build pass unchanged.
