@@ -1,8 +1,8 @@
 "use server";
 
 import { z } from "zod";
-import { auth } from "@/auth";
 import { updateEditorPreferences } from "@/lib/db/editor-preferences";
+import { requireSession } from "@/lib/action-guard";
 
 const editorPreferencesSchema = z.object({
   fontSize: z.number().int().min(12).max(20),
@@ -13,20 +13,18 @@ const editorPreferencesSchema = z.object({
 });
 
 export async function saveEditorPreferences(data: z.infer<typeof editorPreferencesSchema>) {
-  const session = await auth();
-  if (!session?.user?.id) {
-    return { success: false, error: "Unauthorized" };
-  }
+  const guard = await requireSession();
+  if (!guard.ok) return guard.error;
 
   const parsed = editorPreferencesSchema.safeParse(data);
   if (!parsed.success) {
-    return { success: false, error: "Invalid preferences" };
+    return { success: false as const, error: "Invalid preferences" };
   }
 
   try {
-    const updated = await updateEditorPreferences(session.user.id, parsed.data);
-    return { success: true, data: updated };
+    const updated = await updateEditorPreferences(guard.userId, parsed.data);
+    return { success: true as const, data: updated };
   } catch {
-    return { success: false, error: "Failed to save preferences" };
+    return { success: false as const, error: "Failed to save preferences" };
   }
 }
