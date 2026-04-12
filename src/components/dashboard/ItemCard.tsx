@@ -1,7 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { Pin, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,7 +7,7 @@ import CopyButton from "@/components/dashboard/CopyButton";
 import { getIcon } from "@/lib/icon-map";
 import { formatDate } from "@/lib/utils";
 import { toggleItemFavorite } from "@/actions/items";
-import { toast } from "sonner";
+import { useToggleFavorite } from "@/hooks/useToggleFavorite";
 import type { ItemWithDetails } from "@/lib/db/items";
 
 interface ItemCardProps {
@@ -18,25 +16,11 @@ interface ItemCardProps {
 }
 
 export default function ItemCard({ item, onClick }: ItemCardProps) {
-  const router = useRouter();
-  const [isFavorite, setIsFavorite] = useState(item.isFavorite);
-
-  useEffect(() => {
-    setIsFavorite(item.isFavorite);
-  }, [item.isFavorite]);
-
-  async function handleToggleFavorite(e: React.MouseEvent) {
-    e.stopPropagation();
-    setIsFavorite(!isFavorite);
-    const result = await toggleItemFavorite(item.id);
-
-    if (!result.success) {
-      setIsFavorite(isFavorite);
-      toast.error("Failed to toggle favorite");
-      return;
-    }
-    router.refresh();
-  }
+  const { isFavorite, handleToggleFavorite } = useToggleFavorite(
+    item.id,
+    item.isFavorite,
+    toggleItemFavorite
+  );
 
   return (
     <Card

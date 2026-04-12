@@ -25,6 +25,7 @@ import { CodeEditor } from "@/components/ui/code-editor";
 import { MarkdownEditor } from "@/components/ui/markdown-editor";
 import { FileUpload } from "@/components/ui/file-upload";
 import { CODE_LANGUAGES } from "@/lib/languages";
+import { parseTagsInput } from "@/lib/utils";
 import {
   Plus,
   Code,
@@ -100,10 +101,7 @@ export default function NewItemDialog({ defaultType, children, isPro = false }: 
     e.preventDefault();
     setLoading(true);
 
-    const tags = tagsInput
-      .split(",")
-      .map((t) => t.trim())
-      .filter(Boolean);
+    const tags = parseTagsInput(tagsInput);
 
     const isFileType = typeName === "file" || typeName === "image";
 
@@ -315,15 +313,9 @@ export default function NewItemDialog({ defaultType, children, isPro = false }: 
                 <SuggestTagsButton
                   title={title}
                   content={content}
-                  existingTags={tagsInput
-                    .split(",")
-                    .map((t) => t.trim())
-                    .filter(Boolean)}
+                  existingTags={parseTagsInput(tagsInput)}
                   onAccept={(tag) => {
-                    const current = tagsInput
-                      .split(",")
-                      .map((t) => t.trim())
-                      .filter(Boolean);
+                    const current = parseTagsInput(tagsInput);
                     if (current.some((t) => t.toLowerCase() === tag.toLowerCase())) return;
                     setTagsInput([...current, tag].join(", "));
                   }}

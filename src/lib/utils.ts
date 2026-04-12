@@ -21,6 +21,10 @@ export function getDownloadUrl(fileUrl: string): string {
   return `/api/download/${encodeURIComponent(key)}`;
 }
 
+export function parseTagsInput(raw: string): string[] {
+  return raw.split(",").map((t) => t.trim()).filter(Boolean);
+}
+
 export function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
