@@ -1,16 +1,42 @@
 # Current Feature
 
+Components Folder Refactor — extract duplicated patterns and decompose large components in `src/components` identified by refactor-scanner.
+
 ## Goals
 
-<!-- Bullet points of what success looks like -->
+- Eliminate duplicated hook/handler logic across collection and item card components
+- Extract small shared utilities and sub-components to close behavioral drift
+- Decompose `ItemDrawer.tsx` (677 lines) into focused sub-components after shared state is reduced
+- No behavior change — existing tests + build must pass
 
 ## Notes
 
-<!-- Additional context, constraints, or details from spec -->
+### High priority
+
+- **[H1] Extract `useCollectionActions` hook** — `CollectionActions.tsx:35-68` and `CollectionCardMenu.tsx:36-72` duplicate favorite-toggle + delete logic. Real drift: `CollectionCardMenu` has `router.refresh()` after delete, `CollectionActions` doesn't. New hook at `src/hooks/useCollectionActions.ts` returning `{ isFavorite, togglingFav, deleting, editOpen, setEditOpen, deleteOpen, setDeleteOpen, handleToggleFavorite, handleDelete }`. Both components keep only their button/menu JSX surface.
+- **[H2] Extract `useToggleFavorite` hook** — `ItemCard.tsx:22-38` and `CollectionCard.tsx:20-36` share a 15-line optimistic toggle + rollback + `router.refresh()` pattern. Drift: `CollectionActions` has a `togglingFav` guard the others lack. New hook at `src/hooks/useToggleFavorite.ts` with signature `(initialValue, toggleAction) => { isFavorite, handleToggleFavorite }`. Consumed by `ItemCard`, `CollectionCard`, and (via H1) `CollectionActions`.
+- **[H3] Extract `AuthDivider`** — Exact OR divider block duplicated in `SignInForm.tsx:154-161` and `RegisterForm.tsx:150-157`. New component at `src/components/auth/AuthDivider.tsx`.
+- **[H4] Extract `parseTagsInput` util** — `.split(",").map(t => t.trim()).filter(Boolean)` inlined 6x across `ItemDrawer.tsx` (lines 139-141, 594-596, 599-601) and `NewItemDialog.tsx` (lines 104-106, 319-321, 324-326). Add `parseTagsInput` to `src/lib/utils.ts` alongside existing helpers.
+
+### Medium priority
+
+- **[M1] Decompose `ItemDrawer.tsx` (677 lines)** — Extract at minimum `ItemDrawerDetails` (lines 654-665, pure display of Created/Updated) and `ItemDrawerDescriptionField` (lines 380-414, self-contained edit/view toggle). Optional: `ItemDrawerHeader` (206-373), `ItemDrawerMetaSection` (566-651). Tackle after H1/H2 reduce shared state surface.
+- **[M2] Shared AI suggest button trigger** — `SuggestTagsButton.tsx:61-75` and `SuggestDescriptionButton.tsx:47-65` share the same ghost button + loader/sparkles pattern. Not worth extracting today (the two components diverge in output below the button); revisit if a third AI button is added.
+
+### Low / Consider later
+
+- **[L1] `AuthFormCard` wrapper** — `SignInForm`, `RegisterForm`, `ForgotPasswordForm` all render the same Card shell. Only worth extracting if a fourth auth form appears.
+
+### Rejected (not duplication)
+
+- `CollectionsGrid` — already shared between dashboard page and collections index
+- `ItemsListWithDrawer` vs `CollectionItemsList` — structurally different (grouped sections, different pagination)
+- `NewItemDialog` / `ItemDrawer` field rendering — same conditionals but JSX shape (Label+Input vs h4 sections) differs per field
+- `FavoritesList` sort helpers — type-specific, no other consumers
 
 ## Status
 
-Not Started
+In Progress
 
 ## History
 

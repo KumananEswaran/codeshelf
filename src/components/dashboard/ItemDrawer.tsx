@@ -10,7 +10,6 @@ import {
   Trash2,
   Tag,
   FolderOpen,
-  Calendar,
   Loader2,
   Save,
   X,
@@ -40,7 +39,7 @@ import { CodeEditor } from "@/components/ui/code-editor";
 import { MarkdownEditor } from "@/components/ui/markdown-editor";
 import { Separator } from "@/components/ui/separator";
 import { getIcon } from "@/lib/icon-map";
-import { formatDate, formatFileSize, getDownloadUrl } from "@/lib/utils";
+import { formatFileSize, getDownloadUrl, parseTagsInput } from "@/lib/utils";
 import { updateItem, deleteItem, toggleItemFavorite, toggleItemPin } from "@/actions/items";
 import { toast } from "sonner";
 import {
@@ -57,6 +56,7 @@ import {
 import CollectionPicker from "@/components/dashboard/CollectionPicker";
 import SuggestTagsButton from "@/components/dashboard/SuggestTagsButton";
 import SuggestDescriptionButton from "@/components/dashboard/SuggestDescriptionButton";
+import ItemDrawerDetails from "@/components/dashboard/ItemDrawerDetails";
 import type { ItemDetail } from "@/lib/db/items";
 
 interface ItemDrawerProps {
@@ -135,10 +135,7 @@ export default function ItemDrawer({ itemId, onClose, isPro = false }: ItemDrawe
     if (!item) return;
 
     setSaving(true);
-    const tags = tagsInput
-      .split(",")
-      .map((t) => t.trim())
-      .filter(Boolean);
+    const tags = parseTagsInput(tagsInput);
 
     const result = await updateItem(item.id, {
       title,
@@ -590,15 +587,9 @@ export default function ItemDrawer({ itemId, onClose, isPro = false }: ItemDrawe
                       <SuggestTagsButton
                         title={title}
                         content={content}
-                        existingTags={tagsInput
-                          .split(",")
-                          .map((t) => t.trim())
-                          .filter(Boolean)}
+                        existingTags={parseTagsInput(tagsInput)}
                         onAccept={(tag) => {
-                          const current = tagsInput
-                            .split(",")
-                            .map((t) => t.trim())
-                            .filter(Boolean);
+                          const current = parseTagsInput(tagsInput);
                           if (current.some((t) => t.toLowerCase() === tag.toLowerCase())) return;
                           setTagsInput([...current, tag].join(", "));
                         }}
@@ -651,18 +642,7 @@ export default function ItemDrawer({ itemId, onClose, isPro = false }: ItemDrawe
               )}
 
               {/* Details (display only) */}
-              <div>
-                <div className="flex items-center gap-1.5 mb-1.5">
-                  <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
-                  <h4 className="text-sm font-medium">Details</h4>
-                </div>
-                <div className="grid grid-cols-2 gap-y-1 text-sm">
-                  <span className="text-muted-foreground">Created</span>
-                  <span>{formatDate(item.createdAt)}</span>
-                  <span className="text-muted-foreground">Updated</span>
-                  <span>{formatDate(item.updatedAt)}</span>
-                </div>
-              </div>
+              <ItemDrawerDetails createdAt={item.createdAt} updatedAt={item.updatedAt} />
             </div>
           </>
         ) : (
