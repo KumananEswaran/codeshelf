@@ -1,7 +1,6 @@
 "use server";
 
 import { z } from "zod";
-import { auth } from "@/auth";
 import {
   createCollection as createCollectionQuery,
   updateCollection as updateCollectionQuery,
@@ -10,6 +9,7 @@ import {
 } from "@/lib/db/collections";
 import { getUserCollectionCount } from "@/lib/db/subscription";
 import { FREE_LIMITS } from "@/lib/subscription";
+import { requireSession } from "@/lib/action-guard";
 
 const collectionSchema = z.object({
   name: z.string().trim().min(1, "Name is required"),
@@ -19,13 +19,11 @@ const collectionSchema = z.object({
 export async function createCollection(
   data: z.input<typeof collectionSchema>
 ) {
-  const session = await auth();
-  if (!session?.user?.id) {
-    return { success: false as const, error: "Unauthorized" };
-  }
+  const guard = await requireSession();
+  if (!guard.ok) return guard.error;
 
-  if (!session.user.isPro) {
-    const count = await getUserCollectionCount(session.user.id);
+  if (!guard.isPro) {
+    const count = await getUserCollectionCount(guard.userId);
     if (count >= FREE_LIMITS.MAX_COLLECTIONS) {
       return {
         success: false as const,
@@ -42,7 +40,7 @@ export async function createCollection(
     };
   }
 
-  const collection = await createCollectionQuery(session.user.id, parsed.data);
+  const collection = await createCollectionQuery(guard.userId, parsed.data);
   return { success: true as const, data: collection };
 }
 
@@ -50,10 +48,8 @@ export async function updateCollection(
   collectionId: string,
   data: z.input<typeof collectionSchema>
 ) {
-  const session = await auth();
-  if (!session?.user?.id) {
-    return { success: false as const, error: "Unauthorized" };
-  }
+  const guard = await requireSession();
+  if (!guard.ok) return guard.error;
 
   const parsed = collectionSchema.safeParse(data);
   if (!parsed.success) {
@@ -65,7 +61,7 @@ export async function updateCollection(
 
   const updated = await updateCollectionQuery(
     collectionId,
-    session.user.id,
+    guard.userId,
     parsed.data
   );
   if (!updated) {
@@ -76,12 +72,10 @@ export async function updateCollection(
 }
 
 export async function deleteCollection(collectionId: string) {
-  const session = await auth();
-  if (!session?.user?.id) {
-    return { success: false as const, error: "Unauthorized" };
-  }
+  const guard = await requireSession();
+  if (!guard.ok) return guard.error;
 
-  const result = await deleteCollectionQuery(collectionId, session.user.id);
+  const result = await deleteCollectionQuery(collectionId, guard.userId);
   if (!result.deleted) {
     return { success: false as const, error: "Collection not found" };
   }
@@ -90,12 +84,10 @@ export async function deleteCollection(collectionId: string) {
 }
 
 export async function toggleCollectionFavorite(collectionId: string) {
-  const session = await auth();
-  if (!session?.user?.id) {
-    return { success: false as const, error: "Unauthorized" };
-  }
+  const guard = await requireSession();
+  if (!guard.ok) return guard.error;
 
-  const result = await toggleFavoriteQuery(collectionId, session.user.id);
+  const result = await toggleFavoriteQuery(collectionId, guard.userId);
   if (!result) {
     return { success: false as const, error: "Collection not found" };
   }
